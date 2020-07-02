@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.gui;
 
 import java.awt.*;
@@ -38,18 +39,30 @@ public class ProfilePlot {
 		this.imp = imp;
 		Roi roi = imp.getRoi();
 		if (roi==null) {
-			IJ.error("Profile Plot", "Selection required.");
+			//EU_HOU Bundle
+			IJ.error("Profile Plot", IJ.getBundle().getString("SelReqErr"));
 			return;
 		}
 		int roiType = roi.getType();
 		if (!(roi.isLine() || roiType==Roi.RECTANGLE)) {
-			IJ.error("Line or rectangular selection required.");
+			//EU_HOU Bundle
+			IJ.error(IJ.getBundle().getString("HorizLineSelReqErr"));
 			return;
 		}
 		Calibration cal = imp.getCalibration();
 		xInc = cal.pixelWidth;
 		units = cal.getUnits();
 		yLabel = cal.getValueUnit();
+		/*
+		 * EU_HOU CHANGES
+		 */
+        //by Oli
+		 if (yLabel.equals("Gray Value"))
+             yLabel=IJ.getPluginBundle().getString("IntensityRS");
+         //end by Oli
+		/*
+		 * EU_HOU CHANGES END
+		 */
 		ImageProcessor ip = imp.getProcessor();
 		if (roiType==Roi.LINE)
 			profile = getStraightLineProfile(roi, cal, ip);
@@ -99,6 +112,7 @@ public class ProfilePlot {
 	public Plot getPlot() {
 		if (profile==null)
 			return null;
+		//EU_HOU MISSING Bundle
 		String xLabel = "Distance ("+units+")";
   		int n = profile.length;
   		if (xValues==null) {
@@ -110,7 +124,8 @@ public class ProfilePlot {
         for (int i=0; i<n; i++)
         	yValues[i] = (float)profile[i];
 		boolean fixedYScale = fixedMin!=0.0 || fixedMax!=0.0;
-		Plot plot = new Plot("Plot of "+getShortTitle(imp), xLabel, yLabel, xValues, yValues);
+		//EU_HOU Bundle
+		Plot plot = new Plot(IJ.getBundle().getString("PlotWinTitle") + " " +getShortTitle(imp), xLabel, yLabel, xValues, yValues);
 		if (fixedYScale) {
 			double[] a = Tools.getMinMax(xValues);
 			plot.setLimits(a[0],a[1],fixedMin,fixedMax);

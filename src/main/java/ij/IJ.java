@@ -1,3 +1,4 @@
+//EU_HOU
 package ij;
 import ij.gui.*;
 import ij.process.*;
@@ -26,6 +27,17 @@ import java.security.cert.*;
 import java.security.KeyStore;
 import java.nio.ByteBuffer;
 import java.math.RoundingMode;
+/*
+ * EU_HOU CHANGES
+ */
+import java.util.ResourceBundle;
+import ij.plugin.frame.Recorder;
+import ij.*;
+import java.net.URL;
+import java.net.URLConnection;
+/*
+ * EU_HOU CHANGES END
+ */
 
 
 /** This class consists of static utility methods. */
@@ -75,7 +87,22 @@ public class IJ {
 	private static Interpreter macroInterpreter;
 	private static boolean protectStatusBar;
 	private static Thread statusBarThread;
-			
+	
+    /*
+     * EU_HOU CHANGES
+     */
+    private static ResourceBundle menubun, plgbun, colorbun, blitbun, toolbun;
+    private static Locale locale;
+    private static int ExecLevel;
+    public final static int LEVEL_EASY = 1;
+    public final static int LEVEL_INTER = 2;
+    public final static int LEVEL_TOUGH = 3;
+    public final static int LEVEL_TEACH = 10;
+    public final static int LEVEL_DEVEL = 30;
+    /*
+     * EU_HOU CHANGES END
+     */
+    
 	static {
 		osname = System.getProperty("os.name");
 		isWin = osname.startsWith("Windows");
@@ -119,6 +146,125 @@ public class IJ {
 		progressBar = ij.getProgressBar();
 	}
 
+	/*
+     * EU_HOU ADD
+     */
+    /**
+     * Gets the locale attribute of the IJ class
+     *
+     * @return The locale value
+     */
+    public static Locale getLocale() {
+        return locale;
+    }
+
+    /**
+     * Sets the locale attribute of the IJ class
+     *
+     * @param loc The new locale value
+     */
+    public static void setLocale(Locale loc) {
+        locale = loc;
+    }
+
+    /**
+     * Gets the bundle attribute of the IJ class
+     *
+     * @return The bundle value
+     */
+    public static ResourceBundle getBundle() {
+        return menubun;
+    }
+
+    /**
+     * Sets the bundle attribute of the IJ class
+     *
+     * @param table The new bundle value
+     */
+    public static void setBundle(ResourceBundle table) {
+        menubun = table;
+    }
+
+    /**
+     * Gets the pluginBundle attribute of the IJ class
+     *
+     * @return The pluginBundle value
+     */
+    public static ResourceBundle getPluginBundle() {
+        return plgbun;
+    }
+
+    /**
+     * Sets the pluginBundle attribute of the IJ class
+     *
+     * @param table The new pluginBundle value
+     */
+    public static void setPluginBundle(ResourceBundle table) {
+        plgbun = table;
+    }
+
+    /**
+     * Gets the opBundle attribute of the IJ class
+     *
+     * @return The opBundle value
+     */
+    public static ResourceBundle getOpBundle() {
+        return blitbun;
+    }
+
+    /**
+     * Sets the opBundle attribute of the IJ class
+     *
+     * @param table The new opBundle value
+     */
+    public static void setOpBundle(ResourceBundle table) {
+        blitbun = table;
+    }
+
+    /**
+     * Gets the colorBundle attribute of the IJ class
+     *
+     * @return The colorBundle value
+     */
+    public static ResourceBundle getColorBundle() {
+        return colorbun;
+    }
+
+    /**
+     * Sets the colorBundle attribute of the IJ class
+     *
+     * @param table The new colorBundle value
+     */
+    public static void setColorBundle(ResourceBundle table) {
+        colorbun = table;
+    }
+
+    /**
+     * Description of the Method
+     *
+     * @return Description of the Return Value
+     */
+    public static int execLevel() {
+        return ExecLevel;
+    }
+
+    /**
+     * Sets the execLevel attribute of the IJ class
+     *
+     * @param level The new execLevel value
+     */
+    static void setExecLevel(int level) {
+        if ((level != LEVEL_EASY) || (level != LEVEL_TOUGH)
+                || (level != LEVEL_TEACH) || (level != LEVEL_DEVEL)) {
+            ExecLevel = LEVEL_INTER;
+        } else {
+            ExecLevel = level;
+        }
+    }
+    /*
+     * EU_HOU ADD END
+     */
+    
 	static void cleanup() {
 		ij=null; applet=null; progressBar=null; textPanel=null;
 	}
@@ -170,6 +316,16 @@ public class IJ {
 		return runMacroFile(name, null);
 	}
 
+	/*
+	 * EU_HOU ADD
+	 */
+    public static Object runPlugIn(String className) {
+        return runPlugIn(className, "");
+    }
+	/*
+	 * EU_HOU END ADD
+	 */
+    
 	/** Runs the specified plugin using the specified image. */
 	public static Object runPlugIn(ImagePlus imp, String className, String arg) {
 		if (imp!=null) {
@@ -191,6 +347,7 @@ public class IJ {
 	public static Object runPlugIn(String commandName, String className, String arg) {
 		if (arg==null) arg = "";
 		if (IJ.debugMode)
+            //EU_HOU MISSING Bundle
 			IJ.log("runPlugIn: "+className+argument(arg));
 		// Load using custom classloader if this is a user 
 		// plugin and we are not running as an applet
@@ -205,19 +362,45 @@ public class IJ {
  			else
 				new PlugInFilterRunner(thePlugIn, commandName, arg);
 		} catch (ClassNotFoundException e) {
+            //EU_HOU MISSING Bundle
 			log("Plugin or class not found: \"" + className + "\"\n(" + e+")");
 			String path = Prefs.getCustomPropsPath();
 			if (path!=null);
+            	//EU_HOU MISSING Bundle
 				log("Error may be due to custom properties at " + path);
 		}
-		catch (InstantiationException e) {log("Unable to load plugin (ins)");}
-		catch (IllegalAccessException e) {log("Unable to load plugin, possibly \nbecause it is not public.");}
+		catch (InstantiationException e) {
+            //EU_HOU MISSING Bundle
+			log("Unable to load plugin (ins)");}
+		catch (IllegalAccessException e) {
+            //EU_HOU MISSING Bundle
+			log("Unable to load plugin, possibly \nbecause it is not public.");}
 		redirectErrorMessages = false;
 		return thePlugIn;
 	}
         
 	static Object runUserPlugIn(String commandName, String className, String arg, boolean createNewLoader) {
+		/*
+         * EU_HOU CHANGES
+         */
+        ImagePlus imp;
+        //EU_HOU Bundle
+        if (commandName.equals(IJ.getBundle().getString("Print")) || commandName.equals(IJ.getBundle().getString("Clear")) || commandName.equals(IJ.getBundle().getString("ClearOutside")) || commandName.equals(IJ.getBundle().getString("Fill")) || commandName.equals(IJ.getBundle().getString("Draw")) || commandName.equals(IJ.getBundle().getString("Crop")) || commandName.equals(IJ.getBundle().getString("Duplicate")) || commandName.equals(IJ.getBundle().getString("Rename")) || commandName.equals(IJ.getBundle().getString("Scale")) || commandName.equals(Prefs.getCommand("saveas01")) || commandName.equals(Prefs.getCommand("saveas02")) || commandName.equals(Prefs.getCommand("saveas03")) || commandName.equals(Prefs.getCommand("saveas04")) || commandName.equals(Prefs.getCommand("saveas05")) || commandName.equals(Prefs.getCommand("saveas06")) || commandName.equals(Prefs.getCommand("saveas07")) || commandName.equals(Prefs.getCommand("saveas08")) || commandName.equals(Prefs.getCommand("saveas09")) || commandName.equals(Prefs.getCommand("saveas10")) || commandName.equals(Prefs.getCommand("saveas11")) || commandName.equals(Prefs.getCommand("saveas12")) || commandName.equals(Prefs.getCommand("saveas13")) || commandName.equals(Prefs.getCommand("saveas14")) || commandName.equals(Prefs.getCommand("saveas15"))) {
+            Object win = WindowManager.getFrontWindow();
+
+            if (win instanceof ImageWindow) {
+                imp = ((ImageWindow) win).getImagePlus();
+            } else {
+                imp = WindowManager.getCurrentImage();
+            }
+        } else {
+            imp = WindowManager.getCurrentImage();
+        }
+        /*
+         * EU_HOU CHANGES END
+         */
 		if (IJ.debugMode)
+            //EU_HOU MISSING Bundle
 			IJ.log("runUserPlugIn: "+className+", arg="+argument(arg));
 		if (applet!=null) return null;
 		if (checkForDuplicatePlugins) {
@@ -240,6 +423,7 @@ public class IJ {
 			if (className.startsWith("macro:"))
 				runMacro(className.substring(6));
 			else if (className.contains("_")  && !suppressPluginNotFoundError)
+	            //EU_HOU MISSING Bundle
 				error("Plugin or class not found: \"" + className + "\"\n(" + e+")");
 		}
 		catch (NoClassDefFoundError e) {
@@ -250,10 +434,15 @@ public class IJ {
 				return runUserPlugIn(commandName, className.substring(dotIndex+1), arg, createNewLoader);
 			}
 			if (className.contains("_") && !suppressPluginNotFoundError)
+	            //EU_HOU MISSING Bundle
 				error("Run User Plugin", "Class not found while attempting to run \"" + className + "\"\n \n   " + e);
 		}
-		catch (InstantiationException e) {error("Unable to load plugin (ins)");}
-		catch (IllegalAccessException e) {error("Unable to load plugin, possibly \nbecause it is not public.");}
+		catch (InstantiationException e) {
+            //EU_HOU MISSING Bundle
+			error("Unable to load plugin (ins)");}
+		catch (IllegalAccessException e) {
+            //EU_HOU MISSING Bundle
+			error("Unable to load plugin, possibly \nbecause it is not public.");}
 		if (thePlugIn!=null && !"HandleExtraFileTypes".equals(className))
  			redirectErrorMessages = false;
 		suppressPluginNotFoundError = false;
@@ -265,12 +454,20 @@ public class IJ {
 	}
 
 	static void wrongType(int capabilities, String cmd) {
-		String s = "\""+cmd+"\" requires an image of type:\n \n";
-		if ((capabilities&PlugInFilter.DOES_8G)!=0) s +=  "    8-bit grayscale\n";
-		if ((capabilities&PlugInFilter.DOES_8C)!=0) s +=  "    8-bit color\n";
-		if ((capabilities&PlugInFilter.DOES_16)!=0) s +=  "    16-bit grayscale\n";
-		if ((capabilities&PlugInFilter.DOES_32)!=0) s +=  "    32-bit (float) grayscale\n";
-		if ((capabilities&PlugInFilter.DOES_RGB)!=0) s += "    RGB color\n";
+        /*
+         * EU_HOU Bundle CHANGES
+         */
+		//String s = "\""+cmd+"\" requires an image of type:\n \n";
+        String s = menubun.getString("TypeReqErr") + "\n \n  ";
+        /*
+         * EU_HOU Bundle CHANGES END
+         */
+        // EU_HOU Bundle =5
+		if ((capabilities&PlugInFilter.DOES_8G)!=0) s += menubun.getString("8-bit") + " " + menubun.getString("Grayscale") + "\n";
+		if ((capabilities&PlugInFilter.DOES_8C)!=0) s += menubun.getString("8-bitColor") + "\n";
+		if ((capabilities&PlugInFilter.DOES_16)!=0) s += menubun.getString("16-bit") + " " + menubun.getString("Grayscale") + "\n";
+		if ((capabilities&PlugInFilter.DOES_32)!=0) s += menubun.getString("32-bit") + " " + menubun.getString("Grayscale") + "\n";
+		if ((capabilities&PlugInFilter.DOES_RGB)!=0) s += menubun.getString("RGBColor") + "\n";
 		error(s);
 	}
 	
@@ -476,6 +673,7 @@ public class IJ {
 	}
 
 	private static void showResults() {
+		//EU_HOU MISSING Bundle
 		TextWindow resultsWindow = new TextWindow("Results", "", 400, 250);
 		textPanel = resultsWindow.getTextPanel();
 		textPanel.setResultsTable(Analyzer.getResultsTable());
@@ -484,6 +682,7 @@ public class IJ {
 	public static synchronized void log(String s) {
 		if (s==null) return;
 		if (logPanel==null && ij!=null) {
+            //EU_HOU MISSING Bundle
 			TextWindow logWindow = new TextWindow("Log", "", 400, 250);
 			logPanel = logWindow.getTextPanel();
 			logPanel.setFont(new Font("SansSerif", Font.PLAIN, 16));
@@ -671,12 +870,14 @@ public class IJ {
     
     /**Displays a "no images are open" dialog box.*/
 	public static void noImage() {
-		String msg = "There are no images open";
+		//EU_HOU Bundle
+		String msg = IJ.getBundle().getString("NoImgErr");
 		if (macroInterpreter!=null) {
 			macroInterpreter.abort(msg);
 			macroInterpreter = null;
 		} else
-			error("No Image", msg);
+			//EU_HOU Bundle
+			error(IJ.getBundle().getString("ErrorTitle"), msg);
 	}
 
 	/** Displays an "out of memory" message to the "Log" window. */
@@ -687,6 +888,7 @@ public class IJ {
 		String tot = Runtime.getRuntime().maxMemory()/1048576L+"MB";
 		if (!memMessageDisplayed)
 			log(">>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        //EU_HOU MISSING Bundle
 		log("<Out of memory>");
 		if (!memMessageDisplayed) {
 			log("<All available memory ("+tot+") has been>");
@@ -1159,6 +1361,7 @@ public class IJ {
 	public static boolean versionLessThan(String version) {
 		boolean lessThan = ImageJ.VERSION.compareTo(version)<0;
 		if (lessThan)
+            //EU_HOU MISSING Bundle
 			error("This plugin or macro requires ImageJ "+version+" or later. Use\nHelp>Update ImageJ to upgrade to the latest version.");
 		return lessThan;
 	}
@@ -1188,14 +1391,17 @@ public class IJ {
 			}
 			if (hideProcessStackDialog)
 				return flags;
+            //EU_HOU MISSING Bundle
 			String note = ((flags&PlugInFilter.NO_CHANGES)==0)?" There is\nno Undo if you select \"Yes\".":"";
- 			YesNoCancelDialog d = new YesNoCancelDialog(getInstance(),
+            //EU_HOU MISSING Bundle
+			YesNoCancelDialog d = new YesNoCancelDialog(getInstance(),
 				"Process Stack?", "Process all "+stackSize+" images?"+note);
 			if (d.cancelPressed())
 				return PlugInFilter.DONE;
 			else if (d.yesPressed()) {
 		    	if (imp.getStack().isVirtual() && ((flags&PlugInFilter.NO_CHANGES)==0)) {
 		    		int size = (stackSize*imp.getWidth()*imp.getHeight()*imp.getBytesPerPixel()+524288)/1048576;
+		            //EU_HOU MISSING Bundle
 		    		String msg =
 						"Use the Process>Batch>Virtual Stack command\n"+
 						"to process a virtual stack or convert it into a\n"+
@@ -1476,6 +1682,7 @@ public class IJ {
 			id = WindowManager.getNthImageID(id);
 		ImagePlus imp = WindowManager.getImage(id);
 		if (imp==null)
+            //EU_HOU MISSING Bundle
 			error("Macro Error", "Image "+id+" not found or no images are open.");
 		if (Interpreter.isBatchMode()) {
 			ImagePlus impT = WindowManager.getTempCurrentImage();
@@ -1536,6 +1743,7 @@ public class IJ {
 			}
 			wait(10);
 		}
+        //EU_HOU MISSING Bundle
 		error("Macro Error", "No window with the title \""+title+"\" found.");
 	}
 	
@@ -1895,6 +2103,7 @@ public class IJ {
 			URLConnection uc = u.openConnection();
 			long len = uc.getContentLength();
 			if (len>5242880L)
+	            //EU_HOU MISSING Bundle
 				return "<Error: file is larger than 5MB>";
 			InputStream in = u.openStream();
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -1980,6 +2189,7 @@ public class IJ {
 			if (title!=null)
 				imp2.setTitle(title);
 		} else
+            //EU_HOU MISSING Bundle
 			error("The file path passed to IJ.save() method or save()\nmacro function is missing the required extension.\n \n\""+path+"\"");
 	}
 

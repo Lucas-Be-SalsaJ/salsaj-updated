@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.gui;
 import ij.*;
 import ij.measure.Calibration;
@@ -19,13 +20,34 @@ public class StackWindow extends ImageWindow implements Runnable, AdjustmentList
 	int nChannels=1, nSlices=1, nFrames=1;
 	int c=1, z=1, t=1;
 
-
 	public StackWindow(ImagePlus imp) {
 		this(imp, null);
 	}
-
-    public StackWindow(ImagePlus imp, ImageCanvas ic) {
-		super(imp, ic);
+	
+	/*
+	 * EU_HOU ADD
+	 */
+	public StackWindow(ImagePlus imp, boolean accessibleImage) {
+		this(imp, new ImageCanvas(imp), accessibleImage);
+	}
+	
+	public StackWindow(ImagePlus imp, ImageCanvas ic) {
+		this(imp, ic, true);
+	}
+	/*
+	 * EU_HOU ADD END
+	 */
+	
+	/*
+	 * EU_HOU CHANGES
+	 */
+	//public StackWindow(ImagePlus imp, ImageCanvas ic) {
+    public StackWindow(ImagePlus imp, ImageCanvas ic, boolean accessibleImage) {
+		//super(imp, ic);
+    	super(imp, ic, true);
+    	/*
+    	 * EU_HOU CHANGES END
+    	 */
 		addScrollbars(imp);
 		addMouseWheelListener(this);
 		if (sliceSelector==null && this.getClass().getName().indexOf("Image5D")!=-1)

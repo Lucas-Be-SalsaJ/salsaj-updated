@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.gui;
 
 import java.awt.*;
@@ -52,7 +53,8 @@ public class HistogramWindow extends ImageWindow implements Measurements, Action
 	    
 	/** Displays a histogram using the title "Histogram of ImageName". */
 	public HistogramWindow(ImagePlus imp) {
-		super(NewImage.createRGBImage("Histogram of "+imp.getShortTitle(), WIN_WIDTH, WIN_HEIGHT, 1, NewImage.FILL_WHITE));
+		//EU_HOU Bundle
+		super(NewImage.createRGBImage(IJ.getBundle().getString("HistoTitle") + " " +imp.getShortTitle(), WIN_WIDTH, WIN_HEIGHT, 1, NewImage.FILL_WHITE));
 		showHistogram(imp, 256, 0.0, 0.0);
 	}
 
@@ -172,21 +174,26 @@ public class HistogramWindow extends ImageWindow implements Measurements, Action
  		int hgap = IJ.isMacOSX()||isRGB?1:5;
 		buttons.setLayout(new FlowLayout(FlowLayout.RIGHT,hgap,0));
 		int trim = IJ.isMacOSX()?6:0;
-		list = new TrimmedButton("List", trim);
+		//EU_HOU Bundle
+		list = new TrimmedButton(IJ.getBundle().getString("List"), trim);
 		list.addActionListener(this);
 		buttons.add(list);
-		copy = new TrimmedButton("Copy", trim);
+		//EU_HOU Bundle
+		copy = new TrimmedButton(IJ.getBundle().getString("Copy"), trim);
 		copy.addActionListener(this);
 		buttons.add(copy);
-		log = new TrimmedButton("Log", trim);
+		//EU_HOU Bundle
+		log = new TrimmedButton(IJ.getBundle().getString("Log"), trim);
 		log.addActionListener(this);
 		buttons.add(log);
 		if (!stackHistogram) {
+			//EU_HOU MISSING Bundle
 			live = new TrimmedButton("Live", trim);
 			live.addActionListener(this);
 			buttons.add(live);
 		}
 		if (imp!=null && isRGB && !stackHistogram) {
+			//EU_HOU MISSING Bundle
 			rgb = new TrimmedButton("RGB", trim);
 			rgb.addActionListener(this);
 			buttons.add(rgb);
@@ -196,6 +203,7 @@ public class HistogramWindow extends ImageWindow implements Measurements, Action
 			valueAndCount.setLayout(new GridLayout(2,1,0,0));
 			blankLabel = IJ.isMacOSX()?"           ":"                ";
 			value = new Label(blankLabel);
+			//EU_HOU MISSING Bundle
 			Font font = new Font("Monospaced", Font.PLAIN, 12);
 			value.setFont(font);
 			valueAndCount.add(value);
@@ -225,8 +233,12 @@ public class HistogramWindow extends ImageWindow implements Measurements, Action
 			String vlabel=null, clabel=null;
 			if (blankLabel.length()==11) // OS X
 				{vlabel=" "; clabel=" ";}
-			else
-				{vlabel=" value="; clabel=" count=";}
+			else {
+				//EU_HOU Bundle
+				vlabel=" " + IJ.getBundle().getString("Value") + ":" ;
+				//EU_HOU Bundle
+				clabel=" " + IJ.getBundle().getString("Count") + ":";
+			}
 			String v = vlabel+d2s(cal.getCValue(stats.histMin+index*stats.binSize))+blankLabel;
 			String c = clabel+histogram[index]+blankLabel;
 			int len = vlabel.length() + blankLabel.length();
@@ -426,6 +438,7 @@ public class HistogramWindow extends ImageWindow implements Measurements, Action
 			y += 1;
 			ip.setJustification(ImageProcessor.CENTER_JUSTIFY);
 			boolean weighted = ((ColorProcessor)ip).weightedHistogram();
+			//EU_HOU MISSING >1 Bundle
 			switch (rgbMode) {
 				case INTENSITY1: ip.drawString((weighted?"Intensity (weighted)":"Intensity (unweighted)"), x, y); break;
 				case INTENSITY2: ip.drawString((weighted?"Intensity (unweighted)":"Intensity (weighted)"), x, y); break;
@@ -450,15 +463,23 @@ public class HistogramWindow extends ImageWindow implements Measurements, Action
 		String modeCount = " (" + stats.maxCount + ")";
 		if (modeCount.length()>12) modeCount = "";
 		
-		ip.drawString("Count: " + count, col1, row1);
-		ip.drawString("Mean: " + d2s(stats.mean), col1, row2);
-		ip.drawString("StdDev: " + d2s(stats.stdDev), col1, row3);
-		ip.drawString("Mode: " + d2s(stats.dmode) + modeCount, col2, row3);
-		ip.drawString("Min: " + d2s(stats.min), col2, row1);
-		ip.drawString("Max: " + d2s(stats.max), col2, row2);
+		//EU_HOU Bundle
+		ip.drawString(IJ.getBundle().getString("HistoCount") + ": " + count, col1, row1);
+		//EU_HOU Bundle
+		ip.drawString(IJ.getBundle().getString("Mean") + ": " + d2s(stats.mean), col1, row2);
+		//EU_HOU Bundle
+		ip.drawString(IJ.getBundle().getString("StdDev") + ": " + d2s(stats.stdDev), col1, row3);
+		//EU_HOU Bundle
+		ip.drawString(IJ.getBundle().getString("Mode") + ": " + d2s(stats.dmode) + modeCount, col2, row3);
+		//EU_HOU Bundle
+		ip.drawString(IJ.getBundle().getString("Min") + ": " + d2s(stats.min), col2, row1);
+		//EU_HOU Bundle
+		ip.drawString(IJ.getBundle().getString("Max") + ": " + d2s(stats.max), col2, row2);
 		
 		if (showBins) {
+			//EU_HOU MISSING Bundle
 			ip.drawString("Bins: " + d2s(stats.nBins), col1, row4);
+			//EU_HOU MISSING Bundle
 			ip.drawString("Bin Width: " + d2s(binWidth), col2, row4);
 		}
 	}
@@ -478,19 +499,24 @@ public class HistogramWindow extends ImageWindow implements Measurements, Action
 	public ResultsTable getResultsTable() {
 		ResultsTable rt = new ResultsTable();
 		rt.setPrecision(digits);
-		String vheading = stats.binSize==1.0?"value":"bin start";
+		//EU_HOU Bundle
+		String vheading = stats.binSize==1.0?IJ.getBundle().getString("HistoCount"):"bin start";
 		if (cal.calibrated() && !cal.isSigned16Bit()) {
 			for (int i=0; i<stats.nBins; i++) {
+				//EU_HOU MISSING Bundle
 				rt.setValue("level", i, i);
 				rt.setValue(vheading, i, cal.getCValue(stats.histMin+i*stats.binSize));
-				rt.setValue("count", i, histogram[i]);
+				//EU_HOU Bundle
+				rt.setValue(IJ.getBundle().getString("HistoCount"), i, histogram[i]);
 			}
 		} else {
 			for (int i=0; i<stats.nBins; i++) {
 				if (stats.binSize!=1.0)
+					//EU_HOU MISSING Bundle
 					rt.setValue("index", i, i);
 				rt.setValue(vheading, i, cal.getCValue(stats.histMin+i*stats.binSize));
-				rt.setValue("count", i, histogram[i]);
+				//EU_HOU Bundle
+				rt.setValue(IJ.getBundle().getString("HistoCount"), i, histogram[i]);
 			}
 		}
 		return rt;
@@ -505,9 +531,13 @@ public class HistogramWindow extends ImageWindow implements Measurements, Action
 		Clipboard systemClipboard = null;
 		try {systemClipboard = getToolkit().getSystemClipboard();}
 		catch (Exception e) {systemClipboard = null; }
-		if (systemClipboard==null)
-			{IJ.error("Unable to copy to Clipboard."); return;}
-		IJ.showStatus("Copying histogram values...");
+		if (systemClipboard==null) {
+			//EU_HOU Bundle
+			IJ.error(IJ.getBundle().getString("ClipCopyErr"));
+			return;
+		}
+		//EU_HOU Bundle
+		IJ.showStatus(IJ.getBundle().getString("HistoCopyVal"));
 		CharArrayWriter aw = new CharArrayWriter(stats.nBins*4);
 		PrintWriter pw = new PrintWriter(aw);
 		for (int i=0; i<stats.nBins; i++)
@@ -516,7 +546,8 @@ public class HistogramWindow extends ImageWindow implements Measurements, Action
 		pw.close();
 		StringSelection contents = new StringSelection(text);
 		systemClipboard.setContents(contents, this);
-		IJ.showStatus(text.length() + " characters copied to Clipboard");
+		//EU_HOU Bundle
+		IJ.showStatus(text.length() + " " + IJ.getBundle().getString("CharCopied"));
 	}
 	
 	void replot() {
@@ -605,6 +636,7 @@ public class HistogramWindow extends ImageWindow implements Measurements, Action
 		if (bgThread==null) {
 			srcImp = WindowManager.getImage(srcImageID);
 			if (srcImp==null) return;
+			//EU_HOU MISSING Bundle
 			bgThread = new Thread(this, "Live Histogram");
 			bgThread.setPriority(Math.max(bgThread.getPriority()-3, Thread.MIN_PRIORITY));
 			bgThread.start();

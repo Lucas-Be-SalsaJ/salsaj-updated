@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.gui;
 
 import java.awt.*;
@@ -86,6 +87,17 @@ public class ImageCanvas extends Canvas implements MouseListener, MouseMotionLis
 	private boolean painted;
 	private boolean hideZoomIndicator;
 	private boolean flattening;
+	
+	/*
+	 * EU_HOU ADD
+	 */
+	private int cxloc = -1, cyloc = -1;
+	private int rad = 3;
+	private int dia = 2 * rad + 1;
+
+	/*
+	 * EU_HOU END
+	 */
 		
 	public ImageCanvas(ImagePlus imp) {
 		this.imp = imp;
@@ -104,7 +116,7 @@ public class ImageCanvas extends Canvas implements MouseListener, MouseMotionLis
  		setFocusTraversalKeysEnabled(false);
 		//setScaleToFit(true);
 	}
-		
+	
 	void updateImage(ImagePlus imp) {
 		this.imp = imp;
 		int width = imp.getWidth();
@@ -192,6 +204,60 @@ public class ImageCanvas extends Canvas implements MouseListener, MouseMotionLis
 	public void setImageUpdated() {
 		imageUpdated = true;
 	}
+	
+	/*
+	 * EU_HOU ADD
+	 */
+	/**
+	 *  Sets the point attribute of the ImageCanvas object
+	 *
+	 *@param  x  The new point value
+	 *@param  y  The new point value
+	 *@param  r  The new point value
+	 */
+	public synchronized void setPoint(int x, int y, Roi r) {
+		Graphics g = getGraphics();
+	
+		if (g == null) {
+			return;
+		}
+		if ((cxloc != -1) && (cyloc != -1)) {
+			g.clipRect(screenX(cxloc) - rad, screenY(cyloc) - rad, dia, dia);
+			imp.killRoi();
+			repaint();
+	
+		}
+		cxloc = x;
+		cyloc = y;
+		//	repaint();
+		if ((cxloc != -1) && (cyloc != -1)) {
+			imp.killRoi();
+			imp.setRoi(r);
+			g.setColor(imp.getRoi().getColor());
+			g.drawOval(screenX(cxloc) - rad, screenY(cyloc) - rad, dia, dia);
+		}
+	}
+	
+	
+	
+	/**
+	 *  Sets the roi attribute of the ImageCanvas object
+	 *
+	 *@param  r  The new roi value
+	 */
+	public synchronized void setRoi(Roi r) {
+		Graphics g = getGraphics();
+	
+		if (g == null) {
+			return;
+		}
+		imp.killRoi();
+		imp.setRoi(r);
+	}
+	/*
+	 * EU_HOU END
+	 */
+
 
 	public void setPaintPending(boolean state) {
 		paintPending.set(state);
@@ -242,7 +308,17 @@ public class ImageCanvas extends Canvas implements MouseListener, MouseMotionLis
 				drawOverlay(showAllOverlay, g);
 			if (roi!=null) drawRoi(roi, g);
 			if (srcRect.width<imageWidth || srcRect.height<imageHeight)
-				drawZoomIndicator(g);
+				drawZoomIndicator(g);			
+			/*
+			 *	EU_HOU CHANGES : petite bille
+			 */
+			if ((cxloc != -1) && (cyloc != -1)) {
+				g.setColor(roi.getColor());
+				g.drawOval(screenX(cxloc) - rad, screenY(cyloc) - rad, dia, dia);
+			}
+			/*
+			 * EU_HOU END
+			 */			
 			//if (IJ.debugMode) showFrameRate(g);
 		} catch(OutOfMemoryError e) {IJ.outOfMemory("Paint");}
 		setPaintPending(false);
@@ -1218,6 +1294,23 @@ public class ImageCanvas extends Canvas implements MouseListener, MouseMotionLis
 				else
 					handleRoiMouseDown(e);
 				break;
+				/*
+				 * EU_HOU ADD : not sure about utility
+				 */
+				case Toolbar.SPARE1:
+				case Toolbar.SPARE2:
+				case Toolbar.SPARE3:
+				case Toolbar.SPARE4:
+				case Toolbar.SPARE5:
+				case Toolbar.SPARE6:
+				case Toolbar.SPARE7:
+				case Toolbar.SPARE8:
+				case Toolbar.SPARE9:
+					Toolbar.getInstance().runMacroTool(toolID);
+					break;
+				/*
+				 * EU_HOU END
+				 */
 			default:  //selection tool
 				handleRoiMouseDown(e);
 		}
@@ -1656,6 +1749,19 @@ public class ImageCanvas extends Canvas implements MouseListener, MouseMotionLis
 		setCursor(sx, sy, ox, oy);
 		mousePressedX = mousePressedY = -1;
 		IJ.setInputEvent(e);
+		/*
+	   	 * EU_HOU ADD
+	     */
+		if (e.isAltDown()) {
+			IJ.setKeyDown(KeyEvent.VK_ALT);
+		}
+		else {
+			IJ.setKeyUp(KeyEvent.VK_ALT);
+		}
+
+		/*
+	     * EU_HOU END
+	     */
 		PlugInTool tool = Toolbar.getPlugInTool();
 		if (tool!=null) {
 			tool.mouseMoved(imp, e);
@@ -1686,11 +1792,44 @@ public class ImageCanvas extends Canvas implements MouseListener, MouseMotionLis
 			tool.mouseEntered(imp, e);
 	}
 
+	/*
+	 * EU_HOU CHANGES
+	 */
+	/*
 	public void mouseClicked(MouseEvent e) {
 		PlugInTool tool = Toolbar.getPlugInTool();
 		if (tool!=null)
 			tool.mouseClicked(imp, e);
+	}*/
+	public void mouseClicked(MouseEvent e) {
+		if (ij == null) {
+			return;
+		}
+		int sx = e.getX();
+		int sy = e.getY();
+		int ox = offScreenX(sx);
+		int oy = offScreenY(sy);
+
+		flags = e.getModifiers();
+		if (IJ.debugMode) {
+			IJ.log(e.getX() + " " + e.getY() + " " + ox + " " + oy);
+		}
+		//EU_HOU COMMENTARY : EU_HOU_rb enleve
+		if (ox < imageWidth && oy < imageHeight) {
+			ImageWindow win = imp.getWindow();
+
+			if (win != null) {
+				win.mouseClicked(ox, oy);
+			}
+		}
+		else {
+			IJ.showStatus("");
+		}
+
 	}
+	/*
+	 * EU_HOU CHANGES END
+	 */
 	
 	public void setScaleToFit(boolean scaleToFit) {
 		this.scaleToFit = scaleToFit;

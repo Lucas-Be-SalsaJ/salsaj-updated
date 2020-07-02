@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.gui;
 import ij.*;
 import ij.process.*;
@@ -2884,4 +2885,25 @@ public class Roi extends Object implements Cloneable, java.io.Serializable, Iter
 		}
 	}
 	
+	/*
+	 *  EU_HOU ADD
+	 */
+	public int x() {
+		return x;
+	}
+
+	public int y() {
+		return y;
+	}
+
+	public int width() {
+		return width;
+	}
+
+	public int height() {
+		return height;
+	}
+	/*
+	 *  EU_HOU ADD END
+	 */
 }

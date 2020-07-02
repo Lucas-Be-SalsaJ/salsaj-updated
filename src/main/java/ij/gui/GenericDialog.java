@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.gui;
 import java.awt.*;
 import java.awt.event.*;
@@ -98,8 +99,10 @@ FocusListener, ItemListener, KeyListener, AdjustmentListener, WindowListener {
     /** Creates a new GenericDialog using the specified title and parent frame. */
     public GenericDialog(String title, Frame parent) {
 		super(parent, title, true);
-		okay = new Button("  OK  ");
-		cancel = new Button("Cancel");
+		//EU_HOU Bundle
+		okay = new Button(IJ.getBundle().getString("YNCDialYes"));
+		//EU_HOU Bundle
+		cancel = new Button(IJ.getBundle().getString("YNCDialCan"));
 		if (Prefs.blackCanvas) {
 			setForeground(SystemColor.controlText);
 			setBackground(SystemColor.control);
@@ -1137,6 +1140,7 @@ FocusListener, ItemListener, KeyListener, AdjustmentListener, WindowListener {
 				Interpreter interp = Interpreter.getInstance();
 				String s = interp!=null?interp.getStringVariable(item):null;
 				if (s==null)
+	                //EU_HOU MISSING Bundle
 					IJ.error(getTitle(), "\""+item+"\" is not a valid choice for \""+label+"\"");
 				else
 					item = s;

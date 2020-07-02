@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.gui;
 import ij.*;
 import ij.process.*;
@@ -598,6 +599,21 @@ public class Line extends Roi {
 		lineWidth = w;
 		widthChanged = true;
 	}
+	
+	/*
+	 * EU_HOU ADD
+	 */
+	/**
+	 *  Gets the x attribute of the Line object
+	 *
+	 *@return    The x value
+	 */
+	public int getX() {
+		return x1;
+	}
+	/*
+	 * EU_HOU ADD END
+	 */
 		
 	public void setStrokeWidth(float width) {
 		super.setStrokeWidth(width);

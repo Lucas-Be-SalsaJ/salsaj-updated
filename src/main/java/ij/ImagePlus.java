@@ -1,3 +1,4 @@
+//EU_HOU
 package ij;
 import java.awt.*;
 import java.awt.image.*;
@@ -101,7 +102,13 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 	public boolean setIJMenuBar = Prefs.setIJMenuBar;
 	private Plot plot;
 	private Properties imageProperties;
-
+    /*
+     *  EU_HOU CHANGES
+     */
+    private String ComplementaryHeader = "";
+    /*
+     *  EU_HOU CHANGES END
+     */
 
     /** Constructs an uninitialized ImagePlus. */
     public ImagePlus() {
@@ -113,11 +120,42 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 		argument will be used as the title of the window that displays the image.
 		Throws an IllegalStateException if an error occurs while loading the image. */
     public ImagePlus(String title, Image image) {
-		this.title = title;
-		if (image!=null)
-			setImage(image);
+    	this.title = title;
+    	/*
+         *  EU_HOU CHANGES
+         */
+        /*if (image!=null)
+			setImage(image);*/
+		System.out.println("ImagePlus img=" + img + "	,title=" + title);
+        if (img != null) {
+            if (title != null) {
+                setImage(img);
+                System.out.println("ImagePlus img");
+            } else {
+                setImage2(img);
+                System.out.println("ImagePlus img2");
+            }
+        }
+    	/*
+         *  EU_HOU CHANGES END
+         */
 		setID();
     }
+    
+    /*
+     *  EU_HOU CHANGES
+     */
+    public ImagePlus(ImagePlus imp, Image img) {
+        this.title = null;
+        ID = --currentID;
+        if (img != null) {
+            setImage(imp, img);
+        }
+    }
+    /*
+     *  EU_HOU CHANGES END
+     */
+    
 
     /** Constructs an ImagePlus from an ImageProcessor. */
     public ImagePlus(String title, ImageProcessor ip) {
@@ -191,7 +229,9 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 				if (loud) {
 					IJ.beep();
 					IJ.showStatus("\"" + title + "\" is locked");
-					if (IJ.debugMode) IJ.log(title + " is locked by " + lockingThread + "; refused locking by " + Thread.currentThread().getName());
+					if (IJ.debugMode) 
+		                //EU_HOU MISSING Bundle
+						IJ.log(title + " is locked by " + lockingThread + "; refused locking by " + Thread.currentThread().getName());
 					if (IJ.macroRunning())
 						IJ.wait(500);
 				}
@@ -203,7 +243,9 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 			lockingThread = Thread.currentThread();
 			if (win instanceof StackWindow)
 				((StackWindow)win).setSlidersEnabled(false);
-			if (IJ.debugMode) IJ.log(title + ": locked" + (loud ? "" : "silently") + " by " + Thread.currentThread().getName());
+			if (IJ.debugMode) 
+                //EU_HOU MISSING Bundle
+				IJ.log(title + ": locked" + (loud ? "" : "silently") + " by " + Thread.currentThread().getName());
 			return true;
 		}
 	}
@@ -222,7 +264,9 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 			lockingThread = null;
 			if (win instanceof StackWindow)
 				((StackWindow)win).setSlidersEnabled(true);
-			if (IJ.debugMode) IJ.log(title + ": unlocked");
+			if (IJ.debugMode)
+	            //EU_HOU MISSING Bundle
+				IJ.log(title + ": unlocked");
 		}
 	}
 
@@ -455,12 +499,37 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 
 	/** Opens a window to display this image and clears the status bar. */
 	public void show() {
-		show("");
+        /*
+         *  EU_HOU CHANGES
+         */
+		//show("");
+        show("", true);
+        /*
+         *  EU_HOU CHANGES END
+         */
 	}
+	
+    /*
+     *  EU_HOU CHANGES
+     */
+    public void show(boolean accessibleImage) {
+        show("", accessibleImage);
+    }
+    /*
+     *  EU_HOU CHANGES END
+     */
 
 	/** Opens a window to display this image and displays
 		'statusMessage' in the status bar. */
-	public void show(String statusMessage) {
+	
+    /*
+     * EU_HOU CHANGES
+     */
+    //public void show(String statusMessage) {
+    public void show(String statusMessage, boolean accessibleImage) {
+    	/*
+    	 * EU_HOU CHANGES END
+    	 */
 		if (isVisible())
 			return;
 		win = null;
@@ -479,11 +548,25 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 			activated = false;
 			int stackSize = getStackSize();
 			if (stackSize>1)
-				win = new StackWindow(this);
+				 /*
+                 *  EU_HOU CHANGES
+                 */
+				//win = new StackWindow(this);
+                win = new StackWindow(this, accessibleImage);
+				/*
+				 * EU_HOU CHANGES END
+				 */
 			else if (getProperty(Plot.PROPERTY_KEY) != null)
 				win = new PlotWindow(this, (Plot)(getProperty(Plot.PROPERTY_KEY)));
 			else
-				win = new ImageWindow(this);
+				/*
+				 * EU_HOU CHANGES
+				 */
+				//win = new ImageWindow(this);
+                win = new StackWindow(this, accessibleImage);
+				/*
+				 * EU_HOU CHANGES END
+				 */
 			if (roi!=null) roi.setImage(this);
 			if (overlay!=null && getCanvas()!=null)
 				getCanvas().setOverlay(overlay);
@@ -573,6 +656,7 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 		errorLoadingImage = false;
 		waitForImage(image);
 		if (errorLoadingImage)
+            //EU_HOU MISSING Bundle
 			throw new IllegalStateException ("Error loading image");
 		int newWidth = image.getWidth(ij);
 		int newHeight = image.getHeight(ij);
@@ -595,6 +679,95 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 				repaintWindow();
 		}
 	}
+	
+	/*
+     *  EU_HOU CHANGES
+     */
+    /**
+     *  Sets the image2 attribute of the ImagePlus object
+     *
+     *@param  img  The new image2 value
+     */
+    public void setImage2(Image img) {
+        if (img instanceof BufferedImage) {
+            BufferedImage bi = (BufferedImage) img;
+
+            if (bi.getType() == BufferedImage.TYPE_USHORT_GRAY) {
+                setProcessor(null, new ShortProcessor(bi));
+                return;
+            }
+        }
+        roi = null;
+        errorLoadingImage = false;
+        //waitForImage(img);
+        if (errorLoadingImage) {
+            //EU_HOU Bundle
+            throw new IllegalStateException("Error loading image");
+        }
+        this.img = img;
+
+        int newWidth = img.getWidth(ij);
+        int newHeight = img.getHeight(ij);
+
+        width = newWidth;
+        height = newHeight;
+        ip = null;
+        stack = null;
+
+        LookUpTable lut = new LookUpTable(img);
+        int type;
+
+        if (lut.getMapSize() > 0) {
+            if (lut.isGrayscale()) {
+                type = GRAY8;
+            } else {
+                type = COLOR_256;
+            }
+        } else {
+            type = COLOR_RGB;
+        }
+        setType(type);
+        setupProcessor();
+        this.img = ip.createImage();
+    }
+    
+    /**
+     *  Sets the image attribute of the ImagePlus object
+     *
+     *@param  imp  The new image value
+     *@param  img  The new image value
+     */
+    public void setImage(ImagePlus imp, Image img) {
+        roi = null;
+        this.img = img;
+
+        int newWidth = img.getWidth(ij);
+        int newHeight = img.getHeight(ij);
+
+        width = newWidth;
+        height = newHeight;
+        ip = null;
+        stack = null;
+
+        LookUpTable lut = imp.createLut();
+        int type;
+
+        if (lut.getMapSize() > 0) {
+            if (lut.isGrayscale()) {
+                type = GRAY8;
+            } else {
+                type = COLOR_256;
+            }
+        } else {
+            type = COLOR_RGB;
+        }
+        setType(type);
+        setupProcessor();
+        ip.setColorModel(imp.getProcessor().getColorModel());
+    }
+    /*
+     *  EU_HOU CHANGES END
+     */
 
 	/** Replaces this image with the specified ImagePlus. May
 		not work as expected if 'imp' is a CompositeImage
@@ -650,12 +823,15 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 		it must be the same width and height.  Set 'title' to null to leave the title unchanged. */
 	public void setProcessor(String title, ImageProcessor ip) {
 		if (ip==null || ip.getPixels()==null)
+            //EU_HOU MISSING Bundle
 			throw new IllegalArgumentException("ip null or ip.getPixels() null");
 		if (getStackSize()>1) {
 			if (ip.getWidth()!=width || ip.getHeight()!=height)
+	            //EU_HOU MISSING Bundle
 				throw new IllegalArgumentException("Wrong dimensions for this stack");
 			int stackBitDepth = stack!=null?stack.getBitDepth():0;
 			if (stackBitDepth>0 && getBitDepth()!=stackBitDepth)
+	            //EU_HOU MISSING Bundle
 				throw new IllegalArgumentException("Wrong type for this stack");
 		} else {
 			setStackNull();
@@ -722,10 +898,12 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 		int previousStackSize = getStackSize();
 		int newStackSize = newStack.getSize();
 		if (newStackSize==0)
+            //EU_HOU MISSING Bundle
 			throw new IllegalArgumentException("Stack is empty");
 		if (!newStack.isVirtual()) {
 			Object[] arrays = newStack.getImageArray();
 			if (arrays==null || (arrays.length>0&&arrays[0]==null))
+	            //EU_HOU MISSING Bundle
 				throw new IllegalArgumentException("Stack pixel array null");
 		}
     	boolean sliderChange = false;
@@ -893,7 +1071,9 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 	public void trimProcessor() {
 		ImageProcessor ip2 = ip;
 		if (!locked && ip2!=null) {
-			if (IJ.debugMode) IJ.log(title + ": trimProcessor");
+			if (IJ.debugMode)
+                //EU_HOU MISSING Bundle
+				IJ.log(title + ": trimProcessor");
 			Roi roi2 = getRoi();
 			if (roi2!=null && roi2.getPasteMode()!=Roi.NOT_PASTING)
 				roi2.endPaste();
@@ -1308,7 +1488,16 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 		if (imageType!=previousType) {
 			if (win!=null)
 				Menus.updateMenus();
-			getLocalCalibration().setImage(this);
+            /*
+             *  EU_HOU CHANGES
+             */
+			//getLocalCalibration().setImage(this);
+            if (calibration != null || globalCalibration != null) {
+                getCalibration().setImage(this);
+            }
+            /*
+             *  EU_HOU CHANGES END
+             */
 		}
 		typeSet = true;
 	}
@@ -2002,10 +2191,16 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 				break;
 			case Toolbar.POLYGON:
 			case Toolbar.POLYLINE:
-			case Toolbar.ANGLE:
+			/*
+			 * EU_HOU CHANGES
+			 */
 				roi = new PolygonRoi(sx, sy, this);
 				break;
-			case Toolbar.FREEROI:
+			//case Toolbar.ANGLE:
+			//case Toolbar.FREEROI:
+			/*
+			 * EU_HOU CHANGES END
+			 */
 			case Toolbar.FREELINE:
 				roi = new FreehandRoi(sx, sy, this);
 				break;
@@ -2015,7 +2210,10 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 				else
 					roi = new Line(sx, sy, this);
 				break;
-			case Toolbar.TEXT:
+			/*
+			 * EU_HOU CHANGES
+			 */
+			/*case Toolbar.TEXT:
 				roi = new TextRoi(sx, sy, this);
 				((TextRoi)roi).setPreviousTextRoi(previousRoi);
 				break;
@@ -2049,7 +2247,10 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 					IJ.run(this, "Next Slice [>]", "");
 					deleteRoi();
 				}
-				break;
+				break;*/
+			/*
+			 * EU_HOU CHANGES END
+			 */
 		}
 		if (roi!=null)
 			roi.notifyListeners(RoiListener.CREATED);
@@ -2106,10 +2307,12 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 			Rectangle r = roi2.getBounds();
 			if ((r.width>0 || r.height>0)) {
 				Roi.setPreviousRoi(roi2);
+                //EU_HOU MISSING Bundle
 				if (IJ.debugMode) IJ.log("saveRoi: "+roi2);
 			}
 			if ((roi2 instanceof PointRoi) && ((PointRoi)roi2).promptBeforeDeleting()) {
 				PointRoi.savedPoints = (PointRoi)roi2.clone();
+                //EU_HOU MISSING Bundle
 				if (IJ.debugMode) IJ.log("saveRoi: saving multi-point selection");
 			}
 		}
@@ -2162,6 +2365,7 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 		if (fi.directory==null && url==null)
 			return;
 		if (ij!=null && changes && isFileInfo && !Interpreter.isBatchMode() && !IJ.isMacro() && !IJ.altKeyDown()) {
+            //EU_HOU MISSING Bundle
 			if (!IJ.showMessageWithCancel("Revert?", "Revert to saved version of\n\""+getTitle()+"\"?"))
 				return;
 		}
@@ -2302,6 +2506,34 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
     	}
     	return fi;
     }
+    
+    /*
+     *  EU_HOU ADD
+     */
+    /**
+     *  Sets the headerComplementary attribute of the ImagePlus object
+     *
+     *@param  s  The new headerComplementary value
+     */
+    public void setHeaderComplementary(String s) {
+        ComplementaryHeader = s;
+    }
+
+    /**
+     *  Gets the headerComplementary attribute of the ImagePlus object
+     *
+     *@return    The headerComplementary value
+     */
+    public String getHeaderComplementary() {
+        if (ComplementaryHeader == null) {
+            return "";
+        } else {
+            return ComplementaryHeader;
+        }
+    }
+    /*
+     *  EU_HOU ADD END
+     */
 
 	private void addLut(LookUpTable lut, FileInfo fi) {
 		fi.lutSize = lut.getMapSize();
@@ -2620,6 +2852,23 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 		if (ij!=null && !IJ.statusBarProtected() && (roi2==null || roi2.getState()==Roi.NORMAL))
 			ij.showStatus(getLocationAsString(x,y) + getValueAsString(x,y));
 	}
+	
+    /*
+     *  EU_HOU ADD
+     */
+    /**
+     *  EU_HOU_rb 27/5/05 Called by ImageCanvas when the mouse is clicked . Can be
+     *  overridden by ImagePlus subclasses.
+     *
+     *@param  x  Description of the Parameter
+     *@param  y  Description of the Parameter
+     */
+    public void mouseClicked(int x, int y) {
+        IJ.log(x+", "+y);
+    }
+    /*
+     *  EU_HOU ADD END
+     */
 
     /** Redisplays the (x,y) coordinates and pixel value (which may
 	 * have changed) in the status bar. Called by the Next Slice and
@@ -2653,7 +2902,14 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
     public String getLocationAsString(int x, int y) {
 		Calibration cal = getCalibration();
 		if (getProperty("FHT")!=null)
-			return getFFTLocation(x, height-y, cal);
+            /*
+             *  EU_HOU CHANGES
+             */
+			//return getFFTLocation(x, height-y, cal);
+            return getFFTLocation(x, y, cal);
+            /*
+             *  EU_HOU END
+             */
 		String xx="", yy="";
 		if (cal.scaled()) {
 			xx = " ("+x+")";
@@ -2685,22 +2941,27 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 			case GRAY8: case GRAY16: case COLOR_256:
 				if (type==COLOR_256) {
 					if (cal.getCValue(v[3])==v[3]) // not calibrated
+                        //EU_HOU Bundle
 						return(", index=" + v[3] + ", value=" + v[0] + "," + v[1] + "," + v[2]);
 					else
 						v[0] = v[3];
 				}
 				double cValue = cal.getCValue(v[0]);
 				if (cValue==v[0])
-    				return(", value=" + v[0]);
+                    //EU_HOU Bundle
+					return (" " + IJ.getOpBundle().getString("Value") + "=" + v[0]);
     			else
-    				return(", value=" + IJ.d2s(cValue) + " ("+v[0]+")");
+                    //EU_HOU Bundle
+    				return (" " + IJ.getOpBundle().getString("Value") + "=" + IJ.d2s(cValue) + " (" + v[0] + ")");
     		case GRAY32:
     			double value = Float.intBitsToFloat(v[0]);
     			String s = (int)value==value?IJ.d2s(value,0)+".0":IJ.d2s(value,4,7);
-    			return(", value=" + s);
+                //EU_HOU Bundle
+                return (" " + IJ.getOpBundle().getString("Value") + "=" + Float.intBitsToFloat(v[0]));
 			case COLOR_RGB:
 				String hex = Colors.colorToString(new Color(v[0],v[1],v[2]));
-				return(", value=" + IJ.pad(v[0],3) + "," + IJ.pad(v[1],3) + "," + IJ.pad(v[2],3) + " ("+hex + ")");
+                //EU_HOU Bundle
+                return (" " + IJ.getOpBundle().getString("Value") + "=" + v[0] + "," + v[1] + "," + v[2]);
     		default: return("");
 		}
     }
@@ -2719,6 +2980,7 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 		if (roi!=null && !roi.isArea())
 			roi = null;
 		if (cut && roi==null && !IJ.isMacro()) {
+            //EU_HOU Bundle
 			IJ.error("Edit>Cut", "This command requires an area selection");
 			return;
 		}
@@ -2728,14 +2990,45 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 		ImageProcessor ip = getProcessor();
 		ImageProcessor ip2;
 		ip2 = ip.crop();
-		clipboard = new ImagePlus("Clipboard", ip2);
-		if (roi!=null)
-			clipboard.setRoi((Roi)roi.clone());
+        /*
+         *  EU_HOU CHANGES
+         */
+        Roi roi2 = null;
+        if (roi != null && roi.getType() != roi.LINE) {
+            roi2 = (Roi) roi.clone();
+            Rectangle r = roi.getBounds();
+            if (r.x < 0 || r.y < 0) {
+                roi2.setLocation(Math.min(r.x, 0), Math.min(r.y, 0));
+            }
+        }
+        /*
+         * EU_HOU CHANGES END
+         */
+        //EU_HOU MISSING Bundle
+        clipboard = new ImagePlus("Clipboard", ip2);
+        /*
+         * EU_HOU CHANGES
+         */
+		/*if (roi!=null)
+			clipboard.setRoi((Roi)roi.clone());*/
+        if (roi2 != null) {
+            clipboard.setRoi(roi2);
+        }
+		/*
+         *  EU_HOU CHANGES END
+         */
 		if (cut) {
 			ip.snapshot();
 	 		ip.setColor(Toolbar.getBackgroundColor());
 			ip.fill();
-			if (roi!=null && roi.getType()!=Roi.RECTANGLE) {
+			/*
+			 * EU_HOU CHANGES
+			 */
+			//if (roi!=null && roi.getType()!=Roi.RECTANGLE) {
+            if (roi != null && roi.getType() != roi.LINE) {
+            	/*
+            	 * EU_HOU CHANGES END
+            	 */
 				getMask();
 				ip.reset(ip.getMask());
 			} setColor(Toolbar.getForegroundColor());
@@ -2780,7 +3073,14 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
 			Rectangle srcRect = ic!=null?ic.getSrcRect():new Rectangle(0,0,width,height);
 			int xCenter = w>=width ? width/2 : srcRect.x + srcRect.width/2;
 			int yCenter = h>=height ? height/2 : srcRect.y + srcRect.height/2;
-			if (cRoi!=null && cRoi.getType()!=Roi.RECTANGLE) {
+			/*
+			 * EU_HOU CHANGES
+			 */
+			//if (cRoi!=null && cRoi.getType()!=Roi.RECTANGLE) {
+            if (cRoi != null && cRoi.getType() != Roi.LINE) {
+            	/*
+            	 * EU_HOU END CHANGES
+            	 */
 				cRoi.setImage(this);
 				cRoi.setLocation(xCenter-w/2, yCenter-h/2);
 				setRoi(cRoi);

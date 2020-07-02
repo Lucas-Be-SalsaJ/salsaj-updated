@@ -1,7 +1,16 @@
+//EU_HOU
 package ij.gui;
 import ij.*;
 import java.awt.*;
 import java.awt.event.*;
+/*
+ *  EU_HOU CHANGES
+ */
+import java.util.ResourceBundle;
+//EU_HOU COMMENTARY: just for visibility of 'getString()'
+/*
+ *  EU_HOU CHANGES END
+ */
 
 /** A modal dialog box with a one line message and
 	"Yes", "No" and "Cancel" buttons. */
@@ -11,7 +20,8 @@ public class YesNoCancelDialog extends Dialog implements ActionListener, KeyList
 	private boolean firstPaint = true;
 
 	public YesNoCancelDialog(Frame parent, String title, String msg) {
-		this(parent, title, msg, "  Yes  ", "  No  ");
+		//EU_HOU Bundle
+		this(parent, title, msg, IJ.getBundle().getString("YNCDialYes"), IJ.getBundle().getString("YNCDialNo"));
 	}
 
 	public YesNoCancelDialog(Frame parent, String title, String msg, String yesLabel, String noLabel) {
@@ -27,13 +37,16 @@ public class YesNoCancelDialog extends Dialog implements ActionListener, KeyList
 		panel = new Panel();
 		panel.setLayout(new FlowLayout(FlowLayout.RIGHT, 15, 8));
 		if (msg.startsWith("Save")) {
-			yesB = new Button("  Save  ");
-			noB = new Button("Don't Save");
-			cancelB = new Button("  Cancel  ");
+			//EU_HOU Bundle =3
+			yesB = new Button(IJ.getBundle().getString("YNCDialYes"));
+			noB = new Button(IJ.getBundle().getString("YNCDialNo"));
+			cancelB = new Button(IJ.getBundle().getString("YNCDialCan"));
 		} else {
-			yesB = new Button(yesLabel);
-			noB = new Button(noLabel);
-			cancelB = new Button(" Cancel ");
+			//EU_HOU Bundle =3
+			//EU_HOU COMMENTARY: yesB and noB originally used yesLabel and noLabel
+			yesB = new Button(IJ.getBundle().getString("YNCDialYes"));
+			noB = new Button(IJ.getBundle().getString("YNCDialNo"));
+			cancelB = new Button(IJ.getBundle().getString("YNCDialCan"));
 		}
 		yesB.addActionListener(this);
 		noB.addActionListener(this);

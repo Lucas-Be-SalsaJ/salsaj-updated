@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.gui;
 import java.awt.*;
 import java.awt.image.*;
@@ -11,6 +12,14 @@ import ij.plugin.frame.*;
 import ij.plugin.PointToolOptions;
 import ij.macro.Interpreter;
 import ij.util.*;
+/*
+ *  EU_HOU CHANGES
+ */
+import java.util.Locale;
+import java.util.ResourceBundle;
+/*
+ *  EU_HOU CHANGES END
+ */
 
 /** A frame for displaying images. */
 public class ImageWindow extends Frame implements FocusListener, WindowListener, WindowStateListener, MouseWheelListener {
@@ -57,6 +66,44 @@ public class ImageWindow extends Frame implements FocusListener, WindowListener,
 	/** This variable is set false if the user clicks in this
 		window, presses the escape key, or closes the window. */
 	public boolean running2;
+	/*
+	 *  EU_HOU CHANGES
+	 */
+	private static ResourceBundle etiq;
+	private boolean publicImage;
+	/*
+	 * EU_HOU CHANGES END
+	 */
+	
+	/*
+	 * EU_HOU ADD 
+	 */
+	/**
+	 *  Sets the publicImage attribute of the ImageWindow object
+	 *
+	 *@param  b  The new publicImage value
+	 */
+	public void setPublicImage(boolean b) {
+		publicImage = b;
+	}
+	/*
+	 * EU_HOU END
+	 */
+	
+	/*
+	 * EU_HOU ADD 
+	 */
+	/**
+	 *  Gets the publicImage attribute of the ImageWindow object
+	 *
+	 *@return    The publicImage value
+	 */
+	public boolean isPublicImage() {
+		return publicImage;
+	}
+	/*
+	 * EU_HOU END
+	 */
 	
 	public ImageWindow(String title) {
 		super(title);
@@ -84,6 +131,105 @@ public class ImageWindow extends Frame implements FocusListener, WindowListener,
         }
 		boolean openAsHyperStack = imp.getOpenAsHyperStack();
 		ij = IJ.getInstance();
+		this.imp = imp;
+		if (ic==null) {
+			ic = (this instanceof PlotWindow) ? new PlotCanvas(imp) : new ImageCanvas(imp);
+			newCanvas=true;
+		}
+		this.ic = ic;
+		ImageWindow previousWindow = imp.getWindow();
+		setLayout(new ImageLayout(ic));
+		add(ic);
+ 		addFocusListener(this);
+ 		addWindowListener(this);
+ 		addWindowStateListener(this);
+ 		addKeyListener(ij);
+		setFocusTraversalKeysEnabled(false);
+		if (!(this instanceof StackWindow))
+			addMouseWheelListener(this);
+		setResizable(true);
+		if (!(this instanceof HistogramWindow&&IJ.isMacro()&&Interpreter.isBatchMode())) {
+			WindowManager.addWindow(this);
+			imp.setWindow(this);
+		}
+		if (previousWindow!=null) {
+			if (newCanvas)
+				setLocationAndSize(false);
+			else
+				ic.update(previousWindow.getCanvas());
+			Point loc = previousWindow.getLocation();
+			setLocation(loc.x, loc.y);
+			if (!(this instanceof StackWindow || this instanceof PlotWindow)) { //layout now unless components will be added later
+				pack();
+				show();
+			}
+			if (ic.getMagnification()!=0.0)
+				imp.setTitle(imp.getTitle());
+			boolean unlocked = imp.lockSilently();
+			boolean changes = imp.changes;
+			imp.changes = false;
+			previousWindow.close();
+			imp.changes = changes;
+			if (unlocked)
+				imp.unlock();
+			if (this.imp!=null)
+				this.imp.setOpenAsHyperStack(openAsHyperStack);
+			WindowManager.setCurrentWindow(this);
+		} else {
+			setLocationAndSize(false);
+			if (ij!=null && !IJ.isMacintosh()) {
+				Image img = ij.getIconImage();
+				if (img!=null) try {
+					setIconImage(img);
+				} catch (Exception e) {}
+			}
+			if (nextLocation!=null)
+				setLocation(nextLocation);
+			else if (centerOnScreen)
+				GUI.center(this);
+			nextLocation = null;
+			centerOnScreen = false;
+			if (Interpreter.isBatchMode() || (IJ.getInstance()==null&&this instanceof HistogramWindow)) {
+				WindowManager.setTempCurrentImage(imp);
+				Interpreter.addBatchModeImage(imp);
+			} else
+				show();
+		}
+     }
+    
+    /*
+     * EU_HOU CHANGE
+     */
+    public ImageWindow(ImagePlus imp, ImageCanvas ic, boolean pub) {
+		super(imp.getTitle());
+		System.out.println("ImageWindow(ImagePlus imp, ImageCanvas ic, boolean pub)");
+		/*
+		 *  EU_HOU CHANGE END
+		 */
+		if (SCALE>1.0) {
+			TEXT_GAP = (int)(TEXT_GAP*SCALE);
+			textGap = centerOnScreen?0:TEXT_GAP;
+		}
+		if (Prefs.blackCanvas && getClass().getName().equals("ij.gui.ImageWindow")) {
+			setForeground(Color.white);
+			setBackground(Color.black);
+		} else {
+        	setForeground(Color.black);
+        	if (IJ.isLinux())
+        		setBackground(ImageJ.backgroundColor);
+        	else
+        		setBackground(Color.white);
+        }
+		boolean openAsHyperStack = imp.getOpenAsHyperStack();
+		ij = IJ.getInstance();
+		/*
+		 *  EU_HOU CHANGE
+		 */
+		Locale lang = ij.getLocale();
+		etiq = IJ.getBundle();
+		/*
+		 *  EU_HOU CHANGE END
+		 */	
 		this.imp = imp;
 		if (ic==null) {
 			ic = (this instanceof PlotWindow) ? new PlotCanvas(imp) : new ImageCanvas(imp);
@@ -344,16 +490,20 @@ public class ImageWindow extends Frame implements FocusListener, WindowListener,
     	switch (type) {
 	    	case ImagePlus.GRAY8:
 	    	case ImagePlus.COLOR_256:
-	    		s += "8-bit";
+				//EU_HOU Bundle
+	    		s += etiq.getString("8-bit");
 	    		break;
 	    	case ImagePlus.GRAY16:
-	    		s += "16-bit";
+				//EU_HOU Bundle
+	    		s += etiq.getString("16-bit");
 	    		break;
 	    	case ImagePlus.GRAY32:
-	    		s += "32-bit";
+				//EU_HOU Bundle
+	    		s += etiq.getString("32-bit");
 	    		break;
 	    	case ImagePlus.COLOR_RGB:
-	    		s += "RGB";
+				//EU_HOU Bundle
+	    		s += etiq.getString("RGBColor");
 	    		break;
     	}
     	if (imp.isInvertedLut())
@@ -412,11 +562,13 @@ public class ImageWindow extends Frame implements FocusListener, WindowListener,
 			String msg;
 			String name = imp.getTitle();
 			if (name.length()>22)
-				msg = "Save changes to\n" + "\"" + name + "\"?";
+				//EU_HOU Bundle
+				msg = IJ.getBundle().getString("SaveChanges") + "\n" + "\"" + name + "\"?";
 			else
+				//EU_HOU Bundle
 				msg = "Save changes to \"" + name + "\"?";
 			if (imp.isLocked())
-				msg += "\nWARNING: This image is locked.\nProbably, processing is unfinished (slow or still previewing).";
+				msg = IJ.getBundle().getString("SaveChanges") + "\n" + "\"" + name + "\"?";
 			toFront();
 			YesNoCancelDialog d = new YesNoCancelDialog(this, "ImageJ", msg);
 			if (d.cancelPressed())
@@ -682,6 +834,16 @@ public class ImageWindow extends Frame implements FocusListener, WindowListener,
     	imp.mouseMoved(x, y);
     }
     
+    /*
+     * EU_HOU ADD
+     */
+	public void mouseClicked(int x, int y) {
+		imp.mouseClicked(x, y);
+	}
+	/*
+	 * EU_HOU END
+	 */
+	
     public String toString() {
     	return imp!=null?imp.getTitle():"";
     }

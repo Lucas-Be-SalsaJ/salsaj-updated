@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.gui;
 import ij.*;
 import ij.process.*;
@@ -223,7 +224,14 @@ public class PolygonRoi extends Roi {
 			} else
 				drawSpline(g, xSpline, ySpline, splinePoints, true, fill, isActiveOverlayRoi);
 		} else {
-			if (type==POLYLINE || type==FREELINE || type==ANGLE || state==CONSTRUCTING) {
+			/*
+			 * EU_HOU CHANGES
+			 */
+			//if (type==POLYLINE || type==FREELINE || type==ANGLE || state==CONSTRUCTING) {
+			if (type == POLYLINE || type == FREELINE || state == CONSTRUCTING) {
+				/*
+				 * EU_HOU CHANGES END
+				 */
 				g.drawPolyline(xp2, yp2, nPoints);
 				if (wideLine && !overlay) {
 					g2d.setStroke(onePixelWide);
@@ -240,7 +248,14 @@ public class PolygonRoi extends Roi {
 				} else
 					g.drawPolygon(xp2, yp2, nPoints);
 			 }
-			if (state==CONSTRUCTING && type!=FREEROI && type!=FREELINE)
+			/*
+			 * EU_HOU CHANGES
+			 */
+			//if (state==CONSTRUCTING && type!=FREEROI && type!=FREELINE)
+			if (state == CONSTRUCTING && type != FREELINE)
+				/*
+				 * EU_HOU CHANGES ENDS
+				 */
 				drawStartBox(g);
 		}
 		if (hasHandles	&& clipboard==null && !overlay) {
@@ -386,7 +401,14 @@ public class PolygonRoi extends Roi {
 
 		// Do rubber banding
 		int tool = Toolbar.getToolId();
-		if (!(tool==Toolbar.POLYGON || tool==Toolbar.POLYLINE || tool==Toolbar.ANGLE)) {
+		/*
+		 * EU_HOU CHANGES
+		 */
+		//if (!(tool==Toolbar.POLYGON || tool==Toolbar.POLYLINE || tool==Toolbar.ANGLE)) {
+		if (!(tool == Toolbar.POLYGON || tool == Toolbar.POLYLINE)) {
+			/*
+			 * EU_HOU CHANGES END
+			 */
 			imp.deleteRoi();
 			imp.draw();
 			return;
@@ -573,7 +595,14 @@ public class PolygonRoi extends Roi {
 			}
 			bounds = null;
 		}
-		if (nPoints<2 || (!(type==FREELINE||type==POLYLINE||type==ANGLE) && (nPoints<3||width==0||height==0))) {
+		/*
+		 * EU_HOU CHANGES
+		 */
+		//if (nPoints<2 || (!(type==FREELINE||type==POLYLINE||type==ANGLE) && (nPoints<3||width==0||height==0))) {
+		if (nPoints < 2 || (!(type == FREELINE || type == POLYLINE) && (nPoints < 3 || width == 0 || height == 0))) {
+			/*
+			 * EU_HOU CHANGES END
+			 */
 			if (imp!=null) imp.deleteRoi();
 			if (type!=POINT) return;
 		}

@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.gui;
 import ij.IJ;
 import java.awt.*;
@@ -10,18 +11,22 @@ public class SaveChangesDialog extends Dialog implements ActionListener, KeyList
 	private boolean cancelPressed, savePressed;
 
 	public SaveChangesDialog(Frame parent, String fileName) {
-		super(parent, "Save?", true);
+		//EU_HOU Bundle
+		super(parent, IJ.getBundle().getString("DoSave"), true);
 		setLayout(new BorderLayout());
 		Panel panel = new Panel();
 		panel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
 		Component message;
+		//EU_HOU MISSING Bundle
 		if (fileName.startsWith("Save "))
 			message = new Label(fileName);
 		else {
 			if (fileName.length()>22)
-				message = new MultiLineLabel("Save changes to\n" + "\"" + fileName + "\"?");
+				//EU_HOU Bundle
+				message = new MultiLineLabel(IJ.getBundle().getString("SaveChanges") + "\n" + "\"" + fileName + "\"?");
 			else
-				message = new Label("Save changes to \"" + fileName + "\"?");
+				//EU_HOU Bundle
+				message = new Label(IJ.getBundle().getString("SaveChanges") + " \"" + fileName + "\"?");
 		}
 		message.setFont(new Font("Dialog", Font.BOLD, 12));
 		panel.add(message);
@@ -29,13 +34,16 @@ public class SaveChangesDialog extends Dialog implements ActionListener, KeyList
 		
 		panel = new Panel();
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 8, 8));
-		save = new Button("  Save  ");
+		//EU_HOU Bundle
+		save = new Button(IJ.getBundle().getString("YNCDialYes"));
 		save.addActionListener(this);
 		save.addKeyListener(this);
-		cancel = new Button("  Cancel  ");
+		//EU_HOU Bundle
+		cancel = new Button(IJ.getBundle().getString("YNCDialCan"));
 		cancel.addActionListener(this);
 		cancel.addKeyListener(this);
-		dontSave = new Button("Don't Save");
+		//EU_HOU Bundle
+		dontSave = new Button(IJ.getBundle().getString("YNCDialNo"));
 		dontSave.addActionListener(this);
 		dontSave.addKeyListener(this);
 		if (ij.IJ.isMacintosh()) {

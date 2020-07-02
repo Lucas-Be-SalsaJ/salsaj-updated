@@ -22,14 +22,33 @@ public class NewImage {
 	static final String HEIGHT = "new.height";
 	static final String SLICES = "new.slices";
 
-    private static String name = "Untitled";
+	/*
+	 * EU_HOU CHANGES
+	 */
+    /*private static String name = "Untitled";
     private static int staticWidth = Prefs.getInt(WIDTH, 512);
-    private static int staticHeight = Prefs.getInt(HEIGHT, 512);
+    private static int staticHeight = Prefs.getInt(HEIGHT, 512);*/
+    private static String name = "";
+    private static int staticWidth = Prefs.getInt(WIDTH, 400);
+    private static int staticHeight = Prefs.getInt(HEIGHT, 400);
+    /*
+     * EU_HOU CHANGES END
+     */
     private static int staticSlices = Prefs.getInt(SLICES, 1);
     private static int staticType = Prefs.getInt(TYPE, GRAY8);
     private static int staticFillWith = Prefs.getInt(FILL, FILL_BLACK);
-    private static String[] types = {"8-bit", "16-bit", "32-bit", "RGB"};
-    private static String[] fill = {"White", "Black", "Ramp", "Noise"}; 
+	/*
+	 *  EU_HOU CHANGES
+	 */
+    /*private static String[] types = {"8-bit", "16-bit", "32-bit", "RGB"};
+    private static String[] fill = {"White", "Black", "Ramp", "Noise"};*/
+	private static String[] typekeys = {"8-bit", "16-bit", "32-bit", "RGBColor"};
+	private static String[] fillkeys = {"WhiteColor", "BlackColor", "Ramp"};
+	
+	private static String types[], fill[];
+	/*
+	 *  EU_HOU CHANGES END
+	 */
     private int gwidth, gheight, gslices, gtype, gfill;
 	
     public NewImage() {
@@ -57,6 +76,7 @@ public class NewImage {
 				inUse = IJ.currentMemory();
 				available = max-inUse;
 				if (size>available) {
+					//EU_HOU MISSING Bundle
 					IJ.error("Insufficient Memory", "There is not enough free memory to allocate a \n"
 					+ size2+" stack.\n \n"
 					+ "Memory available: "+available/(1024*1024)+"MB\n"		
@@ -72,6 +92,7 @@ public class NewImage {
 		int inc = nSlices/40;
 		if (inc<1) inc = 1;
 		if (bigStack)
+			//EU_HOU MISSING Bundle
 			IJ.showStatus("Allocating "+size2+". Press 'Esc' to abort.");
 		IJ.resetEscape();
 		try {
@@ -342,7 +363,9 @@ public class NewImage {
 			case 16: imp = createShortImage(title, width, height, nSlices, options); break;
 			case 32: imp = createFloatImage(title, width, height, nSlices, options); break;
 			case 24: imp = createRGBImage(title, width, height, nSlices, options); break;
-			default: throw new IllegalArgumentException("Invalid bitDepth: "+bitDepth);
+			default: 
+				//EU_HOU MISSING Bundle
+				throw new IllegalArgumentException("Invalid bitDepth: "+bitDepth);
 		}
 		return imp;
 	}
@@ -352,23 +375,47 @@ public class NewImage {
 			staticType = GRAY8;
 		if (staticFillWith<OLD_FILL_WHITE||staticFillWith>FILL_NOISE)
 			staticFillWith = FILL_WHITE;
-		GenericDialog gd = new GenericDialog("New Image...");
-		gd.addStringField("Name:", name, 12);
-		gd.addChoice("Type:", types, types[staticType]);
-		gd.addChoice("Fill with:", fill, fill[staticFillWith]);
-		gd.addNumericField("Width:", staticWidth, 0, 5, "pixels");
-		gd.addNumericField("Height:", staticHeight, 0, 5, "pixels");
-		gd.addNumericField("Slices:", staticSlices, 0, 5, "");
+		//EU_HOU Bundle
+		GenericDialog gd = new GenericDialog(IJ.getBundle().getString("New"));
+		/*
+		 * EU_HOU Bundle ADD
+		 */
+		name = IJ.getBundle().getString("Untitled");
+		types = new String[typekeys.length];
+		for (int i = 0; i < types.length; ++i) {
+			types[i] = IJ.getBundle().getString(typekeys[i]);
+		}
+		fill = new String[fillkeys.length];
+		for (int i = 0; i < fill.length; ++i) {
+			fill[i] = IJ.getColorBundle().getString(fillkeys[i]);
+		}
+		/*
+		 * EU_HOU Bundle ADD END
+		 */
+		//EU_HOU Bundle = 6
+		gd.addStringField(IJ.getBundle().getString("Name") + ":", name, 12);
+		gd.addChoice(IJ.getBundle().getString("Type") + ":", types, types[staticType]);
+		gd.addChoice(IJ.getBundle().getString("NewFill") + ":", fill, fill[staticFillWith]);
+		gd.addNumericField(IJ.getBundle().getString("Width") + ":", staticWidth, 0, 5, IJ.getBundle().getString("Pixels"));
+		gd.addNumericField(IJ.getBundle().getString("Height") + ":", staticHeight, 0, 5, IJ.getBundle().getString("Pixels"));
+		gd.addNumericField(IJ.getBundle().getString("Slices") + ":", staticSlices, 0, 5, "");
 		gd.showDialog();
 		if (gd.wasCanceled())
 			return false;
 		name = gd.getNextString();
 		String s = gd.getNextChoice();
-		if (s.startsWith("8"))
+
+		//EU_HOU Bundle CHANGES
+		if (s.startsWith("8")  || s.equals(IJ.getBundle().getString("8-bit")))
+			//EU_HOU Bundle CHANGES END
 			gtype = GRAY8;
-		else if (s.startsWith("16"))
+		//EU_HOU Bundle CHANGES
+		else if (s.startsWith("16")  || s.equals(IJ.getBundle().getString("16-bit")))
+			//EU_HOU Bundle CHANGES END
 			gtype = GRAY16;
-		else if (s.endsWith("RGB") || s.endsWith("rgb"))
+		//EU_HOU Bundle CHANGES
+		else if (s.endsWith("RGB") || s.endsWith("rgb") || s.equals(IJ.getBundle().getString("RGBColor")))
+			//EU_HOU Bundle CHANGES END
 			gtype = RGB;
 		else
 			gtype = GRAY32;
@@ -398,6 +445,7 @@ public class NewImage {
 		try {
 			open(name, gwidth, gheight, gslices, gtype, gfill);
 		} catch(OutOfMemoryError e) {
+			//EU_HOU MISSING Bundle
 			IJ.outOfMemory("New Image...");
 		}
 	}

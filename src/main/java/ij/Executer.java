@@ -1,9 +1,11 @@
+//EU_HOU
 package ij;
 import ij.util.Tools;
 import ij.text.TextWindow;
 import ij.plugin.MacroInstaller;
 import ij.plugin.frame.Recorder;
 import ij.plugin.frame.Editor;
+import ij.gui.EuHouToolbar;
 import ij.io.OpenDialog;
 import java.io.*;
 import java.util.*;
@@ -21,6 +23,15 @@ public class Executer implements Runnable {
 	private String command;
 	private Thread thread;
 	private boolean repeatingCommand;
+	
+	/*
+	 *  EU_HOU CHANGES
+	 */
+	private static ResourceBundle menubun;
+	private static ResourceBundle etiq;
+	/*
+	 *  EU_HOU CHANGES END
+	 */
 
 	/** Create an Executer to run the specified menu command
 		in this thread using the active image. */
@@ -47,6 +58,13 @@ public class Executer implements Runnable {
 		if (imp!=null)
 			WindowManager.setTempCurrentImage(thread, imp);
 		thread.start();
+		/*
+		 *   EU_HOU CHANGES
+		 */
+		menubun = IJ.getBundle();
+		/*
+		 *  EU_HOU CHANGES END
+		 */
 	}
 
 	public void run() {
@@ -121,8 +139,65 @@ public class Executer implements Runnable {
 	}
 
 	void runCommand(String cmd) {
+		/*
+		 *  EU_HOU CHANGES
+		 */
 		Hashtable table = Menus.getCommands();
-		String className = (String)table.get(cmd);
+		String className = new String();
+		String[] cN = new String[2];
+		EuHouToolbar etb = new EuHouToolbar();
+		String PhotometerGood = "";
+		String ClearPhotometerGood = "";
+		String PhotometrySettingsGood = "";
+		String menubunGood = "";
+		String addPluginItemGood = "";
+
+		System.out.println("Executer avant if1 cmd: " + cmd);
+		try {
+			System.out.println("Executer 1");
+			//EU_HOU Bundle
+			PhotometerGood = menubun.getString("Photometer");
+		} catch (Exception exp) {}
+		try {
+			System.out.println("Executer 2");
+			//EU_HOU Bundle
+			ClearPhotometerGood = menubun.getString("ClearPhotometer");
+		} catch (Exception exp) {}
+		try {
+			System.out.println("Executer 3");
+			//EU_HOU Bundle
+			PhotometrySettingsGood = menubun.getString("PhotometrySettings");
+		} catch (Exception exp) {}
+		try {
+			System.out.println("Executer 4");
+			addPluginItemGood = etb.addPluginItem(cmd);
+			System.out.println("Executer addPluginItemGood: " + addPluginItemGood);
+		} catch (Exception exp) {}
+		try {
+			System.out.println("Executer 5");
+			//EU_HOU Bundle
+			menubunGood = menubun.getString(cmd);
+			System.out.println("Executer menubunGood: " + menubunGood);
+		} catch (Exception exp) {}
+
+		if (cmd.equals(PhotometerGood) || cmd.equals("Photometer")) {
+			EuHouToolbar.getInstance().photometerButtonAction();
+		} else if (cmd.equals(ClearPhotometerGood) || cmd.equals("ClearPhotometer")) {
+			EuHouToolbar.getInstance().clearPhotometer();
+		} else if (cmd.equals(PhotometrySettingsGood) || cmd.equals("PhotometrySettings")) {
+			EuHouToolbar.getInstance().settingsAction();
+		} else if (table.get(cmd) != null) {
+			className = (String) table.get(cmd);
+		} else if (addPluginItemGood != "") {
+			className = (String) table.get(addPluginItemGood);
+		} else if (menubunGood != "") {
+			className = (String) table.get(menubunGood);
+		}
+		System.out.println("Executer apres if cmd: " + cmd + " , className: " + className);
+		/*
+		 *  EU_HOU CHANGES END
+		 */
+		
 		if (className!=null) {
 			String arg = "";
 			if (className.endsWith("\")")) {
@@ -172,7 +247,8 @@ public class Executer implements Runnable {
 					if (repeatingCommand)
 						IJ.runMacro(previousCommand);
 					else
-						IJ.error("Unrecognized command: \"" + cmd+"\"");
+						//EU_HOU Bundle
+						IJ.error(etiq.getString("UnrecCmdErr") + " " + cmd+"\"");
 				}
 			}
 	 	}
