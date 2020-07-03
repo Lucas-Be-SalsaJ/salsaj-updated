@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.io;
 import ij.*;
 import ij.gui.*;
@@ -63,6 +64,7 @@ public class Opener {
 	 * @see ij.IJ#openImage(String)
 	*/
 	public void open() {
+        //EU_HOU MISSING Bundle
 		OpenDialog od = new OpenDialog("Open", "");
 		String directory = od.getDirectory();
 		String name = od.getFileName();
@@ -100,6 +102,7 @@ public class Opener {
 				path = (new File(path)).getAbsolutePath();
 		}
 		if (!silentMode)
+            //EU_HOU MISSING Bundle
 			IJ.showStatus("Opening: " + path);
 		long start = System.currentTimeMillis();
 		ImagePlus imp = null;
@@ -320,8 +323,16 @@ public class Opener {
 				imp = (ImagePlus)IJ.runPlugIn("ij.plugin.DICOM", path);
 				if (imp.getWidth()!=0) return imp; else return null;
 			case FITS:
-				imp = (ImagePlus)IJ.runPlugIn("ij.plugin.FITS_Reader", path);
+				/*
+				 * EU_HOU CHANGES
+				 */
+				//imp = (ImagePlus)IJ.runPlugIn("ij.plugin.FITS_Reader", path);
+				imp = (ImagePlus)IJ.runPlugIn("ij.plugin.FITS", path);
+				/*
+				 * EU_HOU CHANGES END
+				 */
 				if (imp.getWidth()!=0) return imp; else return null;
+
 			case PGM:
 				imp = (ImagePlus)IJ.runPlugIn("ij.plugin.PGM_Reader", path);
 				if (imp.getWidth()!=0) {
@@ -402,6 +413,7 @@ public class Opener {
 	*/
 	public ImagePlus openURL(String url) {
 		url = updateUrl(url);
+        //EU_HOU MISSING Bundle
 		if (IJ.debugMode) IJ.log("OpenURL: "+url);
 		ImagePlus imp = openCachedImage(url);
 		if (imp!=null)
@@ -448,6 +460,7 @@ public class Opener {
 			String msg = e.getMessage();
 			if (msg==null || msg.equals(""))
 				msg = "" + e;
+	        //EU_HOU MISSING Bundle
 			IJ.error("Open URL", msg);
 			return null;
 		} 
@@ -542,6 +555,7 @@ public class Opener {
 		}
 		String name = entry.getName();
 		if (!(name.endsWith(".tif")||name.endsWith(".dcm")))
+	        //EU_HOU MISSING Bundle
 			throw new IOException("This ZIP archive does not appear to contain a .tif or .dcm file\n"+name);
 		if (name.endsWith(".dcm"))
 			return openDicomStack(zis, entry);
@@ -595,6 +609,7 @@ public class Opener {
 		zis.close();
 		IJ.showProgress(1.0);
 		if (count==0)
+	        //EU_HOU MISSING Bundle
 			throw new IOException("This ZIP archive does not appear to contain any .dcm files");
 		return imp;
 	}
@@ -685,6 +700,7 @@ public class Opener {
 	public static void convertGrayJpegTo8Bits(ImagePlus imp) {
 		ImageProcessor ip = imp.getProcessor();
 		if (ip.getBitDepth()==24 && ip.isGrayscale()) {
+            //EU_HOU MISSING Bundle
 			IJ.showStatus("Converting to 8-bit grayscale");
 			new ImageConverter(imp).convertToGray8();
 		}
@@ -704,6 +720,7 @@ public class Opener {
 		}
 		if (contiguous &&  info[0].fileType!=FileInfo.RGB48)
 			info[0].nImages = info.length;
+        //EU_HOU MISSING Bundle
 		//if (IJ.debugMode) {
 		//	IJ.log("sameSizeAndType: " + sameSizeAndType);
 		//	IJ.log("contiguous: " + contiguous);
@@ -742,6 +759,7 @@ public class Opener {
 					nChannels = 1;
 					Object[] channels = null;
 					if (!silentMode)
+			            //EU_HOU MISSING Bundle
 						IJ.showStatus("Reading: " + (i+1) + "/" + info.length);
 					if (IJ.escapePressed()) {
 						IJ.beep();
@@ -766,6 +784,7 @@ public class Opener {
 						skip = info[i+1].getOffset()-loc;
 						if (info[i+1].compression>=FileInfo.LZW) skip = 0;
 						if (skip<0L) {
+				            //EU_HOU MISSING Bundle
 							IJ.error("Opener", "Unexpected image offset");
 							break;
 						}
@@ -859,6 +878,7 @@ public class Opener {
 		FileInfo fi = info[0];
 		if (info.length==1 && fi.nImages>1) {
 			if (n<1 || n>fi.nImages)
+	            //EU_HOU MISSING Bundle
 				throw new IllegalArgumentException("N out of 1-"+fi.nImages+" range");
 			long size = fi.width*fi.height*fi.getBytesPerPixel();
 			fi.longOffset = fi.getOffset() + (n-1)*(size+fi.getGap());
@@ -866,6 +886,7 @@ public class Opener {
 			fi.nImages = 1;
 		} else {
 			if (n<1 || n>info.length)
+	            //EU_HOU MISSING Bundle
 				throw new IllegalArgumentException("N out of 1-"+info.length+" range");
 			fi.longOffset = info[n-1].getOffset();
 			fi.offset = 0;
@@ -933,8 +954,10 @@ public class Opener {
 				zis.close();
 				if (!silentMode)
 					if (IJ.isMacro() && Interpreter.isBatchMode() && RoiManager.getInstance()==null)
+			            //EU_HOU MISSING Bundle
 						IJ.log("Use roiManager(\"Open\", path) instead of open(path)\nto open ROI sets in batch mode macros.");
 					else
+			            //EU_HOU MISSING Bundle
 						IJ.runMacro("roiManager(\"Open\", getArgument());", path);
 				return null;
 			}
@@ -946,11 +969,13 @@ public class Opener {
 				imp = dcm;
 			} else {
 				zis.close();
+	            //EU_HOU MISSING Bundle
 				IJ.error("Opener", "This ZIP archive does not appear to contain a \nTIFF (\".tif\") or DICOM (\".dcm\") file, or ROIs (\".roi\").");
 				return null;
 			}
 			zis.close();
 		} catch (Exception e) {
+            //EU_HOU MISSING Bundle
 			IJ.error("Opener", ""+e);
 			return null;
 		}
@@ -1070,6 +1095,7 @@ public class Opener {
 		RoiDecoder rd = new RoiDecoder(path);
 		try {roi = rd.getRoi();}
 		catch (IOException e) {
+            //EU_HOU MISSING Bundle
 			IJ.error("RoiDecoder", e.getMessage());
 			return null;
 		}

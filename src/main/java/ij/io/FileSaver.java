@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.io;
 import java.awt.*;
 import java.io.*;
@@ -51,6 +52,7 @@ public class FileSaver {
 			if (f==null || !f.exists())
 				return saveAsTiff();
 			if (!IJ.isMacro()) {
+                //EU_HOU MISSING Bundle
 				GenericDialog gd = new GenericDialog("Save as TIFF");
 				gd.addMessage("\""+ofi.fileName+"\" already exists.\nDo you want to replace it?");
 				gd.setOKLabel("Replace");
@@ -58,6 +60,7 @@ public class FileSaver {
 				if (gd.wasCanceled())
 					return false;
 			}
+            //EU_HOU MISSING Bundle
 			IJ.showStatus("Saving "+path);
 			if (imp.getStackSize()>1) {
 				IJ.saveAs(imp, "tif", path);
@@ -70,6 +73,7 @@ public class FileSaver {
 	
 	String getPath(String type, String extension) {
 		name = imp.getTitle();
+        //EU_HOU MISSING Bundle
 		SaveDialog sd = new SaveDialog("Save as "+type, name, extension);
 		name = sd.getFileName();
 		if (name==null)
@@ -121,6 +125,7 @@ public class FileSaver {
 			file.write(out);
 			out.close();
 		} catch (IOException e) {
+            //EU_HOU MISSING Bundle
 			showErrorMessage("saveAsTiff", path, e);
 			return false;
 		} finally {
@@ -466,6 +471,7 @@ public class FileSaver {
 
 	public static boolean okForFits(ImagePlus imp) {
 		if (imp.getBitDepth()==24) {
+            //EU_HOU MISSING Bundle
 			IJ.error("FITS Writer", "Grayscale image required");
 			return false;
 		} else
@@ -522,8 +528,9 @@ public class FileSaver {
 
 	/** Save the stack as raw data using the specified path. */
 	public boolean saveAsRawStack(String path) {
-		if (fi.nImages==1)
-			{IJ.log("This is not a stack"); return false;}
+		if (fi.nImages==1) {
+            //EU_HOU MISSING Bundle
+			IJ.log("This is not a stack"); return false;}
 		fi.intelByteOrder = Prefs.intelByteOrder;
 		boolean signed16Bit = false;
 		Object[] stack = null;
@@ -604,6 +611,7 @@ public class FileSaver {
 		dialog. Returns false if the user selects cancel. */
 	public boolean saveAsLut() {
 		if (imp.getType()==ImagePlus.COLOR_RGB) {
+            //EU_HOU MISSING Bundle
 			error("RGB Images do not have a LUT.");
 			return false;
 		}
@@ -618,10 +626,12 @@ public class FileSaver {
 		LookUpTable lut = imp.createLut();
 		int mapSize = lut.getMapSize();
 		if (mapSize==0) {
+            //EU_HOU MISSING Bundle
 			error("RGB Images do not have a LUT.");
 			return false;
 		}
 		if (mapSize<256) {
+            //EU_HOU MISSING Bundle
 			error("Cannot save LUTs with less than 256 entries.");
 			return false;
 		}
@@ -695,6 +705,7 @@ public class FileSaver {
 		String msg = e.getMessage();
 		if (msg.length()>100)
 			msg = msg.substring(0, 100);
+        //EU_HOU MISSING Bundle
 		msg = "File saving error (IOException):\n   \"" + msg + "\"";
 		IJ.error("FileSaver."+title, msg+" \n   "+path);
 		IJ.showProgress(1.0);

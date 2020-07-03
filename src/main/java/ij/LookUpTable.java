@@ -1,3 +1,4 @@
+//EU_HOU
 package ij;
 import java.awt.*;
 import java.awt.image.*;
@@ -89,6 +90,39 @@ public class LookUpTable extends Object {
 		g.setColor(Color.black);
 		g.drawRect(x, y, width, height);
 	}
+	
+	/*
+	 * EU_HOU ADD
+	 */
+	public void drawVertColorBar(Graphics g, int x, int y, int width, int height, double imin, double imax) {
+		if (mapSize == 0) {
+			return;
+		}
+	ColorProcessor cp = new ColorProcessor((3 * width) / 5, height);
+	double scale = 256.0 / mapSize;
+	double st = height / 256.0;
+		cp.setLineWidth((int) (st + .5));
+	int w2 = (3 * width) / 5;
+		g.setColor(Color.black);
+		for (int i = 0; i < 256; i++) {
+		int y2 = height - (int) (i * st);
+		int index = (int) (i / scale);
+			cp.setColor(new Color(rLUT[index] & 0xff, gLUT[index] & 0xff, bLUT[index] & 0xff));
+			cp.moveTo(0, y2);
+			cp.lineTo(w2, y2);
+
+			if ((i % 32) == 0) {
+				g.drawLine(x + w2, y + y2, x + width, y + y2);
+				g.drawString("" + (long) (imin + ((double) i * (imax - imin)) / 256.), x + w2 + 5, y + y2);
+			}
+		}
+		g.drawImage(cp.createImage(), x, y, null);
+		g.drawRect(x, y, width, height);
+		g.drawString("" + (long) imax, x + w2 + 5, y);
+	}
+	/*
+	 * EU_HOU ADD END
+	 */
 
 	public void drawUnscaledColorBar(ImageProcessor ip, int x, int y, int width, int height) {
 		ImageProcessor bar = null;

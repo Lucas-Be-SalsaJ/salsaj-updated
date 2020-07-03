@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.io;
 import java.awt.*;
 import java.awt.image.*;
@@ -43,6 +44,7 @@ public class FileOpener {
 			width = fi.width;
 			height = fi.height;
 		}
+		//EU_HOU MISSING Bundle
 		if (IJ.debugMode) IJ.log("FileInfo: "+fi);
 	}
 	
@@ -119,6 +121,7 @@ public class FileOpener {
 				if (pixelArray==null) return null;
 				int nChannels = 3;
 				ImageStack stack = new ImageStack(width, height);
+				//EU_HOU MISSING Bundle
 				stack.addSlice("Red", pixelArray[0]);
 				stack.addSlice("Green", pixelArray[1]);
 				stack.addSlice("Blue", pixelArray[2]);
@@ -207,6 +210,7 @@ public class FileOpener {
 			IJ.resetEscape();
 			for (int i=1; i<=fi.nImages; i++) {
 				if (!silentMode)
+					//EU_HOU MISSING Bundle
 					IJ.showStatus("Reading: " + i + "/" + fi.nImages);
 				if (IJ.escapePressed()) {
 					IJ.beep();
@@ -271,6 +275,7 @@ public class FileOpener {
 		int n = stack.size();
 		for (int i=1; i<=n; i++) {
 			if (!silentMode)
+				//EU_HOU MISSING Bundle
 				IJ.showStatus("Calculating stack min and max: "+i+"/"+n);
 			ImageProcessor ip = stack.getProcessor(i);
 			ip.resetMinAndMax();
@@ -290,6 +295,7 @@ public class FileOpener {
 		String path = fi.getFilePath();
 		if (fi.url!=null && !fi.url.equals("") && (fi.directory==null||fi.directory.equals("")))
 			path = fi.url;
+		//EU_HOU MISSING +Bundle
 		IJ.showStatus("Loading: " + path);
 		ImagePlus imp2 = null;
 		if (!path.endsWith(".raw"))
@@ -340,6 +346,7 @@ public class FileOpener {
 	
 	void setCalibration(ImagePlus imp) {
 		if (fi.fileType==FileInfo.GRAY16_SIGNED) {
+			//EU_HOU MISSING Bundle
 			if (IJ.debugMode) IJ.log("16-bit signed");
  			imp.getLocalCalibration().setSigned16BitCalibration();
 		}
@@ -492,12 +499,14 @@ public class FileOpener {
 		long offset = fi.getOffset();
 		long length = 0;
 		if (fi.width<=0 || fi.height<=0) {
+			//EU_HOU MISSING Bundle
 		   error("Width or height <= 0.", fi, offset, length);
 		   return false;
 		}
 		if (offset>=0 && offset<1000L)
 			 return true;
 		if (offset<0L) {
+			//EU_HOU MISSING Bundle
 		   error("Offset is negative.", fi, offset, length);
 		   return false;
 		}
@@ -508,6 +517,7 @@ public class FileOpener {
 		size = fi.nImages>1?size:size/4;
 		if (fi.height==1) size = 0; // allows plugins to read info of unknown length at end of file
 		if (offset+size>length) {
+			//EU_HOU MISSING Bundle
 		   error("Offset + image size > file length.", fi, offset, length);
 		   return false;
 		}
@@ -515,6 +525,7 @@ public class FileOpener {
 	}
 
 	static void error(String msg, FileInfo fi, long offset, long length) {
+		//EU_HOU MISSING Bundle
 		String msg2 = "FileInfo parameter error. \n"
 			+msg + "\n \n"
 			+"  Width: " + fi.width + "\n"
@@ -554,6 +565,7 @@ public class FileOpener {
 		if (fi.description==null || fi.description.length()<7)
 			return null;
 		if (IJ.debugMode)
+			//EU_HOU MISSING Bundle
 			IJ.log("Image Description: " + new String(fi.description).replace('\n',' '));
 		if (!fi.description.startsWith("ImageJ"))
 			return null;

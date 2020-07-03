@@ -1,3 +1,4 @@
+//EU_HOU
 package ij;
 import ij.util.Java2;
 import java.io.*;
@@ -13,7 +14,13 @@ import ij.plugin.filter.*;
 import ij.process.ImageConverter;
 import ij.plugin.Animator;
 import ij.process.FloatBlitter;
-import ij.plugin.GelAnalyzer;
+/*
+ * EU_HOU CHANGES
+ */
+//import ij.plugin.GelAnalyzer;
+/*
+ * EU_HOU CHANGES END
+ */
 import ij.process.ColorProcessor;
 import ij.text.TextWindow;
 
@@ -24,8 +31,16 @@ loaded from the "IJ_Props.txt" and "IJ_Prefs.txt" files.
 */
 public class Prefs {
 
-	public static final String PROPS_NAME = "IJ_Props.txt";
-	public static final String PREFS_NAME = "IJ_Prefs.txt";
+	/*
+	 * EU_HOU CHANGES
+	 */
+	/*public static final String PROPS_NAME = "IJ_Props.txt";
+	public static final String PREFS_NAME = "IJ_Prefs.txt";*/
+	public static final String PROPS_NAME = "EUHOUProps.txt";
+	public static final String PREFS_NAME = "EUHOUPrefs.txt";
+	/*
+	 * EU_HOU CHANGES END
+	 */
 	public static final String DIR_IMAGE = "dir.image";
 	public static final String FCOLOR = "fcolor";
 	public static final String BCOLOR = "bcolor";
@@ -202,15 +217,42 @@ public class Prefs {
 	private static Properties locKeys = new Properties();
 	private static String propertiesPath; // location of custom IJ_Props.txt
 	private static String preferencesPath; // location of custom IJ_Prefs.txt
-
+	/*
+	 * EU_HOU CHANGES
+	 */
+	static String pluginsDir;
+	/*
+	 * EU_HOU CHANGES END
+	 */
+	
 	/** Finds and loads the configuration file ("IJ_Props.txt")
 	 * and the preferences file ("IJ_Prefs.txt").
 	 * @return	an error message if "IJ_Props.txt" not found.
 	*/
 	public static String load(Object ij, Applet applet) {
+		/*
+		 * EU_HOU CHANGES
+		 */
+		Locale lang = ((ImageJ) ij).getLocale();
+		ResourceBundle table = null;
+		try {
+			table = ResourceBundle.getBundle("ij/" + PROPS_NAME, lang);
+		}
+		catch (Exception e) {
+			//EU_HOU MISSING Bundle
+			IJ.error("PROPS NOT LOADED");
+		}
+		/*
+		 * EU_HOU CHANGES END
+		 */
+		
 		if (ImageJDir==null)
 			ImageJDir = System.getProperty("user.dir");
-		InputStream f = null;
+		
+		/*
+		 * EU_HOU CHANGES
+		 */
+		/*InputStream f = null;
 		try { // Look for IJ_Props.txt in ImageJ folder
 			f = new FileInputStream(ImageJDir+"/"+PROPS_NAME);
 			propertiesPath = ImageJDir+"/"+PROPS_NAME;
@@ -220,18 +262,44 @@ public class Prefs {
 		if (f==null) {
 			// Look in ij.jar if not found in ImageJ folder
 			f = ij.getClass().getResourceAsStream("/"+PROPS_NAME);
-		}			
+		}*/
+		/*
+		 * EU_HOU CHANGES END
+		 */
+		
 		if (applet!=null)
-			return loadAppletProps(f, applet);
-		if (f==null)
+			//EU_HOU CHANGES
+			//return loadAppletProps(f, applet);
+			return loadAppletProps(table, applet);
+		
+		//EU_HOU CHANGES
+		//if (f==null)
+		if (table == null)
+			//EU_HOU MISSING Bundle
 			return PROPS_NAME+" not found in ij.jar or in "+ImageJDir;
-		f = new BufferedInputStream(f);
+		
+		
+		/*
+		 * EU_HOU CHANGES
+		 */
+		/*f = new BufferedInputStream(f);
 		try {
 			props.load(f);
 			f.close();
 		} catch (IOException e) {
 			return("Error loading "+PROPS_NAME);
+		}*/
+		
+		for (Enumeration e = table.getKeys(); e.hasMoreElements(); ) {
+			String key = (String) e.nextElement();
+			String val = table.getString(key);
+
+			props.setProperty(key, val);
 		}
+		/*
+		 * EU_HOU CHANGES END
+		 */
+		
 		imagesURL = props.getProperty("images.location");
 		loadPreferences();
 		loadOptions();
@@ -250,14 +318,28 @@ public class Prefs {
 	}
 	*/
 
-	static String loadAppletProps(InputStream f, Applet applet) {
-		if (f==null)
-			return PROPS_NAME+" not found in ij.jar";
+	/*
+	 * EU_HOU CHANGES
+	 */
+	//static String loadAppletProps(InputStream f, Applet applet) {
+	static String loadAppletProps(ResourceBundle f, Applet applet) {
+		/*if (f==null)
+			//EU_HOU Bundle
+			return PROPS_NAME+" not found in SalsaJ.jar";
 		try {
 			props.load(f);
 			f.close();
 		}
-		catch (IOException e) {return("Error loading "+PROPS_NAME);}
+		catch (IOException e) {return("Error loading "+PROPS_NAME);}*/
+		for (Enumeration e = f.getKeys(); e.hasMoreElements(); ) {
+			String key = (String) e.nextElement();
+			String val = f.getString(key);
+
+			props.setProperty(key, val);
+		}
+		/*
+		 * EU_HOU CHANGES END
+		 */
 		try {
 			URL url = new URL(applet.getDocumentBase(), "images/");
 			imagesURL = url.toString();
@@ -355,6 +437,43 @@ public class Prefs {
 		else
 			return s.equals("true");
 	}
+	
+	/*
+	 * EU_HOU ADD
+	 */
+	/**
+	 *  Gets the command attribute of the Prefs class
+	 *
+	 *@param  key  Description of the Parameter
+	 *@return      The command value
+	 */
+	public static String getCommand(String key) {
+	
+		String res = getString(key);
+	
+		if (res == null) {
+			return "null";
+		}
+	
+		System.out.println("Prefs.getCommand key=" + key);
+		System.out.println("Prefs.getCommand res=" + res);
+	
+		int ind0 = res.indexOf('"');
+		int ind = res.indexOf(',');
+	
+		System.out.println("Prefs.getCommand ind0=" + ind0);
+		System.out.println("Prefs.getCommand ind=" + ind);
+		if (ind == -1) {
+			System.out.println("Prefs.getCommand return1=" + (ind0 == -1 ? res : res.substring(1, ind - 1)));
+			return (ind0 == -1 ? res : res.substring(1, ind - 1));
+		}
+	
+		System.out.println("Prefs.getCommand return2=" + (ind0 == -1 ? res.substring(0, ind) : res.substring(1, ind - 1)));
+		return (ind0 == -1 ? res.substring(0, ind) : res.substring(1, ind - 1));
+	}
+	/*
+	 * EU_HOU ADD END
+	 */
 
 	/** Finds an int in IJ_Props or IJ_Prefs.txt. */
 	public static int getInt(String key, int defaultValue) {
@@ -471,6 +590,7 @@ public class Prefs {
 			if (msg==null) msg = ""+t;
 			int delay = 4000;
 			try {
+				//EU_HOU MISSING Bundle
 				new TextWindow("Error Saving Preferences:\n"+path, msg, 500, 200);
 				IJ.wait(delay);
 			} catch (Throwable t2) {}
@@ -570,6 +690,7 @@ public class Prefs {
 		retrieved using the appropriate <code>get()</code> method. */
 	public static void set(String key, String text) {
 		if (key.indexOf('.')<1)
+			//EU_HOU MISSING Bundle
 			throw new IllegalArgumentException("Key must have a prefix");
 		if (text==null)
 			ijPrefs.remove(KEY_PREFIX+key);
@@ -684,7 +805,8 @@ public class Prefs {
 	public static void savePrefs(Properties prefs, String path) throws IOException{
 		FileOutputStream fos = new FileOutputStream(path);
 		BufferedOutputStream bos = new BufferedOutputStream(fos);
-		prefs.store(bos, "ImageJ "+ImageJ.VERSION+" Preferences");
+		//EU_HOU Bundle
+		prefs.store(bos, "SalsaJ "+ImageJ.VERSION+" Preferences");
 		bos.close();
 	}
 	

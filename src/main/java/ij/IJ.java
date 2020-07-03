@@ -46,7 +46,13 @@ public class IJ {
 	/** Image display modes */
 	public static final int COMPOSITE=1, COLOR=2, GRAYSCALE=3;
 	
-	public static final String URL = "http://imagej.nih.gov/ij";
+	/*
+	 * EU_HOU CHANGES
+	 */
+	public static final String URL = "http://www.euhou.net";
+	/*
+	 * EU_HOU CHANGES END
+	 */
 	public static final int ALL_KEYS = -1;
 	
 	/** Use setDebugMode(boolean) to enable/disable debug mode. */

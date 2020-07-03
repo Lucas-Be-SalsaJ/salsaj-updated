@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.process.*;
@@ -16,16 +17,30 @@ import java.awt.image.*;
 		System.gc();
 		int lines = 7;
 		String[] text = new String[lines];
-		text[0] = "ImageJ "+ImageJ.VERSION+ImageJ.BUILD;
-		text[1] = "Wayne Rasband";
-		text[2] = "National Institutes of Health, USA";
-		text[3] = IJ.URL;
-		text[4] = "Java "+System.getProperty("java.version")+(IJ.is64Bit()?" (64-bit)":" (32-bit)");
-		text[5] = IJ.freeMemory();
-		text[6] = "ImageJ is in the public domain";
+        /*
+         * EU_HOU Bundle CHANGES
+         */
+		text[0] = "SalsaJ "+ImageJ.VERSION+ImageJ.BUILD;
+        //EU_HOU Bundle
+		text[1] = IJ.getBundle().getString("About1");
+		text[2] = IJ.URL;
+        //EU_HOU Bundle
+		text[3] = IJ.getBundle().getString("About2");
+        text[4] = IJ.getBundle().getString("About3");
+		text[5] =  "Java "+System.getProperty("java.version")+(IJ.is64Bit()?" (64-bit)":" (32-bit)");
+		text[6] = IJ.freeMemory();
+		/*
+		 * EU_HOU Bundle CHANGES END
+		 */
 		ImageProcessor ip = null;
 		ImageJ ij = IJ.getInstance();
-		URL url = ij .getClass() .getResource("/about.jpg");
+		/*
+		 * EU_HOU CHANGES : url "/about.jpg" --> "images/about2.jpg"
+		 */
+		URL url = ij .getClass() .getResource("images/about2.jpg");
+		/*
+		 * EU_HOU CHANGES END
+		 */
 		if (url!=null) {
 			Image img = null;
 			try {img = ij.createImage((ImageProducer)url.getContent());}
@@ -49,16 +64,23 @@ import java.awt.image.*;
 		for (int i=0; i<lines-1; i++) 
 			if (widths[i]>max)
 				max = widths[i];
-		ip.setColor(new Color(255,255, 140));
+		/*
+		 * EU_HOU CHANGES
+		 */
+		//ip.setColor(new Color(255,255, 140));
+		ip.setColor(new Color(255,255, 255));
 		ip.setFont(new Font("SansSerif", Font.PLAIN, LARGE_FONT));
-		int y  = 45;
+		//int y = 45 --> 40
+		int y  = 40;
 		ip.drawString(text[0], x(text[0],ip,max), y);
 		ip.setFont(new Font("SansSerif", Font.PLAIN, SMALL_FONT));
-		y += 30;
+		//y += 30;
+		y += 100;
 		ip.drawString(text[1], x(text[1],ip,max), y);
 		y += 18;
 		ip.drawString(text[2], x(text[2],ip,max), y);
-		y += 18;
+		//y += 18;
+		y += 25;
 		ip.drawString(text[3], x(text[3],ip,max), y);
 		y += 18;
 		ip.drawString(text[4], x(text[4],ip,max), y);
@@ -66,9 +88,13 @@ import java.awt.image.*;
 			y += 18;
 			ip.drawString(text[5], x(text[5],ip,max), y);
 		}
+		/*
+		 * EU_HOU CHANGES END
+		 */
 		ip.drawString(text[6], ip.getWidth()-ip.getStringWidth(text[6])-10, ip.getHeight()-3);
 		ImageWindow.centerNextImage();
-		ImagePlus imp = new ImagePlus("About ImageJ", ip);
+		//EU_HOU Bundle
+		ImagePlus imp = new ImagePlus(IJ.getBundle().getString("AboutIJ"), ip);
 		String info = text[0] +"\n" + text[4] +"\n" + text[5];
 		imp.setProperty("Info", info);
 		imp.show();

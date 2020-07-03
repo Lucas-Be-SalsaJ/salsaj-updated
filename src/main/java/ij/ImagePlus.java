@@ -509,6 +509,17 @@ public class ImagePlus implements ImageObserver, Measurements, Cloneable {
          */
 	}
 	
+	/*
+	 * EU_HOU ADD
+	 */
+	public void show(String statusMessage) {
+        show(statusMessage, true);
+	}
+	/*
+	 * EU_HOU ADD END
+	 */
+	
+	
     /*
      *  EU_HOU CHANGES
      */

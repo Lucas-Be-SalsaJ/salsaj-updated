@@ -53,6 +53,7 @@ public class ImageConverter {
 		if (type==ImagePlus.GRAY16)
 			return;
 		if (!(type==ImagePlus.GRAY8||type==ImagePlus.GRAY32||type==ImagePlus.COLOR_RGB))
+            //EU_HOU MISSING Bundle
 			throw new IllegalArgumentException("Unsupported conversion");
 		if (imp.getStackSize()>1) {
 			new StackConverter(imp).convertToGray16();
@@ -81,6 +82,7 @@ public class ImageConverter {
 		if (type==ImagePlus.GRAY32)
 			return;
 		if (!(type==ImagePlus.GRAY8||type==ImagePlus.GRAY16||type==ImagePlus.COLOR_RGB))
+            //EU_HOU MISSING Bundle
 			throw new IllegalArgumentException("Unsupported conversion");
 		Calibration cal = imp.getCalibration();
 		double min = cal.getCValue(imp.getDisplayRangeMin());
@@ -113,6 +115,7 @@ public class ImageConverter {
 	/** Converts an RGB image to an RGB (red, green and blue) stack. */
 	public void convertToRGBStack() {
 		if (type!=ImagePlus.COLOR_RGB)
+            //EU_HOU MISSING Bundle
 			throw new IllegalArgumentException("Image must be RGB");
 
 		//convert to RGB Stack
@@ -144,6 +147,7 @@ public class ImageConverter {
 	/** Converts an RGB image to a HSB (hue, saturation and brightness) stack. */
 	public void convertToHSB() {
 		if (type!=ImagePlus.COLOR_RGB)
+            //EU_HOU MISSING Bundle
 			throw new IllegalArgumentException("Image must be RGB");;
 		ColorProcessor cp;
 		if (imp.getType()==ImagePlus.COLOR_RGB)
@@ -159,6 +163,7 @@ public class ImageConverter {
 	/** Converts an RGB image to a Lab stack. */
 	public void convertToLab() {
 		if (type!=ImagePlus.COLOR_RGB)
+            //EU_HOU MISSING Bundle
 			throw new IllegalArgumentException("Image must be RGB");
 		ColorSpaceConverter converter = new ColorSpaceConverter();
   		ImagePlus imp2 = converter.RGBToLab(imp);
@@ -178,6 +183,7 @@ public class ImageConverter {
 	public void convertRGBStackToRGB() {
 		int stackSize = imp.getStackSize();
 		if (stackSize<2 || stackSize>3 || type!=ImagePlus.GRAY8)
+            //EU_HOU MISSING Bundle
 			throw new IllegalArgumentException("2 or 3 slice 8-bit stack required");
 		int width = imp.getWidth();
 		int height = imp.getHeight();
@@ -203,6 +209,7 @@ public class ImageConverter {
 	/** Converts a 3-slice (hue, saturation, brightness) 8-bit stack to RGB. */
 	public void convertHSBToRGB() {
 		if (imp.getStackSize()!=3)
+            //EU_HOU MISSING Bundle
 			throw new IllegalArgumentException("3-slice 8-bit stack required");
 		ImageStack stack = imp.getStack();
 		byte[] H = (byte[])stack.getPixels(1);
@@ -222,6 +229,7 @@ public class ImageConverter {
 	/** Converts a Lab stack to RGB. */
 	public void convertLabToRGB() {
 		if (imp.getStackSize()!=3)
+            //EU_HOU MISSING Bundle
 			throw new IllegalArgumentException("3-slice 32-bit stack required");
 		ColorSpaceConverter converter = new ColorSpaceConverter();
 		ImagePlus imp2 = converter.LabToRGB(imp);
@@ -233,6 +241,7 @@ public class ImageConverter {
 		be greater than 1 and less than or equal to 256. */
 	public void convertRGBtoIndexedColor(int nColors) {
 		if (type!=ImagePlus.COLOR_RGB)
+            //EU_HOU MISSING Bundle
 			throw new IllegalArgumentException("Image must be RGB");
 		if (nColors<2) nColors = 2;
 		if (nColors>256) nColors = 256;

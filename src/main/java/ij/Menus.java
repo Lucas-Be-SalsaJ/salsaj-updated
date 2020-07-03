@@ -1,3 +1,4 @@
+//EU_HOU
 package ij;
 import ij.process.*;
 import ij.util.*;
@@ -13,6 +14,13 @@ import java.io.*;
 import java.applet.Applet;
 import java.awt.event.*;
 import java.util.zip.*;
+/*
+ * EU_HOU CHANGES
+ */
+import java.awt.color.*;
+/*
+ * EU_HOU CHANGES END
+ */
 
 /**
 This class installs and updates ImageJ's menus. Note that menu labels,
@@ -58,7 +66,15 @@ public class Menus {
 	private static String ImageJPath, pluginsPath, macrosPath;
 	private static Properties menus;
 	private static Properties menuSeparators;
-	private static Menu pluginsMenu, saveAsMenu, shortcutsMenu, utilitiesMenu, macrosMenu;
+	/*
+	 * EU_HOU CHANGES
+	 */
+	//private static Menu pluginsMenu, saveAsMenu, shortcutsMenu, utilitiesMenu, macrosMenu;
+    private static Menu pluginsMenu, importMenu, saveAsMenu, shortcutsMenu, aboutMenu, filtersMenu, toolsMenu, utilitiesMenu, macrosMenu, optionsMenu;
+	/*
+	 * EU_HOU CHANGES END
+	 */
+	
 	static Menu window, openRecentMenu;
 	private static Hashtable pluginsTable;
 	
@@ -84,12 +100,33 @@ public class Menus {
 
 	static boolean jnlp; // true when using Java WebStart
 	public static int setMenuBarCount;
-		
+	
+	/*
+	 * EU_HOU CHANGES
+	 */
+    private static ResourceBundle menubun;
+    private static int to_clear;
+    private Locale lang;
+	/*
+	 * EU_HOU CHANGES END
+	 */
+	
+    /*
+     * EU_HOU History reynald
+     */
 	Menus(ImageJ ijInstance, Applet appletInstance) {
 		ij = ijInstance;
 		String title = ij!=null?ij.getTitle():null;
 		applet = appletInstance;
 		instance = this;
+		/*
+		 * EU_HOU CHANGES
+		 */
+        menubun = IJ.getBundle();
+        lang = Locale.getDefault();
+		/*
+		 * EU_HOU CHANGES END
+		 */
 	}
 
 	String addMenuBar() {
@@ -106,9 +143,66 @@ public class Menus {
 		pluginsPrefs = new Vector();
 		macroShortcuts = null;
 		setupPluginsAndMacrosPaths();
-		Menu file = getMenu("File");
+		
+		/*
+		 * EU_HOU CHANGES : Hidden menu
+		 */
+        Menu hidden_menu = new Menu();
+        addPlugInItem(hidden_menu, "ClearOutside", "ij.plugin.filter.Filler(\"outside\")", 0, false);
+        addPlugInItem(hidden_menu, "Fill", "ij.plugin.filter.Filler(\"fill\")", KeyEvent.VK_F, false);
+        addPlugInItem(hidden_menu, "Draw", "ij.plugin.filter.Filler(\"draw\")", KeyEvent.VK_D, false);
+        addPlugInItem(hidden_menu, "Invert", "ij.plugin.filter.Filters(\"invert\")", KeyEvent.VK_I, true);
+        addPlugInItem(hidden_menu, "OpenNext", "ij.plugin.NextImageOpener", KeyEvent.VK_O, true);
+        addPlugInItem(hidden_menu, "PasteControl", "ij.plugin.frame.PasteController", 0, false);
+        hidden_menu.addSeparator();
+        addSubMenu(hidden_menu, "Selection");
+        optionsMenu = addSubMenu(hidden_menu, "Options");
+        addPlugInItem(hidden_menu, "AnalyzeParticles", "ij.plugin.filter.ParticleAnalyzer", 0, false);
+        addPlugInItem(hidden_menu, "Summarize", "ij.plugin.filter.Analyzer(\"sum\")", 0, false);
+        addPlugInItem(hidden_menu, "Distribution", "ij.plugin.Distribution", 0, false);
+        addPlugInItem(hidden_menu, "Label", "ij.plugin.filter.Filler(\"label\")", 0, false);
+        addPlugInItem(hidden_menu, "ClearResults", "ij.plugin.filter.Analyzer(\"clear\")", 0, false);
+        addPlugInItem(hidden_menu, "SetMeasurements", "ij.plugin.filter.Analyzer(\"set\")", 0, false);
+        addPlugInItem(hidden_menu, "Calibrate", "ij.plugin.filter.Calibrator", 0, false);
+        hidden_menu.addSeparator();
+        addPlugInItem(hidden_menu, "Smooth", "ij.plugin.filter.Filters(\"smooth\")", KeyEvent.VK_S, true);
+        addPlugInItem(hidden_menu, "Sharpen", "ij.plugin.filter.Filters(\"sharpen\")", 0, false);
+        addPlugInItem(hidden_menu, "FindEdges", "ij.plugin.filter.Filters(\"edge\")", 0, false);
+        addPlugInItem(hidden_menu, "EnhanceContrast", "ij.plugin.ContrastEnhancer", 0, false);
+        hidden_menu.addSeparator();
+        addSubMenu(hidden_menu, "Noise");
+        addSubMenu(hidden_menu, "Shadows");
+        addSubMenu(hidden_menu, "Binary");
+        addSubMenu(hidden_menu, "Math");
+        hidden_menu.addSeparator();
+        importMenu = addSubMenu(hidden_menu, "Import");
+        addPlugInItem(hidden_menu, "SubtractBackground", "ij.plugin.filter.BackgroundSubtracter", 0, false);
+        filtersMenu = addSubMenu(hidden_menu, "Filters");
+        hidden_menu.addSeparator();
+        //EU_HOU Bundle
+        addItem(hidden_menu, menubun.getString("Photometer"), 0, false);
+        //EU_HOU Bundle
+        addItem(hidden_menu, menubun.getString("ClearPhotometer"), 0, false);
+        //EU_HOU Bundle
+        addItem(hidden_menu, menubun.getString("PhotometrySettings"), 0, false);
+
+        hidden_menu.addSeparator();
+		/*
+		 * EU_HOU CHANGES END
+		 */
+		
+        //EU_HOU Bundle
+		Menu file = getMenu(menubun.getString("File"));
+		//EU_HOU MISSING Bundle
 		Menu newMenu = getMenu("File>New", true);
 		addPlugInItem(file, "Open...", "ij.plugin.Commands(\"open\")", KeyEvent.VK_O, false);
+		/*
+		 * EU_HOU CHANGES
+		 */
+        addPlugInItem(file, "Radio_Spectrum", "ij.plugin.RadioSpectrum_Reader", 0, false);
+		/*
+		 * EU_HOU CHANGES END
+		 */
 		addPlugInItem(file, "Open Next", "ij.plugin.NextImageOpener", KeyEvent.VK_O, true);
 		Menu openSamples = getMenu("File>Open Samples", true);
 		openSamples.addSeparator();
@@ -144,22 +238,37 @@ public class Menus {
 		addPlugInItem(edit, "Paste Control...", "ij.plugin.frame.PasteController", 0, false);
 		edit.addSeparator();
 		addPlugInItem(edit, "Clear", "ij.plugin.filter.Filler(\"clear\")", 0, false);
+		/*
+		 * EU_HOU CHANGES
+		 */
+		addPlugInItem(edit, "Crop", "ij.plugin.filter.Resizer(\"crop\")", KeyEvent.VK_X, false);
+        addPlugInItem(edit, "CaptureScreen", "ij.plugin.ScreenGrabber", KeyEvent.VK_X, true);
+        /*
+         * EU_HOU CHANGES END
+         */
 		addPlugInItem(edit, "Clear Outside", "ij.plugin.filter.Filler(\"outside\")", 0, false);
 		addPlugInItem(edit, "Fill", "ij.plugin.filter.Filler(\"fill\")", KeyEvent.VK_F, false);
 		addPlugInItem(edit, "Draw", "ij.plugin.filter.Filler(\"draw\")", KeyEvent.VK_D, false);
 		addPlugInItem(edit, "Invert", "ij.plugin.filter.Filters(\"invert\")", KeyEvent.VK_I, true);
 		edit.addSeparator();
+        //EU_HOU Bundle
 		getMenu("Edit>Selection", true);
+        //EU_HOU Bundle
 		Menu optionsMenu = getMenu("Edit>Options", true);
 		
-		Menu image = getMenu("Image");
-		Menu imageType = getMenu("Image>Type");
-			gray8Item = addCheckboxItem(imageType, "8-bit", "ij.plugin.Converter(\"8-bit\")");
-			gray16Item = addCheckboxItem(imageType, "16-bit", "ij.plugin.Converter(\"16-bit\")");
-			gray32Item = addCheckboxItem(imageType, "32-bit", "ij.plugin.Converter(\"32-bit\")");
+        //EU_HOU Bundle =2
+		Menu image = getMenu(menubun.getString("Image"));
+		Menu imageType = getMenu(menubun.getString("Type"));
+			//EU_HOU Bundle =3
+			gray8Item = addCheckboxItem(imageType, menubun.getString("8-bit"), "ij.plugin.Converter(\"8-bit\")");
+			gray16Item = addCheckboxItem(imageType, menubun.getString("16-bit"), "ij.plugin.Converter(\"16-bit\")");
+			gray32Item = addCheckboxItem(imageType, menubun.getString("32-bit"), "ij.plugin.Converter(\"32-bit\")");
+	        //EU_HOU MISSING Bundle
 			color256Item = addCheckboxItem(imageType, "8-bit Color", "ij.plugin.Converter(\"8-bit Color\")");
-			colorRGBItem = addCheckboxItem(imageType, "RGB Color", "ij.plugin.Converter(\"RGB Color\")");
+	        //EU_HOU Bundle
+			colorRGBItem = addCheckboxItem(imageType, menubun.getString("RGBColor"), "ij.plugin.Converter(\"RGB Color\")");
 			imageType.add(new MenuItem("-"));
+	        //EU_HOU MISSING Bundle
 			RGBStackItem = addCheckboxItem(imageType, "RGB Stack", "ij.plugin.Converter(\"RGB Stack\")");
 			HSBStackItem = addCheckboxItem(imageType, "HSB Stack", "ij.plugin.Converter(\"HSB Stack\")");
 			LabStackItem = addCheckboxItem(imageType, "Lab Stack", "ij.plugin.Converter(\"Lab Stack\")");
@@ -185,7 +294,8 @@ public class Menus {
 		image.addSeparator();
 		getMenu("Image>Lookup Tables", true);
 		
-		Menu process = getMenu("Process");
+        //EU_HOU Bundle
+		Menu process = getMenu(menubun.getString("Process"));
 		addPlugInItem(process, "Smooth", "ij.plugin.filter.Filters(\"smooth\")", KeyEvent.VK_S, true);
 		addPlugInItem(process, "Sharpen", "ij.plugin.filter.Filters(\"sharpen\")", 0, false);
 		addPlugInItem(process, "Find Edges", "ij.plugin.filter.Filters(\"edge\")", 0, false);
@@ -203,7 +313,18 @@ public class Menus {
 		addPlugInItem(process, "Subtract Background...", "ij.plugin.filter.BackgroundSubtracter", 0, false);
 		addItem(process, "Repeat Command", KeyEvent.VK_R, false);
 		
-		Menu analyzeMenu = getMenu("Analyze");
+		//EU_HOU Bundle
+		Menu analyzeMenu = getMenu(menubun.getString("Analyze"));
+		/*
+		 * EU_HOU CHANGES
+		 */
+		 addPlugInItem(analyzeMenu, "Photometer", "ij.process.Photometer", 0, false);
+	     addPlugInItem(analyzeMenu, "ClearPhotometer", "ij.process.ClearPhotometer", 0, false);
+	     addPlugInItem(analyzeMenu, "PhotometrySettings", "ij.process.PhotometrySettings", 0, false);
+	     analyzeMenu.addSeparator();
+		/*
+		 * EU_HOU CHANGES END
+		 */
 		addPlugInItem(analyzeMenu, "Measure", "ij.plugin.filter.Analyzer", KeyEvent.VK_M, false);
 		addPlugInItem(analyzeMenu, "Analyze Particles...", "ij.plugin.filter.ParticleAnalyzer", 0, false);
 		addPlugInItem(analyzeMenu, "Summarize", "ij.plugin.filter.Analyzer(\"sum\")", 0, false);
@@ -227,7 +348,9 @@ public class Menus {
 		// the plugins will be added later, after a separator
 		addPluginsMenu();
 
-		Menu window = getMenu("Window");
+		
+        //EU_HOU Bundle
+		Menu window = getMenu(menubun.getString("Window"));
 		addPlugInItem(window, "Show All", "ij.plugin.WindowOrganizer(\"show\")", KeyEvent.VK_CLOSE_BRACKET, false);
 		String key = IJ.isWindows()?"enter":"return";
 		addPlugInItem(window, "Main Window ["+key+"]", "ij.plugin.WindowOrganizer(\"imagej\")", 0, false);
@@ -236,7 +359,8 @@ public class Menus {
 		addPlugInItem(window, "Tile", "ij.plugin.WindowOrganizer(\"tile\")", 0, false);
 		window.addSeparator();
 
-		Menu help = getMenu("Help");
+		//EU_HOU Bundle
+		Menu help = getMenu(menubun.getString("Help"));
 		addPlugInItem(help, "ImageJ Website...", "ij.plugin.BrowserLauncher", 0, false);
 		addPlugInItem(help, "ImageJ News...", "ij.plugin.BrowserLauncher(\""+IJ.URL+"/notes.html\")", 0, false);
 		addPlugInItem(help, "Documentation...", "ij.plugin.BrowserLauncher(\""+IJ.URL+"/docs\")", 0, false);
@@ -402,6 +526,7 @@ public class Menus {
 	}
 
 	void addOpenRecentSubMenu(Menu menu) {
+        //EU_HOU Bundle
 		openRecentMenu = getMenu("File>Open Recent");
  		for (int i=0; i<MAX_OPEN_RECENT_ITEMS; i++) {
 			String path = Prefs.getString("recent" + (i/10)%10 + i%10);
@@ -439,9 +564,11 @@ public class Menus {
 	}
 	
 	void addPlugInItem(Menu menu, String label, String className, int shortcut, boolean shift) {
-		pluginsTable.put(label, className);
+        //EU_HOU Bundle
+		pluginsTable.put(menubun.getString(label), className);
 		nPlugins++;
-		addItem(menu, label, shortcut, shift);
+        //EU_HOU Bundle
+		addItem(menu, menubun.getString(label), shortcut, shift);
 	}
 
 	CheckboxMenuItem addCheckboxItem(Menu menu, String label, String className) {
@@ -458,7 +585,9 @@ public class Menus {
 		String value;
 		String key = name.toLowerCase(Locale.US);
 		int index;
- 		Menu submenu=new Menu(name.replace('_', ' '));
+		//EU_HOU Bundle
+ 		//Menu submenu=new Menu(name.replace('_', ' '));
+		Menu submenu = new Menu(menubun.getString(name));
 		index = key.indexOf(' ');
 		if (index>0)
 			key = key.substring(0, index);
@@ -473,7 +602,8 @@ public class Menus {
 			else
 				addPluginItem(submenu, value);
 		}
-		if (name.equals("Lookup Tables") && applet==null)
+        //EU_HOU Bundle
+		if (name.equals(menubun.getString("Lookup")) && applet==null)
 			addLuts(submenu);
 		return submenu;
 	}
@@ -552,7 +682,9 @@ public class Menus {
 		String value,label,className;
 		int index;
 		//pluginsMenu = new Menu("Plugins");
-		pluginsMenu = getMenu("Plugins");
+        //EU_HOU Bundle
+		//pluginsMenu = getMenu("Plugins");
+        pluginsMenu = new Menu(menubun.getString("Plugins"));
 		for (int count=1; count<100; count++) {
 			value = Prefs.getString("plug-in" + (count/10)%10 + count%10);
 			if (value==null)
@@ -1226,11 +1358,13 @@ public class Menus {
 		gray8Item.setState(false);
 		gray16Item.setState(false);
 		gray32Item.setState(false);
-		color256Item.setState(false);
+        //EU_HOU CHANGES
+		//color256Item.setState(false);
 		colorRGBItem.setState(false);
-		RGBStackItem.setState(false);
+        //EU_HOU CHANGES
+		/*RGBStackItem.setState(false);
 		HSBStackItem.setState(false);
-		LabStackItem.setState(false);
+		LabStackItem.setState(false);*/
 		ImagePlus imp = WindowManager.getCurrentImage();
 		if (imp==null)
 			return;
@@ -1255,8 +1389,15 @@ public class Menus {
 				gray32Item.setState(true);
 				break;
    			case ImagePlus.COLOR_256:
-				color256Item.setState(true);
-				break;
+                /*
+                 * EU_HOU CHANGES
+                 */
+				//color256Item.setState(true);
+                gray8Item.setState(true);
+                /*
+                 * EU_HOU CHANGES END
+                 */
+   				break;
     		case ImagePlus.COLOR_RGB:
 				colorRGBItem.setState(true);
 				break;
