@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.process.*;
@@ -12,20 +13,42 @@ import java.awt.event.*;
 */
 public class ScaleBar implements PlugIn {
 
-	static final String[] locations = {"Upper Right", "Lower Right", "Lower Left", "Upper Left", "At Selection"};
+	/*
+	 * EU_HOU CHANGES
+	 */
+	//static final String[] locations = {"Upper Right", "Lower Right", "Lower Left", "Upper Left", "At Selection"};
+	final static String[] locationKeys = {"CaliUpR", "CaliDoR", "CaliDoL", "CaliUpL", "CaliSel"};
+	//static final String[] colors = {"White","Black","Light Gray","Gray","Dark Gray","Red","Green","Blue","Yellow"};
+	//static final String[] bcolors = {"None","Black","White","Dark Gray","Gray","Light Gray","Yellow","Blue","Green","Red"};
+	final static String[] colorKeys = {"WhiteColor", "BlackColor", "LGrayColor", "GrayColor", "DGrayColor", "RedColor", "GreenColor", "BlueColor", "YellowColor"};
+	final static String[] bcolorKeys = {"ColorNone", "BlackColor", "WhiteColor", "DGrayColor", "GrayColor", "LGrayColor", "YellowColor", "BlueColor", "GreenColor", "RedColor"};
+	//static final String[] checkboxLabels = {"Bold Text", "Hide Text", "Serif Font", "Overlay"};
+	static String[] checkboxLabels;
+	final static String[] checkboxLabelsKeys = {"ScaleBarBold", "ScaleBarHide", "ScaleBarSerif"};
+	static String[] colors;
+	static String[] locations;
+	static String[] bcolors;
+	/*
+	 * EU_HOU CHANGES END
+	 */
 	static final int UPPER_RIGHT=0, LOWER_RIGHT=1, LOWER_LEFT=2, UPPER_LEFT=3, AT_SELECTION=4;
-	static final String[] colors = {"White","Black","Light Gray","Gray","Dark Gray","Red","Green","Blue","Yellow"};
-	static final String[] bcolors = {"None","Black","White","Dark Gray","Gray","Light Gray","Yellow","Blue","Green","Red"};
-	static final String[] checkboxLabels = {"Bold Text", "Hide Text", "Serif Font", "Overlay"};
 	final static String SCALE_BAR = "|SB|";
-	
 	private static int defaultFontSize = 14;
 	private static int defaultBarHeight = 4;
 	private static double sBarWidth;
 	private static int sBarHeightInPixels = defaultBarHeight;
-	private static String sLocation = locations[LOWER_RIGHT];
+	/*
+	 * EU_HOU CHANGES
+	 */
+	/*private static String sLocation = locations[LOWER_RIGHT];
 	private static String sColor = colors[0];
-	private static String sBcolor = bcolors[0];
+	private static String sBcolor = bcolors[0];*/
+	private static String sLocation;
+	private static String sColor;
+	private static String sBcolor;
+	/*
+	 * EU_HOU CHANGES END
+	 */
 	private static boolean sBoldText = true;
 	private static boolean sHideText;
 	private static boolean sCreateOverlay = true;
@@ -54,6 +77,37 @@ public class ScaleBar implements PlugIn {
 	boolean showingOverlay, drawnScaleBar;
 
 	public void run(String arg) {
+		/*
+		 *  EU_HOU Bundle CHANGES
+		 */
+		colors = new String[colorKeys.length];
+		locations = new String[locationKeys.length];
+		bcolors = new String[bcolorKeys.length];
+		checkboxLabels = new String[checkboxLabelsKeys.length];
+		for (int i = 0; i < colorKeys.length; ++i) {
+			//EU_HOU Bundle
+			colors[i] = IJ.getColorBundle().getString(colorKeys[i]);
+		}
+		for (int i = 0; i < locationKeys.length; ++i) {
+			//EU_HOU Bundle
+			locations[i] = IJ.getPluginBundle().getString(locationKeys[i]);
+		}
+		for (int i = 0; i < bcolorKeys.length; ++i) {
+			//EU_HOU Bundle
+			bcolors[i] = IJ.getColorBundle().getString(bcolorKeys[i]);
+		}
+		for (int i = 0; i < checkboxLabelsKeys.length; ++i) {
+			//EU_HOU Bundle
+			checkboxLabels[i] = IJ.getPluginBundle().getString(checkboxLabelsKeys[i]);
+		}
+
+		location = new String(locations[1]);
+		color = new String(colors[0]);
+		bcolor = new String(bcolors[0]);
+		/*
+		 *  EU_HOU Bundle CHANGES END
+		 */
+		
 		imp = WindowManager.getCurrentImage();
 		if (imp!=null) {
 			if (showDialog(imp) && imp.getStackSize()>1 && labelAll)
@@ -127,19 +181,21 @@ public class ScaleBar implements PlugIn {
 			boldText = hideText = serifFont = createOverlay = false;
 		else
 			updateScalebar();
-		GenericDialog gd = new BarDialog("Scale Bar");
-		gd.addNumericField("Width in "+units+": ", barWidth, digits);
-		gd.addNumericField("Height in pixels: ", barHeightInPixels, 0);
-		gd.addNumericField("Font size: ", fontSize, 0);
-		gd.addChoice("Color: ", colors, color);
-		gd.addChoice("Background: ", bcolors, bcolor);
-		gd.addChoice("Location: ", locations, location);
+		//EU_HOU Bundle =7
+		GenericDialog gd = new BarDialog(IJ.getPluginBundle().getString("ScalerTitle"));
+		gd.addNumericField(IJ.getPluginBundle().getString("ScaleBarWidth") + " " + units+ ": ", barWidth, digits);
+		gd.addNumericField(IJ.getPluginBundle().getString("ScaleBarHeight") + " " + units + ": ", barHeightInPixels, 0);
+		gd.addNumericField(IJ.getPluginBundle().getString("ScaleBarFont"), fontSize, 0);
+		gd.addChoice(IJ.getPluginBundle().getString("ScaleBarColor") + ": ", colors, color);
+		gd.addChoice(IJ.getPluginBundle().getString("ScaleBarBackground") + ": ", bcolors, bcolor);
+		gd.addChoice(IJ.getPluginBundle().getString("ScaleBarLocation") + ": ", locations, location);
 		checkboxStates[0] = boldText; checkboxStates[1] = hideText;
 		checkboxStates[2] = serifFont; checkboxStates[3] = createOverlay;
 		gd.setInsets(10, 25, 0);
 		gd.addCheckboxGroup(2, 2, checkboxLabels, checkboxStates);
 		if (stackSize>1) {
 			gd.setInsets(0, 25, 0);
+			//EU_HOU MISSING Bundle
 			gd.addCheckbox("Label all slices", labelAll);
 		}
 		gd.showDialog();

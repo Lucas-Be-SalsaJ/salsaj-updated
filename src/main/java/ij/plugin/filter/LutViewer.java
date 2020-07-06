@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin.filter;
 import ij.*;
 import ij.process.*;
@@ -8,6 +9,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.util.ArrayList;
+//EU_HOU CHANGES : added Calibration import
+import ij.measure.Calibration;
+
 
 /** Displays the active image's look-up table. */
 public class LutViewer implements PlugInFilter {
@@ -19,7 +23,10 @@ public class LutViewer implements PlugInFilter {
 		return DOES_ALL-DOES_RGB+NO_UNDO+NO_CHANGES;
 	}
 
-	public void run(ImageProcessor ip) {
+	/*
+	 * EU_HOU CHANGES
+	 */
+	/*public void run(ImageProcessor ip) {
 		int xMargin = 35;
 		int yMargin = 20;
 		int width = 256;
@@ -103,27 +110,139 @@ public class LutViewer implements PlugInFilter {
         ImagePlus imp = new ImagePlus("Look-Up Table", img);
         //imp.show();
         new LutWindow(imp, new ImageCanvas(imp), ip);
+    }*/
+	public void run(ImageProcessor ip) {
+		ImagePlus LUTview = prepare(ip, imp.createLut(), imp.getCalibration());
+		new LutWindow(LUTview, new ImageCanvas(LUTview));
+	}
+	
+    static ImagePlus prepare(ImageProcessor ip, LookUpTable lut, Calibration cal) {
+    	int xMargin = 35;
+		int yMargin = 20;
+		int width = 256;
+		int height = 128;
+		int x, y, x1, y1, x2, y2;
+		int imageWidth, imageHeight;
+		int barHeight = 12;
+		boolean isGray;
+		double scale;
+
+        ip = imp.getChannelProcessor();
+        IndexColorModel cm = (IndexColorModel)ip.getColorModel();
+        LookUpTable lut = new LookUpTable(cm);
+		int mapSize = lut.getMapSize();
+		byte[] reds = lut.getReds();
+		byte[] greens = lut.getGreens();
+		byte[] blues = lut.getBlues();
+        isGray = lut.isGrayscale();
+
+		imageWidth = width + 2*xMargin;
+		imageHeight = height + 3*yMargin;
+		Image img = IJ.getInstance().createImage(imageWidth, imageHeight);
+		Graphics g = img.getGraphics();
+		g.setColor(Color.white);
+		g.fillRect(0, 0, imageWidth, imageHeight);
+		g.setColor(Color.black);
+		g.drawRect(xMargin, yMargin, width, height);
+
+		scale = 256.0/mapSize;
+		if (isGray)
+			g.setColor(Color.black);
+		else
+			g.setColor(Color.red);
+		x1 = xMargin;
+		y1 = yMargin + height - (reds[0]&0xff)/2;
+		for (int i = 1; i<256; i++) {
+			x2 = xMargin + i;
+			y2 = yMargin + height - (reds[(int)(i/scale)]&0xff)/2;
+			g.drawLine(x1, y1, x2, y2);
+			x1 = x2;
+			y1 = y2;
+		}
+
+		if (!isGray) {
+			g.setColor(Color.green);
+			x1 = xMargin;
+			y1 = yMargin + height - (greens[0]&0xff)/2;
+			for (int i = 1; i<256; i++) {
+				x2 = xMargin + i;
+				y2 = yMargin + height - (greens[(int)(i/scale)]&0xff)/2;
+				g.drawLine(x1, y1, x2, y2);
+				x1 = x2;
+				y1 = y2;
+			}
+		}
+
+		if (!isGray) {
+			g.setColor(Color.blue);
+			x1 = xMargin;
+			y1 = yMargin + height - (blues[0]&0xff)/2;
+			for (int i = 1; i<255; i++) {
+				x2 = xMargin + i;
+				y2 = yMargin + height - (blues[(int)(i/scale)]&0xff)/2;
+				g.drawLine(x1, y1, x2, y2);
+				x1 = x2;
+				y1 = y2;
+			}
+		}
+
+		x = xMargin;
+		y = yMargin + height + 2;
+		lut.drawColorBar(g, x, y, 256, barHeight);
+		
+		y += barHeight + 15;
+		g.setColor(Color.black);
+		g.drawString("0", x - 4, y);
+		g.drawString(""+(mapSize-1), x + width - 10, y);
+		g.drawString("255", 7, yMargin + 4);
+		g.dispose();
+		
+        return new ImagePlus(IJ.getPluginBundle().getString("LUTTitle"), img);
     }
+    
 
 } // LutViewer class
 
 class LutWindow extends ImageWindow implements ActionListener {
-
-	private Button button;
+	//EU_HOU CHANGES : added buttonUpdate
+	private Button button, buttonUpdate;
 	private ImageProcessor ip;
+	private ImagePlus oi;
 
 	LutWindow(ImagePlus imp, ImageCanvas ic, ImageProcessor ip) {
 		super(imp, ic);
 		this.ip = ip;
 		addPanel();
 	}
+	
+	/*
+	 * EU_HOU ADD
+	 */
+	LutWindow(ImagePlus imp, ImageCanvas ic) {
+		super(imp, ic, false);
+		oi = imp;
+		addPanel();
+	}
+	/*
+	 * EU_HOU ADD END
+	 */
 
 	void addPanel() {
 		Panel panel = new Panel();
 		panel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		button = new Button(" List... ");
+		//EU_HOU Bundle
+		button = new Button((IJ.getPluginBundle().getString("List")));
 		button.addActionListener(this);
 		panel.add(button);
+		/*
+		 * EU_HOU CHANGES
+		 */
+        buttonUpdate = new Button(IJ.getPluginBundle().getString("Update"));
+        buttonUpdate.addActionListener(this);
+        panel.add(buttonUpdate);
+		/*
+		 * EU_HOU CHANGES END
+		 */
 		add(panel);
 		pack();
 	}
@@ -145,12 +264,14 @@ class LutWindow extends ImageWindow implements ActionListener {
 		icm.getBlues(b);		
 		ResultsTable rt = new ResultsTable();
 		for (int i=0; i<size; i++) {
+	        //EU_HOU MISSING Bundle
       		rt.setValue("Index", i, i);
       		rt.setValue("Red", i, r[i]&255);
       		rt.setValue("Green", i, g[i]&255);
       		rt.setValue("Blue", i, b[i]&255);
       	}
-		rt.show("LUT");
+        //EU_HOU Bundle
+		rt.show(IJ.getPluginBundle().getString("LUTTextTitle"));
 	}
 
 } // LutWindow class

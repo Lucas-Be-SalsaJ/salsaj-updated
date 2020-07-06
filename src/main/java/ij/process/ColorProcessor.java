@@ -1041,7 +1041,7 @@ public class ColorProcessor extends ImageProcessor {
 		}
 		showProgress(1.0);
 	}
-	
+    
 	public void flipVertical() {
 		int index1,index2;
 		int tmp;

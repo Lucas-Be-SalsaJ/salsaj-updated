@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin.frame;
 import java.awt.*;
 import java.awt.event.*;
@@ -7,6 +8,8 @@ import ij.plugin.*;
 import ij.process.*;
 import ij.gui.*;
 import ij.measure.*;
+//EU_HOU CHANGES : added util import
+import java.util.*;
 
 /** This plugin implements the Brightness/Contrast, Window/level and
 	Color Balance commands, all in the Image/Adjust sub-menu. It
@@ -20,7 +23,15 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 	public static final String[] sixteenBitRanges = {"Automatic", "8-bit (0-255)", "10-bit (0-1023)",
 		"12-bit (0-4095)", "14-bit (0-16383)", "15-bit (0-32767)", "16-bit (0-65535)"};
 	static final int AUTO_THRESHOLD = 5000;
-	static final String[] channelLabels = {"Red", "Green", "Blue", "Cyan", "Magenta", "Yellow", "All"};
+	/*
+	 * EU_HOU Bundle CHANGES
+	 */
+	//static final String[] channelLabels = {"Red", "Green", "Blue", "Cyan", "Magenta", "Yellow", "All"};
+	final static String[] channelLabelsKeys = {"RedColor", "GreenColor", "BlueColor", "CyanColor", "MagentaColor", "YellowColor", "ColorRGB"};
+	static String[] channelLabels;
+	/*
+	 * EU_HOU Bundle CHANGES END
+	 */
 	static final String[] altChannelLabels = {"Channel 1", "Channel 2", "Channel 3", "Channel 4", "Channel 5", "Channel 6", "All"};
 	static final int[] channelConstants = {4, 2, 1, 3, 5, 6, 7};
 
@@ -58,18 +69,36 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 	private String blankMinLabel = "-------";
 	private String blankMaxLabel = "--------";
 	private double scale = Prefs.getGuiScale();
+    // EU_HOU CHANGES : added menubun
+	static ResourceBundle bun = IJ.getPluginBundle();
+
 
 	public ContrastAdjuster() {
-		super("B&C");
+		//EU_HOU Bundle
+		super(bun.getString("ContrastTitle"));
+		/*
+		 * EU_HOU Bundle CHANGES
+		 */
+		if (channelLabels == null) {
+			channelLabels = new String[channelLabelsKeys.length];
+			for (int i = 0; i < channelLabels.length; ++i) {
+				channelLabels[i] = IJ.getColorBundle().getString(channelLabelsKeys[i]);
+			}
+		}
+		/*
+		 * EU_HOU Bundle CHANGES END
+		 */
 	}
 
 	public void run(String arg) {
 		windowLevel = arg.equals("wl");
 		balance = arg.equals("balance");
 		if (windowLevel)
-			setTitle("W&L");
+			//EU_HOU Bundle
+			setTitle(bun.getString("WLTitle"));
 		else if (balance) {
-			setTitle("Color");
+			//EU_HOU Bundle
+			setTitle(bun.getString("ColorTitle"));
 			channels = 4;
 		}
 
@@ -138,8 +167,11 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 			minSlider.addAdjustmentListener(this);
 			minSlider.addKeyListener(ij);
 			minSlider.setUnitIncrement(1);
+			//EU_HOU CHANGES : setBackground (default: no background)
+			minSlider.setBackground(Color.red);
 			minSlider.setFocusable(false); // prevents blinking on Windows
-			addLabel("Minimum", null);
+			//EU_HOU Bundle
+			addLabel(bun.getString("Minimum"), null);
 		}
 
 		// max slider
@@ -153,8 +185,11 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 			maxSlider.addAdjustmentListener(this);
 			maxSlider.addKeyListener(ij);
 			maxSlider.setUnitIncrement(1);
+			//EU_HOU CHANGES : setBackground (default: no background)
+			minSlider.setBackground(Color.blue);
 			maxSlider.setFocusable(false);
-			addLabel("Maximum", null);
+			//EU_HOU Bundle
+			addLabel(bun.getString("Maximum"), null);
 		}
 
 		// brightness slider
@@ -186,9 +221,11 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 			contrastSlider.setUnitIncrement(1);
 			contrastSlider.setFocusable(false);
 			if (windowLevel)
-				addLabel("Window: ", windowLabel=new TrimmedLabel("        "));
+				//EU_HOU Bundle
+				addLabel(bun.getString("Window"), windowLabel=new TrimmedLabel("        "));
 			else
-				addLabel("Contrast", null);
+				//EU_HOU Bundle
+				addLabel(bun.getString("Contrast"), null);
 		}
 
 		// color channel popup menu
@@ -214,26 +251,37 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 		int trim = IJ.isMacOSX()?20:0;
 		panel = new Panel();
 		panel.setLayout(new GridLayout(0,2, 0, 0));
-		autoB = new TrimmedButton("Auto",trim);
+		//EU_HOU Bundle
+		autoB = new TrimmedButton(bun.getString("Auto"),trim);
 		autoB.addActionListener(this);
 		autoB.addKeyListener(ij);
 		panel.add(autoB);
-		resetB = new TrimmedButton("Reset",trim);
+		//EU_HOU Bundle
+		resetB = new TrimmedButton(bun.getString("Reset"),trim);
 		resetB.addActionListener(this);
 		resetB.addKeyListener(ij);
 		panel.add(resetB);
-		setB = new TrimmedButton("Set",trim);
+		//EU_HOU Bundle
+		setB = new TrimmedButton(bun.getString("Set"),trim);
 		setB.addActionListener(this);
 		setB.addKeyListener(ij);
 		panel.add(setB);
-		applyB = new TrimmedButton("Apply",trim);
+		
+		/*
+		 * EU_HOU CHANGES : apply button is not pedagogical
+		 */
+		//EU_HOU Bundle
+		/*applyB = new TrimmedButton(bun.getString("MyApply2"), trim);
 		applyB.addActionListener(this);
 		applyB.addKeyListener(ij);
 		panel.add(applyB);
 		c.gridy = y++;
 		c.insets = new Insets(8, 5, 10, 5);
 		gridbag.setConstraints(panel, c);
-		add(panel);
+		add(panel);*/
+		/*
+		 * EU_HOU CHANGES END
+		 */
 
  		addKeyListener(ij);  // ImageJ handles keyboard shortcuts
 		pack();
@@ -363,6 +411,7 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 		min = imp.getDisplayRangeMin();
 		max = imp.getDisplayRangeMax();
 		if (IJ.debugMode) {
+			//EU_HOU MISSING Bundle =4
 			IJ.log("min: " + min);
 			IJ.log("max: " + max);
 			IJ.log("defaultMin: " + defaultMin);
@@ -644,7 +693,8 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 		int bitDepth = imp.getBitDepth();
 		if (bitDepth==32) {
 			IJ.beep();
-			IJ.showStatus("\"Apply\" does not work with 32-bit images");
+			//EU_HOU Bundle
+			IJ.showStatus(bun.getString("AdjTypeErr"));
 			imp.unlock();
 			return;
 		}
@@ -671,8 +721,9 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 		ip.setRoi(imp.getRoi());
 		if (imp.getStackSize()>1 && !imp.isComposite()) {
 			ImageStack stack = imp.getStack();
+			//EU_HOU Bundle
 			YesNoCancelDialog d = new YesNoCancelDialog(new Frame(),
-				"Entire Stack?", "Apply LUT to all "+stack.size()+" stack slices?");
+					IJ.getBundle().getString("ProcStackTitle"), bun.getString("LUT1") + " " +stack.size() + " " + bun.getString("LUT2"));
 			if (d.cancelPressed())
 				{imp.unlock(); return;}
 			if (d.yesPressed()) {
@@ -747,11 +798,21 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 		if (IJ.debugMode) IJ.log("applyRGBStack: "+min+"-"+max);
 		int current = imp.getCurrentSlice();
 		int n = imp.getStackSize();
-		if (!IJ.showMessageWithCancel("Update Entire Stack?",
+		/*
+		 * EU_HOU Bundle CHANGES
+		 */
+		/*if (!IJ.showMessageWithCancel("Update Entire Stack?",
 		"Apply brightness and contrast settings\n"+
 		"to all "+n+" slices in the stack?\n \n"+
 		"NOTE: There is no Undo for this operation."))
+			return;*/
+		if (!IJ.showMessageWithCancel(IJ.getBundle().getString("ProcStackTitle"), bun.getString("RGB1") + n + "\n" + bun.getString("RGB2") + "\n" +
+				IJ.getBundle().getString("NoUndoConfirm"))) {
 			return;
+		}
+		/*
+		 * EU_HOU Bundle CHANGES END
+		 */
  		ImageProcessor mask = imp.getMask();
  		Rectangle roi = imp.getRoi()!=null?imp.getRoi().getBounds():null;
  		ImageStack stack = imp.getStack();
@@ -850,9 +911,11 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 		double minValue = cal.getCValue(min);
 		double maxValue = cal.getCValue(max);
 		int channels = imp.getNChannels();
-		GenericDialog gd = new GenericDialog("Set Display Range");
-		gd.addNumericField("Minimum displayed value: ", minValue, digits);
-		gd.addNumericField("Maximum displayed value: ", maxValue, digits);
+		//EU_HOU Bundle =3
+		GenericDialog gd = new GenericDialog(bun.getString("SetMinMaxTitle"));
+		gd.addNumericField(bun.getString("MinVal"), minValue, digits);
+		gd.addNumericField(bun.getString("MaxVal"), maxValue, digits);
+		//EU_HOU MISSING Bundle =2
 		gd.addChoice("Unsigned 16-bit range:", sixteenBitRanges, sixteenBitRanges[get16bitRangeIndex()]);
 		String label = "Propagate to all other ";
 		label = imp.isComposite()?label+channels+" channel images":label+"open images";
@@ -1008,9 +1071,11 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 		//IJ.log("setWindowLevel: "+min+" "+max);
 		double windowValue = maxValue - minValue;
 		double levelValue = minValue + windowValue/2.0;
-		GenericDialog gd = new GenericDialog("Set W&L");
-		gd.addNumericField("Window Center (Level): ", levelValue, digits);
-		gd.addNumericField("Window Width: ", windowValue, digits);
+		//EU_HOU Bundle =3
+		GenericDialog gd = new GenericDialog(bun.getString(""));
+		gd.addNumericField(bun.getString("WinCenter"), levelValue, digits);
+		gd.addNumericField(bun.getString("WinWidth"), windowValue, digits);
+		//EU_HOU MISSING Bundle
 		gd.addCheckbox("Propagate to all open images", false);
 		gd.showDialog();
 		if (gd.wasCanceled())
@@ -1097,10 +1162,12 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 		imp = WindowManager.getCurrentImage();
 		if (imp==null) {
 			IJ.beep();
-			IJ.showStatus("No image");
+			//EU_HOU Bundle
+			IJ.showStatus(bun.getString("NoImg"));
 			return;
 		} else if (imp.getOverlay()!=null && imp.getOverlay().isCalibrationBar()) {
 			IJ.beep();
+			//EU_HOU MISSING Bundle
 			IJ.showStatus("Has calibration bar");
 			return;
 		}
@@ -1193,6 +1260,144 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 } // ContrastAdjuster class
 
 
+/*
+ * EU_HOU UNUSED CHANGES
+ */
+
+
+/*
+ * EU_HOU UNUSED CHANGES
+ */
+class ColorTable extends Canvas {
+
+
+	private Image img;
+	LookUpTable lut;
+	long min = -1;
+	long max = -1;
+	long orgmin, orgmax;
+	long newmax, newmin;
+	//int histogram[] = new int[64];
+	double slope;
+	long factor;
+	double bval;
+	boolean magdisp = false;
+
+
+	/**
+	 *  Constructor for the ColorTable object
+	 */
+	public ColorTable() {
+		System.out.println("B&C lut " + ContrastAdjuster.WIDTH + " " + ContrastAdjuster.HEIGHT);
+		setSize(ContrastAdjuster.WIDTH + 2, ContrastAdjuster.HEIGHT + 2);
+		min = 0;
+		max = 255;
+	}
+
+	public void paint(Graphics g) {
+		/*
+		    min = newmin;
+		    max = newmax;
+		    img = createImage(ContrastAdjuster.WIDTH, ContrastAdjuster.HEIGHT);
+		    Graphics gr = img.getGraphics();
+		    double step = ((double) (max - min)) / 64;
+		    64 samples
+		    int isg;
+		    try {
+		    isg = WindowManager.getCurrentImage().getType();
+		    lut = new LookUpTable(WindowManager.getCurrentImage().getImage());
+		    }
+		    catch (Exception ex) {
+		    return;
+		    }
+		    boolean isGray;
+		    if (lut != null) {
+		    lut = WindowManager.getCurrentImage().createLut();
+		    }
+		    isGray = lut.isGrayscale() && !((isg == ImagePlus.COLOR_256) || (isg == ImagePlus.COLOR_RGB));
+		    double width;
+		    if (min == max) {
+		    width = ContrastAdjuster.WIDTH;
+		    slope = Long.MAX_VALUE;
+		    }
+		    else {
+		    width = ContrastAdjuster.WIDTH / 64;
+		    slope = (double) (orgmax - orgmin) / (double) (max - min);
+		    }
+		    slope = (double)(orgmax-orgmin)/(double)(max-min);
+		    float org = ((float) (min - orgmin) / (float) (orgmax - orgmin));
+		    int xorg = (int) (org * (float) ContrastAdjuster.WIDTH);
+		    if (magdisp) {
+		    xorg = 0;
+		    slope = 256 / ContrastAdjuster.WIDTH;
+		    }
+		    gr.setColor(Color.white);
+		    gr.fillRect(0, 0, ContrastAdjuster.WIDTH, ContrastAdjuster.HEIGHT);
+		    byte[] reds;
+		    byte[] greens;
+		    byte[] blues;
+		    int mapSize = lut.getMapSize();
+		    java.awt.image.ColorModel cm = lut.getColorModel();
+		    if (cm instanceof IndexColorModel) {
+		    IndexColorModel m = (IndexColorModel) cm;
+		    mapSize = m.getMapSize();
+		    reds = new byte[mapSize];
+		    greens = new byte[mapSize];
+		    blues = new byte[mapSize];
+		    m.getReds(reds);
+		    m.getGreens(greens);
+		    m.getBlues(blues);
+		    }
+		    else {
+		    mapSize = 256;
+		    reds = new byte[mapSize];
+		    greens = new byte[mapSize];
+		    blues = new byte[mapSize];
+		    for (int i = 0; i < mapSize; i++) {
+		    reds[i] = (byte) i;
+		    greens[i] = (byte) i;
+		    blues[i] = (byte) i;
+		    }
+		    }
+		    int xend = (slope != Long.MAX_VALUE ?
+		    (int) (((float) ContrastAdjuster.WIDTH) / slope) + xorg
+		    : Integer.MAX_VALUE);
+		    if (xend != Integer.MAX_VALUE) {
+		    for (int i = xorg; i < xend; i += (int) width) {
+		    int j = (int) ((double) ((i - xorg) * mapSize) / (double) (xend - xorg));
+		    gr.setColor(new Color(reds[j] & 0xff, greens[j] & 0xff, blues[j] & 0xff));
+		    gr.fillRect(i, 0, (int) width, ContrastAdjuster.HEIGHT);
+		    }
+		    }
+		    else {
+		    gr.setColor(new Color(reds[mapSize - 1] & 0xff, greens[mapSize - 1] & 0xff, blues[mapSize - 1] & 0xff));
+		    gr.fillRect(0, 0, ContrastAdjuster.WIDTH, ContrastAdjuster.HEIGHT);
+		    }
+		    if (xorg > 0) {
+		    gr.setColor(new Color(reds[0] & 0xff, greens[0] & 0xff, blues[0] & 0xff));
+		    gr.fillRect(0, 0, xorg, ContrastAdjuster.HEIGHT);
+		    }
+		    if (xend < ContrastAdjuster.WIDTH) {
+		    gr.setColor(new Color(reds[mapSize - 1] & 0xff, greens[mapSize - 1] & 0xff, blues[mapSize - 1] & 0xff));
+		    gr.fillRect(xend, 0, ContrastAdjuster.WIDTH - xend, ContrastAdjuster.HEIGHT);
+		    }
+		    g.drawImage(img, 0, 0, this);
+		  */
+		System.out.println("drawImage B&C LUT OK");
+	}
+
+	public void update(Graphics g) {
+		if (min == newmin && max == newmax) {
+			return;
+		}
+
+		paint(g);
+	}
+}
+/*
+ * EU_HOU UNUSED CHANGES END
+ */
+
 class ContrastPlot extends Canvas implements MouseListener {
 
 	static final int WIDTH=128, HEIGHT=64;
@@ -1257,7 +1462,118 @@ class ContrastPlot extends Canvas implements MouseListener {
 	}
 
 	public void paint(Graphics g) {
-		int x1, y1, x2, y2;
+		/*
+		 * EU_HOU CHANGES
+		 */
+		int x1;
+		int y1;
+		int x2;
+		int y2;
+		int x12;
+		int x22;
+
+		double scale = (double) WIDTH / (defaultMax - defaultMin);
+		double slope = 0.0;
+
+		if (max != min) {
+			slope = HEIGHT / (max - min);
+		}
+		if (min >= defaultMin) {
+			x1 = (int) (scale * (min - defaultMin));
+			y1 = HEIGHT;
+		}
+		else {
+			x1 = 0;
+			x12 = 0;
+			if (max > min) {
+				y1 = HEIGHT - (int) ((defaultMin - min) * slope);
+			}
+			else {
+				y1 = HEIGHT;
+			}
+		}
+		if (max <= defaultMax) {
+			x2 = (int) (scale * (max - defaultMin));
+			y2 = 0;
+		}
+		else {
+			x2 = WIDTH;
+			x22 = WIDTH;
+			if (max > min) {
+				y2 = HEIGHT - (int) ((defaultMax - min) * slope);
+			}
+			else {
+				y2 = 0;
+			}
+		}
+
+		if (histogram != null) {
+			// EU_HOU
+			//if (os == null && hmax != 0) {
+			os = createImage(WIDTH, HEIGHT);
+			osg = os.getGraphics();
+			osg.setColor(Color.orange);
+			osg.fillRect(0, 0, WIDTH, HEIGHT);
+			osg.setColor(color);
+			// EU_HOU
+			int idx = 0;
+			LookUpTable lut = WindowManager.getCurrentImage().createLut();
+			byte[] reds = null;
+			byte[] greens = null;
+			byte[] blues = null;
+			if (lut != null) {
+				reds = lut.getReds();
+				greens = lut.getGreens();
+				blues = lut.getBlues();
+			}
+			System.out.println("lut=" + lut + " r=" + reds);
+			for (int i = 0; i < WIDTH; i++) {
+				if (i <= x1) {
+					idx = 0;
+				}
+				else if (i >= x2) {
+					idx = 255;
+				}
+				else {
+					idx = (int) (255 * (i - x1) / (x2 - x1 - 1));
+				}
+				//System.out.println("i=" + i + " idx=" + idx + " r=" + (reds[idx] & 0xff) + " g=" + (greens[idx] & 0xff) + " b=" + (blues[idx] & 0xff));
+				if (reds != null) {
+					osg.setColor(new Color(reds[idx] & 0xff, greens[idx] & 0xff, blues[idx] & 0xff));
+				}
+				else {
+					osg.setColor(new Color(idx, idx, idx));
+				}
+				osg.drawLine(i, HEIGHT, i, HEIGHT - ((int) (HEIGHT * histogram[i]) / hmax));
+			}
+			osg.dispose();
+			//}
+			if (os != null) {
+				g.drawImage(os, 0, 0, this);
+			}
+		}
+		else {
+			g.setColor(Color.white);
+			g.fillRect(0, 0, WIDTH, HEIGHT);
+		}
+
+		//g.setColor(Color.black);
+		//g.drawLine(x1, y1, x2, y2);
+		/*
+		    EU_HOU CHANGES barres de couleur
+		  */
+		g.setColor(Color.red);
+		g.drawRect(x1, 0, WIDTH - x1, HEIGHT);
+		g.setColor(Color.blue);
+		g.drawRect(0, 0, x2, HEIGHT);
+		g.setColor(Color.green);
+		//g.drawLine(x2, HEIGHT - 5, x2, HEIGHT);
+		/*
+		    EU_HOU END
+		  */
+		g.drawRect(0, 0, WIDTH, HEIGHT);
+	}
+		/*int x1, y1, x2, y2;
 		double scale = (double)width/(defaultMax-defaultMin);
 		double slope = 0.0;
 		if (max!=min)
@@ -1283,7 +1599,8 @@ class ContrastPlot extends Canvas implements MouseListener {
 				y2 = 0;
 		}
 		if (histogram!=null) {
-			if (os==null && hmax!=0) {
+			// EU_HOU CHANGES
+			//if (os==null && hmax!=0) {
 				os = createImage(width,height);
 				osg = os.getGraphics();
 				osg.setColor(Color.white);
@@ -1305,7 +1622,7 @@ class ContrastPlot extends Canvas implements MouseListener {
  		g.drawLine(x1, y1, x2, y2);
  		g.drawLine(x2, height-5, x2, height);
  		g.drawRect(0, 0, width, height);
-     }
+     }*/
 
 	public void mousePressed(MouseEvent e) {}
 	public void mouseReleased(MouseEvent e) {}
@@ -1313,6 +1630,9 @@ class ContrastPlot extends Canvas implements MouseListener {
 	public void mouseClicked(MouseEvent e) {}
 	public void mouseEntered(MouseEvent e) {}
 
+	/*
+	 * EU_HOU CHANGES END
+	 */
 } // ContrastPlot class
 
 class TrimmedLabel extends Label {

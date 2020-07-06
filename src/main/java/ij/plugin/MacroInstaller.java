@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import java.awt.*;
 import java.io.*;
@@ -105,6 +106,7 @@ public class MacroInstaller implements PlugIn, MacroConstants, ActionListener {
 				if (nextToken==STRING_CONSTANT) {
 					if (count==MAX_MACROS) {
 						if (isPluginsMacrosMenu)
+							//EU_HOU MISSING Bundle
 							IJ.error("Macro Installer", "Macro sets are limited to "+MAX_MACROS+" macros.");
 						break;
 					}
@@ -187,6 +189,7 @@ public class MacroInstaller implements PlugIn, MacroConstants, ActionListener {
 		if (macrosMenu!=null)
 			this.instance = this;
 		if (shortcutsInUse!=null && text!=null)
+			//EU_HOU MISSING Bundle
 			IJ.showMessage("Install Macros", (inUseCount==1?"This keyboard shortcut is":"These keyboard shortcuts are")
 			+ " already in use:"+shortcutsInUse);
 		if (nMacros==0 && fileName!=null) {
@@ -202,8 +205,10 @@ public class MacroInstaller implements PlugIn, MacroConstants, ActionListener {
 			macroNames[0] = anonymousName;
 			nMacros = 1;
 		}
+		//EU_HOU MISSING Bundle
 		String word = nMacros==1?" macro":" macros";
 		if (isPluginsMacrosMenu)
+			//EU_HOU MISSING Bundle
 			IJ.showStatus(nMacros + word + " installed");
 	}
 	
@@ -368,11 +373,13 @@ public class MacroInstaller implements PlugIn, MacroConstants, ActionListener {
 	
 	 String showDialog() {
 		if (defaultDir==null) defaultDir = Menus.getMacrosPath();
+		//EU_HOU MISSING Bundle
 		OpenDialog od = new OpenDialog("Install Macros", defaultDir, fileName);
 		String name = od.getFileName();
 		if (name==null) return null;
 		String dir = od.getDirectory();
 		if (!(name.endsWith(".txt")||name.endsWith(".ijm"))) {
+			//EU_HOU MISSING Bundle
 			IJ.showMessage("Macro Installer", "File name must end with \".txt\" or \".ijm\" .");
 			return null;
 		}
@@ -508,6 +515,7 @@ public class MacroInstaller implements PlugIn, MacroConstants, ActionListener {
 
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
+		//EU_HOU MISSING Bundle
 		openingStartupMacrosInEditor = fileName.startsWith("StartupMacros");
 	}
 

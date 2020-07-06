@@ -9,6 +9,14 @@ import java.awt.*;
 import java.io.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+/*
+ *  EU_HOU CHANGES
+ */
+import java.util.ResourceBundle;
+import ij.process.Photometer;
+/*
+ *  EU_HOU CHANGES END
+ */
 
 /** Uses a TextPanel to displays text in a window.
 	@see TextPanel
@@ -30,6 +38,14 @@ public class TextWindow extends Frame implements ActionListener, FocusListener, 
 	int fontSize = (int)Prefs.get(FONT_SIZE, 5);
 	MenuBar mb;
 	private static Font font;
+	/*
+	 * EU_HOU CHANGES
+	 */
+    private boolean modifListen = false;
+    private boolean ListenTextPanel = false;
+	/*
+	 * EU_HOU CHANGES END
+	 */
  
 	/**
 	* Opens a new single-column text window.
@@ -75,7 +91,43 @@ public class TextWindow extends Frame implements ActionListener, FocusListener, 
 			textPanel.append(text);
 		create(title, textPanel, width, height);
 	}
-
+	
+	/*
+	 * EU_HOU ADD 
+	 */
+    public TextWindow(String title, String headings, String data, int width, int height, boolean hint) {
+        super(title);
+        enableEvents(AWTEvent.WINDOW_EVENT_MASK | AWTEvent.MOUSE_EVENT_MASK);
+        setBackground(ImageJ.backgroundColor);
+        textPanel = new TextPanel(title, hint);
+        ListenTextPanel = true;
+        textPanel.setTitle(title);
+        add("Center", textPanel);
+        textPanel.setColumnHeadings(headings);
+        if (data != null) {
+            textPanel.append(data);
+        }
+        addKeyListener(textPanel);
+        ImageJ ij = IJ.getInstance();
+        if (ij != null) {
+            Image img = ij.getIconImage();
+            if (img != null) {
+                try {
+                    setIconImage(img);
+                } catch (Exception e) {
+                }
+            }
+        }
+        addFocusListener(this);
+        addMenuBar();
+        WindowManager.addWindow(this);
+        setSize(width, height);
+        GUI.center(this);
+        show();
+    }
+    /*
+     * EU_HOU ADD END
+     */
 	private void create(String title, TextPanel textPanel, int width, int height) {
 		enableEvents(AWTEvent.WINDOW_EVENT_MASK);
 		if (IJ.isLinux()) setBackground(ImageJ.backgroundColor);
@@ -96,7 +148,8 @@ public class TextWindow extends Frame implements ActionListener, FocusListener, 
 		WindowManager.addWindow(this);
 		Point loc=null;
 		int w=0, h=0;
-		if (title.equals("Results")) {
+		//EU_HOU Bundle
+		if (title.equals(IJ.getBundle().getString("Results"))) {
 			loc = Prefs.getLocation(LOC_KEY);
 			w = (int)Prefs.get(WIDTH_KEY, 0.0);
 			h = (int)Prefs.get(HEIGHT_KEY, 0.0);
@@ -142,46 +195,66 @@ public class TextWindow extends Frame implements ActionListener, FocusListener, 
 			dispose();
 	}
 	
+	/*
+	 * EU_HOU ADD
+	 */
+    public void setPhotometry(boolean phot) {
+        textPanel.isPhotometry = true;
+    }
+	/*
+	 * EU_HOU ADD END
+	 */
+	
 	void addMenuBar() {
 		mb = new MenuBar();
 		if (Menus.getFontSize()!=0)
 			mb.setFont(Menus.getFont());
-		Menu m = new Menu("File");
-		m.add(new MenuItem("Save As...", new MenuShortcut(KeyEvent.VK_S)));
-		if (getTitle().equals("Results")) {
+        //EU_HOU Bundle =3
+		Menu m = new Menu(IJ.getBundle().getString("File"));
+		m.add(new MenuItem(IJ.getBundle().getString("SaveAs"), new MenuShortcut(KeyEvent.VK_S)));
+		if (getTitle().equals(IJ.getBundle().getString("Results"))) {
+			//EU_HOU MISSING Bundle
 			m.add(new MenuItem("Rename..."));
-			m.add(new MenuItem("Duplicate..."));
+			//EU_HOU Bundle
+			m.add(new MenuItem(IJ.getBundle().getString("Duplicate")));
 		}
 		m.addActionListener(this);
 		mb.add(m);
 		textPanel.fileMenu = m;
-		m = new Menu("Edit");
-		m.add(new MenuItem("Cut", new MenuShortcut(KeyEvent.VK_X)));
-		m.add(new MenuItem("Copy", new MenuShortcut(KeyEvent.VK_C)));
-		m.add(new MenuItem("Clear"));
-		m.add(new MenuItem("Select All", new MenuShortcut(KeyEvent.VK_A)));
+		//EU_HOU Bundle =5
+		m = new Menu(IJ.getBundle().getString("Edit"));
+		m.add(new MenuItem(IJ.getBundle().getString("Cut"), new MenuShortcut(KeyEvent.VK_X)));
+		m.add(new MenuItem(IJ.getBundle().getString("Copy"), new MenuShortcut(KeyEvent.VK_C)));
+		m.add(new MenuItem(IJ.getBundle().getString("Clear")));
+		m.add(new MenuItem(IJ.getBundle().getString("SelectAll"), new MenuShortcut(KeyEvent.VK_A)));
 		m.addSeparator();
+		//EU_HOU MISSING Bundle =2
 		m.add(new MenuItem("Find...", new MenuShortcut(KeyEvent.VK_F)));
 		m.add(new MenuItem("Find Next", new MenuShortcut(KeyEvent.VK_G)));
 		m.addActionListener(this);
 		mb.add(m);
 		textPanel.editMenu = m;
+		//EU_HOU MISSING Bundle =3
 		m = new Menu("Font");
 		m.add(new MenuItem("Make Text Smaller"));
 		m.add(new MenuItem("Make Text Larger"));
 		m.addSeparator();
+		//EU_HOU MISSING Bundle
 		antialiased = new CheckboxMenuItem("Antialiased", Prefs.get(FONT_ANTI, IJ.isMacOSX()?true:false));
 		antialiased.addItemListener(this);
 		m.add(antialiased);
+		//EU_HOU MISSING Bundle
 		m.add(new MenuItem("Save Settings"));
 		m.addActionListener(this);
 		mb.add(m);
-		if (getTitle().equals("Results")) {
-			m = new Menu("Results");
-			m.add(new MenuItem("Clear Results"));
-			m.add(new MenuItem("Summarize"));
-			m.add(new MenuItem("Distribution..."));
-			m.add(new MenuItem("Set Measurements..."));
+		//EU_HOU Bundle =6
+		if (getTitle().equals(IJ.getBundle().getString("Results"))) {
+			m = new Menu(IJ.getBundle().getString("Results"));
+			m.add(new MenuItem(IJ.getBundle().getString("ClearResults")));
+			m.add(new MenuItem(IJ.getBundle().getString("Summarize")));
+			m.add(new MenuItem(IJ.getBundle().getString("Distribution")));
+			m.add(new MenuItem(IJ.getBundle().getString("SetMeasurements")));
+			//EU_HOU MISSING Bundle =3
 			m.add(new MenuItem("Sort..."));
 			m.add(new MenuItem("Plot..."));
 			m.add(new MenuItem("Options..."));
@@ -208,14 +281,16 @@ public class TextWindow extends Frame implements ActionListener, FocusListener, 
 	}
 	
 	boolean openFile(String path) {
-		OpenDialog od = new OpenDialog("Open Text File...", path);
+        //EU_HOU Bundle
+		OpenDialog od = new OpenDialog(IJ.getBundle().getString("OpenText"), path);
 		String directory = od.getDirectory();
 		String name = od.getFileName();
 		if (name==null)
 			return false;
 		path = directory + name;
 		
-		IJ.showStatus("Opening: " + path);
+        //EU_HOU Bundle
+		IJ.showStatus(IJ.getBundle().getString("Opening") + " " + path);
 		try {
 			BufferedReader r = new BufferedReader(new FileReader(directory + name));
 			load(r);
@@ -254,6 +329,7 @@ public class TextWindow extends Frame implements ActionListener, FocusListener, 
 
 	public void actionPerformed(ActionEvent evt) {
 		String cmd = evt.getActionCommand();
+		//EU_HOU MISSING Bundle FIXME
 		if (cmd.equals("Make Text Larger"))
 			changeFontSize(true);
 		else if (cmd.equals("Make Text Smaller"))
@@ -268,7 +344,19 @@ public class TextWindow extends Frame implements ActionListener, FocusListener, 
 		super.processWindowEvent(e);
 		int id = e.getID();
 		if (id==WindowEvent.WINDOW_CLOSING)
-			close();	
+			/*
+			 * EU_HOU CHANGES
+			 */
+			//close();	
+			 if ((modifListen) && (!Plot.RadioSpectra)) {
+	                EuHouToolbar.getInstance().photometerButtonAction();
+	         } //Photometer.getInstance().close();
+	         else {
+	        	 close();
+	         }
+			/*
+			 * EU_HOU CHANGES END
+			 */
 		else if (id==WindowEvent.WINDOW_ACTIVATED && !"Log".equals(getTitle()))
 			WindowManager.setWindow(this);
 	}
@@ -284,7 +372,8 @@ public class TextWindow extends Frame implements ActionListener, FocusListener, 
 	/** Closes this TextWindow. Display a "save changes" dialog
 		if this is the "Results" window and 'showDialog' is true. */
 	public void close(boolean showDialog) {
-		if (getTitle().equals("Results")) {
+        //EU_HOU Bundle
+		if (getTitle().equals(IJ.getBundle().getString("Results"))) {
 			if (showDialog && !Analyzer.resetCounter())
 				return;
 			IJ.setTextPanel(null);
@@ -305,8 +394,19 @@ public class TextWindow extends Frame implements ActionListener, FocusListener, 
 		} else if (textPanel!=null && textPanel.rt!=null) {
 			if (!saveContents()) return;
 		}
-		//setVisible(false);
+		/*
+		 * EU_HOU CHANGES
+		 */
+		else if (getTitle().equals(IJ.getBundle().getString("GetPosition"))) {
+            IJ.setTextPanel(null);
+		}
+		/*
+		 * EU_HOU CHANGES END
+		 */
+		setVisible(false); //EU_HOU CHANGES: uncommented
 		dispose();
+		//EU_HOU CHANGES: setTool
+        IJ.setTool(Toolbar.LINE);
 		WindowManager.removeWindow(this);
 		textPanel.flush();
 	}
@@ -320,8 +420,10 @@ public class TextWindow extends Frame implements ActionListener, FocusListener, 
 		if (!textPanel.unsavedLines) lineCount = 0;
 		ImageJ ij = IJ.getInstance();
 		boolean macro = IJ.macroRunning() || Interpreter.isBatchMode();
-		boolean isResults = getTitle().contains("Results");
+		//EU_HOU Bundle
+		boolean isResults = getTitle().contains(IJ.getBundle().getString("Results"));
 		if (lineCount>0 && !macro && ij!=null && !ij.quitting() && isResults) {
+            //EU_HOU MISSING Bundle
 			YesNoCancelDialog d = new YesNoCancelDialog(this, getTitle(), "Save "+lineCount+" measurements?");
 			if (d.cancelPressed())
 				return false;
@@ -357,6 +459,7 @@ public class TextWindow extends Frame implements ActionListener, FocusListener, 
 	void saveSettings() {
 		Prefs.set(FONT_SIZE, fontSize);
 		Prefs.set(FONT_ANTI, antialiased.getState());
+		//EU_HOU MISSING Bundle
 		IJ.showStatus("Font settings saved (size="+sizes[fontSize]+", antialiased="+antialiased.getState()+")");
 	}
 	

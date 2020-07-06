@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin.filter;
 import ij.*;
 import ij.process.*;
@@ -20,18 +21,10 @@ public class Profiler implements PlugInFilter {
 	 *  EU_HOU CHANGES
 	 */
 	static boolean horizontalProfile;
-
-
 	/*
-	 *  EU_HOU END
+	 *  EU_HOU CHANGES END
 	 */
-	/**
-	 *  Description of the Method
-	 *
-	 *@param  arg  Description of the Parameter
-	 *@param  imp  Description of the Parameter
-	 *@return      Description of the Return Value
-	 */
+	
 	public int setup(String arg, ImagePlus imp) {
 		if (arg.equals("set")) {
 			doOptions();
@@ -53,32 +46,20 @@ public class Profiler implements PlugInFilter {
                 //System.out.println("plot profil");
 	}
 
-
-	/**
-	 *  Description of the Method
-	 */
 	public void doOptions() {
-	double ymin = ProfilePlot.getFixedMin();
-	double ymax = ProfilePlot.getFixedMax();
-	boolean fixedScale = ymin != 0.0 || ymax != 0.0;
-	boolean wasFixedScale = fixedScale;
-//EU_HOU Bundle
-	GenericDialog gd = new GenericDialog(IJ.getPluginBundle().getString("ProOptTitle"), IJ.getInstance());
-		//EU_HOU Bundle
+		double ymin = ProfilePlot.getFixedMin();
+		double ymax = ProfilePlot.getFixedMax();
+		boolean fixedScale = ymin != 0.0 || ymax != 0.0;
+		boolean wasFixedScale = fixedScale;
+		//EU_HOU Bundle =9
+		GenericDialog gd = new GenericDialog(IJ.getPluginBundle().getString("ProOptTitle"), IJ.getInstance());
 		gd.addNumericField(IJ.getPluginBundle().getString("Width") + " (" + IJ.getPluginBundle().getString("Pixels") + "):", PlotWindow.plotWidth, 0);
-		//EU_HOU Bundle
 		gd.addNumericField(IJ.getPluginBundle().getString("Height") + " (" + IJ.getPluginBundle().getString("Pixels") + "):", PlotWindow.plotHeight, 0);
-		//EU_HOU Bundle
 		gd.addNumericField(IJ.getPluginBundle().getString("Min") + " Y:", ymin, 2);
-		//EU_HOU Bundle
 		gd.addNumericField(IJ.getPluginBundle().getString("Max") + " Y:", ymax, 2);
-		//EU_HOU Bundle
 		gd.addCheckbox(IJ.getPluginBundle().getString("ProOptScale"), fixedScale);
-		//EU_HOU Bundle
 		gd.addCheckbox(IJ.getPluginBundle().getString("ProOptSave"), !PlotWindow.saveXValues);
-		//EU_HOU Bundle
 		gd.addCheckbox(IJ.getPluginBundle().getString("ProOptAuto"), PlotWindow.autoClose);
-		//EU_HOU Bundle
 		gd.addCheckbox(IJ.getPluginBundle().getString("ProOptVert"), verticalProfile);
 		//EU_HOU Bundle
 		//gd.addCheckbox("List Values", PlotWindow.listValues);
@@ -92,9 +73,9 @@ public class Profiler implements PlugInFilter {
 		if (gd.wasCanceled()) {
 			return;
 		}
-	Dimension screen = IJ.getScreenSize();
-	int w = (int) gd.getNextNumber();
-	int h = (int) gd.getNextNumber();
+		Dimension screen = IJ.getScreenSize();
+		int w = (int) gd.getNextNumber();
+		int h = (int) gd.getNextNumber();
 		if (w < 300) {
 			w = 300;
 		}
@@ -120,7 +101,7 @@ public class Profiler implements PlugInFilter {
 		 */
 		horizontalProfile = gd.getNextBoolean();
 		/*
-		 *  EU_HOU END
+		 *  EU_HOU CHANGES END
 		 */
 		//PlotWindow.listValues = gd.getNextBoolean();
 		//PlotWindow.interpolate = gd.getNextBoolean();

@@ -1115,7 +1115,7 @@ public class ByteProcessor extends ImageProcessor {
 			}
 		}
 	}
-
+	
 	public void flipVertical() {
 		int index1,index2;
 		byte tmp;

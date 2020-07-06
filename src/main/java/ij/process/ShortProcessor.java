@@ -1,4 +1,5 @@
- package ij.process;
+//EU_HOU
+package ij.process;
 
 import java.util.*;
 import java.awt.*;
@@ -775,6 +776,81 @@ public class ShortProcessor extends ImageProcessor {
 		}
 	}
 
+	/*
+	 *  EU_HOU ADD
+	 */
+	/**
+	 *  Translates the image or ROI on x and y.
+	 *
+	 *@see        ImageProcessor#setInterpolate
+	 */
+	public void translate(double tx, double ty) {
+	//System.out.println("Short");
+	short[] pixels2 = (short[]) getPixelsCopy();
+	int xMax = roiX + this.roiWidth - 1;
+
+	double xs;
+
+	double ys;
+	int index;
+	int ixs;
+	int iys;
+	double dwidth = width;
+	double dheight = height;
+	double xlimit = width - 1.0;
+	double xlimit2 = width - 1.001;
+	double ylimit = height - 1.0;
+	double ylimit2 = height - 1.001;
+
+	int background = cTable != null && cTable[0] == -32768 ? 32768 : 0;
+		//System.out.println(background);
+
+		for (int y = roiY; y < (roiY + roiHeight); y++) {
+			index = y * width + roiX;
+			for (int x = roiX; x <= xMax; x++) {
+				xs = x - tx;
+				ys = y + ty;
+				if ((xs >= (double) roiX) && (xs < (double) (roiX + roiWidth)) && (ys >= (double) roiY) && (ys < (double) (roiY + roiHeight))) {
+//				if ((xs>=-0.01) && (xs<dwidth) && (ys>=-0.01) && (ys<dheight)) {
+					if (interpolate) {
+						if (xs < 0.0) {
+							xs = 0.0;
+						}
+						if (xs >= xlimit) {
+							xs = xlimit2;
+						}
+						if (ys < 0.0) {
+							ys = 0.0;
+						}
+						if (ys >= ylimit) {
+							ys = ylimit2;
+						}
+						pixels[index++] = (short) (getInterpolatedPixel(xs, ys, pixels2) + 0.5);
+					} else {
+						ixs = (int) (xs + 0.5);
+						iys = (int) (ys + 0.5);
+						if (ixs >= width) {
+							ixs = width - 1;
+						}
+						if (iys >= height) {
+							iys = height - 1;
+						}
+						pixels[index++] = pixels2[width * iys + ixs];
+					}
+				} else {
+					pixels[index++] = (short) background;
+				}
+			}
+			if (y % 30 == 0) {
+				showProgress((double) (y - roiY) / roiHeight);
+			}
+		}
+		hideProgress();
+	}
+	/*
+	 *  EU_HOU ADD END
+	 */
+	
 	public void flipVertical() {
 		int index1,index2;
 		short tmp;

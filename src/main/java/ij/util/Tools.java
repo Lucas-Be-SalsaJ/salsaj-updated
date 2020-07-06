@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.util;
 import ij.process.*;
 import java.awt.Color;
@@ -5,6 +6,8 @@ import java.util.*;
 import java.io.*;
 import java.util.Comparator;
 import java.nio.channels.FileChannel;
+//EU_HOU CHANGES : added import ij.*
+import ij.*;
 
 /** This class contains static utility methods. */
  public class Tools {
@@ -407,5 +410,415 @@ import java.nio.channels.FileChannel;
 			default: return c;
 		}
 	}
+	
+	
+	/*
+	 *  EU_HOU ADD
+	 */
+	/**
+	 *  Fit a polynomial line of the (x,y) values. The order is fixed by the length
+	 *  of vector minus one.
+	 *
+	 *@param  xValues  the values fo the X axis.
+	 *@param  yValues  the values fo the Y axis.
+	 *@param  vector   the result of fitting line
+	 */
+	public static void fittingData(float[] xValues, float[] yValues, float[] vector) {
+	int dim = vector.length;
+	int n = xValues.length;
+	float aux;
+	float[] D = new float[dim];
+	float[][] array = new float[dim][dim];
+	float[][] arraytest = new float[dim][dim];
+	float[][] result = new float[dim][dim];
 
+		for (int i = 0; i < dim; i++) {
+			D[i] = 0;
+			vector[i] = 0;
+			for (int j = 0; j < dim; j++) {
+				array[i][j] = 0;
+				arraytest[i][j] = 0;
+				result[i][j] = 0;
+			}
+		}
+
+		for (int i = 0; i < n; i++) {
+			D[0] = 1;
+			for (int j = 1; j < dim; j++) {
+				D[j] = D[j - 1] * xValues[i];
+			}
+			///256.0;
+			for (int j = 0; j < dim; j++) {
+				vector[j] += yValues[i] * D[j];
+				for (int l = j; l < dim; l++) {
+					array[j][l] += D[j] * D[l];
+					array[l][j] = array[j][l];
+				}
+			}
+		}
+
+		for (int i = 0; i < dim; i++) {
+			for (int j = 0; j < dim; j++) {
+				arraytest[i][j] = array[i][j];
+			}
+		}
+		for (int i = 0; i < dim; i++) {
+			aux = (float) 1.0 / array[i][i];
+			for (int j = 0; j < dim; j++) {
+				array[i][j] = array[i][j] * aux;
+			}
+			array[i][i] = aux;
+			for (int k = 0; k < i; k++) {
+				aux = array[k][i];
+				for (int j = 0; j < dim; j++) {
+					array[k][j] -= aux * array[i][j];
+				}
+				array[k][i] = -aux * array[i][i];
+			}
+			for (int k = i + 1; k < dim; k++) {
+				aux = array[k][i];
+				for (int j = 0; j < dim; j++) {
+					array[k][j] -= aux * array[i][j];
+				}
+				array[k][i] = -aux * array[i][i];
+			}
+		}
+
+		for (int i = 0; i < dim; i++) {
+			D[i] = vector[i];
+			vector[i] = 0;
+		}
+
+		for (int i = 0; i < dim; i++) {
+			for (int j = 0; j < dim; j++) {
+				vector[i] += D[j] * array[i][j];
+			}
+		}
+	}
+
+	public static void covsrt(double[][] covar, int ma, int[] ia, int[] mfit) {
+	int i;
+	int j;
+	int k;
+	double swap;
+
+		for (i = mfit[0]; i < ma; i++) {
+			for (j = 0; j <= i; j++) {
+				covar[i][j] = covar[j][i] = 0.0;
+			}
+		}
+		k = mfit[0] - 1;
+		for (j = ma - 1; j >= 0; j--) {
+			if (ia[j] != 0) {
+				if (k != j) {
+					for (i = 0; i < ma; i++) {
+						swap = covar[i][k];
+						covar[i][k] = covar[i][j];
+						covar[i][j] = swap;
+					}
+					for (i = 0; i < ma; i++) {
+						swap = covar[k][i];
+						covar[k][i] = covar[j][i];
+						covar[j][i] = swap;
+					}
+				}
+				k--;
+			}
+		}
+	}
+
+	public static int gaussj(double[][] a, int n, double[][] b, int m) {
+	int[] indxc;
+	int[] indxr;
+	int[] ipiv;
+	int i;
+	int icol;
+	int irow;
+	int j;
+	int k;
+	int l;
+	int ll;
+	double big;
+	double dum;
+	double pivinv;
+	double temp;
+	double swap;
+
+		indxc = new int[n];
+		indxr = new int[n];
+		ipiv = new int[n];
+		irow = icol = 0;
+		for (j = 0; j < n; j++) {
+			ipiv[j] = 0;
+		}
+		for (i = 0; i < n; i++) {
+			big = 0.0;
+			for (j = 0; j < n; j++) {
+				if (ipiv[j] != 1) {
+					for (k = 0; k < n; k++) {
+						if (ipiv[k] == 0) {
+							if (java.lang.Math.abs(a[j][k]) >= big) {
+								big = java.lang.Math.abs(a[j][k]);
+								irow = j;
+								icol = k;
+							}
+						} else if (ipiv[k] > 1) {
+							//EU_HOU Bundle
+							IJ.error(IJ.getPluginBundle().getString("error2"));
+							return 0;
+						}
+					}
+				}
+			}
+			++(ipiv[icol]);
+			if (irow != icol) {
+				for (l = 0; l < n; l++) {
+					swap = a[irow][l];
+					a[irow][l] = a[icol][l];
+					a[icol][l] = swap;
+				}
+				for (l = 0; l < m; l++) {
+					swap = b[irow][l];
+					b[irow][l] = b[icol][l];
+					b[icol][l] = swap;
+				}
+			}
+			indxr[i] = irow;
+			indxc[i] = icol;
+			if (a[icol][icol] == 0.0) {
+				//EU_HOU Bundle
+				IJ.error(IJ.getPluginBundle().getString("error2"));
+				return 0;
+			}
+			pivinv = 1.0 / a[icol][icol];
+			a[icol][icol] = 1.0;
+			for (l = 0; l < n; l++) {
+				a[icol][l] *= pivinv;
+			}
+			for (l = 0; l < m; l++) {
+				b[icol][l] *= pivinv;
+			}
+			for (ll = 0; ll < n; ll++) {
+				if (ll != icol) {
+					dum = a[ll][icol];
+					a[ll][icol] = 0.0;
+					for (l = 0; l < n; l++) {
+						a[ll][l] -= a[icol][l] * dum;
+					}
+					for (l = 0; l < m; l++) {
+						b[ll][l] -= b[icol][l] * dum;
+					}
+				}
+			}
+		}
+		for (l = n - 1; l >= 0; l--) {
+			if (indxr[l] != indxc[l]) {
+				for (k = 0; k < n; k++) {
+					swap = a[k][indxr[l]];
+					a[k][indxr[l]] = a[k][indxc[l]];
+					a[k][indxc[l]] = swap;
+				}
+			}
+		}
+		return 1;
+	}
+
+	public static void mrqcof(double[] x, double[] y, double[] sig, int ndata,
+			double[] a, int[] ia, int ma,
+			double[][] alpha, double[] beta,
+			IFunctionTools funcs, double[] chisq) {
+	int i;
+	int j;
+	int k;
+	int l;
+	int m;
+	int mfit = 0;
+	double ymod;
+	double wt;
+	double sig2i;
+	double dy;
+	double[] dyda = new double[ma];
+
+		for (j = 0; j < ma; j++) {
+			if (ia[j] != 0) {
+				mfit++;
+			}
+		}
+		for (j = 0; j < mfit; j++) {
+			for (k = 0; k <= j; k++) {
+				alpha[j][k] = 0.0;
+			}
+			beta[j] = 0.0;
+		}
+
+		chisq[0] = 0.0;
+		for (i = 0; i < ndata; i++) {
+			ymod = funcs.run(x[i], a, dyda, ma);
+			sig2i = 1.0 / (sig[i] * sig[i]);
+			dy = y[i] - ymod;
+			for (j = -1, l = 0; l < ma; l++) {
+				if (ia[l] != 0) {
+					wt = dyda[l] * sig2i;
+					for (j++, k = 0, m = 0; m <= l; m++) {
+						if (ia[m] != 0) {
+							alpha[j][k] += wt * dyda[m];
+							k++;
+						}
+					}
+					beta[j] += dy * wt;
+				}
+			}
+			chisq[0] += dy * dy * sig2i;
+		}
+		for (j = 1; j < mfit; j++) {
+			for (k = 0; k < j; k++) {
+				alpha[k][j] = alpha[j][k];
+			}
+		}
+
+	}
+
+	static int[] mfit = new int[1];
+	static double[] atry, beta, da;
+	static double[][] oneda;
+
+	public static int mrqmin(double x[], double y[], double sig[], int ndata,
+			double a[], int ia[], int ma,
+			double[][] covar, double[][] alpha, double[] chisq, double[] ochisq,
+			double[] alamda) {
+	int i;
+	int j;
+	int k;
+	int l;
+	FgaussTools funcs = new FgaussTools();
+
+		if (alamda[0] < 0.0) {
+			atry = new double[ma];
+			beta = new double[ma];
+			da = new double[ma];
+
+			mfit[0] = 0;
+			for (j = 0; j < ma; j++) {
+				if (ia[j] != 0) {
+					mfit[0]++;
+				}
+			}
+			oneda = new double[mfit[0]][1];
+
+			alamda[0] = 0.001;
+			mrqcof(x, y, sig, ndata, a, ia, ma, alpha, beta, funcs, chisq);
+			ochisq[0] = chisq[0];
+			for (j = 0; j < ma; j++) {
+				atry[j] = a[j];
+			}
+		}
+		for (j = 0; j < mfit[0]; j++) {
+			for (k = 0; k < mfit[0]; k++) {
+				covar[j][k] = alpha[j][k];
+			}
+			covar[j][j] = alpha[j][j] * (1.0 + alamda[0]);
+			oneda[j][0] = beta[j];
+		}
+	int err;
+		err = gaussj(covar, mfit[0], oneda, 1);
+		if (err == 0) {
+			return 0;
+		}
+		for (j = 0; j < mfit[0]; j++) {
+			da[j] = oneda[j][0];
+		}
+		if (alamda[0] == 0.0) {
+			covsrt(covar, ma, ia, mfit);
+			return 1;
+		}
+		for (j = 0, l = 0; l < ma; l++) {
+			if (ia[l] != 0) {
+				atry[l] = a[l] + da[j++];
+			}
+		}
+		mrqcof(x, y, sig, ndata, atry, ia, ma, covar, da, funcs, chisq);
+		if (chisq[0] < ochisq[0]) {
+			alamda[0] *= 0.1;
+			ochisq[0] = chisq[0];
+			for (j = 0; j < mfit[0]; j++) {
+				for (k = 0; k < mfit[0]; k++) {
+					alpha[j][k] = covar[j][k];
+				}
+				beta[j] = da[j];
+			}
+			for (l = 0; l < ma; l++) {
+				a[l] = atry[l];
+			}
+		} else {
+			alamda[0] *= 10.0;
+			chisq[0] = ochisq[0];
+		}
+		return 1;
+	}
+
+	public static void Fgauss(float[] x, double[] result, int ma, float[] y) {
+	FgaussTools funcs = new FgaussTools();
+	double[] dy = new double[3];
+	double[] a = new double[3];
+		a[0] = result[3 * ma];
+		a[1] = result[3 * ma + 1];
+		a[2] = result[3 * ma + 2];
+		for (int i = 0; i < y.length; i++) {
+			y[i] = (float) funcs.run(x[i], a, dy, 3);
+		}
+	}
+
+	public static float Fgauss(double x, double[] a) {
+	FgaussTools funcs = new FgaussTools();
+	double[] dy = new double[3];
+
+		return (float) funcs.run(x, a, dy, 3);
+	}
+
+}
+
+/**
+ *@author     Thomas
+ *@created    15 octobre 2007
+ */
+interface IFunctionTools {
+
+	/**
+	 *  Main processing method for the IFunctionTools object
+	 */
+	public double run(double x, double[] a, double[] dyda, int na);
+}
+
+/**
+ *@author     Thomas
+ *@created    15 octobre 2007
+ */
+class FgaussTools implements IFunctionTools {
+
+
+	/**
+	 *  Main processing method for the FgaussTools object
+	 */
+	public double run(double x, double[] a, double[] dyda, int na) {
+	int i;
+	double fac;
+	double ex;
+	double arg;
+	double y;
+	double W = 1.665109222;
+		y = 0.0;
+		for (i = 0; i < na; i += 3) {
+			arg = W * (x - a[i + 1]) / a[i + 2];
+			ex = java.lang.Math.exp(-arg * arg);
+			fac = 2.0 * a[i] * ex * arg;
+			y += a[i] * ex;
+			dyda[i] = ex;
+			dyda[i + 1] = W * fac / a[i + 2];
+			dyda[i + 2] = fac * arg / a[i + 2];
+		}
+		return y;
+	}
+/*
+ *  EU_HOU ADD END
+ */
 }

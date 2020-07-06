@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.text;
 
 import java.awt.*;
@@ -13,6 +14,8 @@ import ij.util.Tools;
 import ij.plugin.frame.Recorder;
 import ij.gui.*;
 import ij.macro.Interpreter;
+//EU_HOU CHANGES : added Photometer import
+import ij.process.Photometer;
 
 
 /**
@@ -59,6 +62,17 @@ public class TextPanel extends Panel implements AdjustmentListener,
     Menu fileMenu, editMenu;
     boolean menusExtended;
     boolean saveAsCSV;
+    
+    /*
+     * EU_HOU CHANGES
+     */
+    static ResourceBundle etiq = IJ.getBundle();
+    boolean modifListener = false;
+    boolean ListenTextPanel = false;
+    boolean isPhotometry = false;
+    /*
+     * EU_HOU CHANGES END
+     */
 
 
 	/** Constructs a new TextPanel. */
@@ -88,23 +102,38 @@ public class TextPanel extends Panel implements AdjustmentListener,
 	public TextPanel(String title) {
 		this();
 		this.title = title;
-		if (title.equals("Results")) {
+		//EU_HOU Bundle
+		if (title.equals(etiq.getString("Results"))) {
 			pm.addSeparator();
-			addPopupItem("Clear Results");
-			addPopupItem("Summarize");
-			addPopupItem("Distribution...");
-			addPopupItem("Set Measurements...");
+			//EU_HOU Bundle =4
+			addPopupItem(etiq.getString("ClearResults"));
+			addPopupItem(etiq.getString("Summarize"));
+			addPopupItem(etiq.getString("Distribution..."));
+			addPopupItem(etiq.getString("SetMeasurements"));
 		}
 	}
+	
+	/*
+	 * EU_HOU CHANGES
+	 */
+    public TextPanel(String title, boolean hint) {
+        this(title);
+        ListenTextPanel = true;
+    }
+	/*
+	 * EU_HOU CHANGES END
+	 */
 
 	void addPopupMenu() {
 		pm=new PopupMenu();
-		addPopupItem("Save As...");
+		//EU_HOU Bundle
+		addPopupItem(etiq.getString("SaveAs"));
 		pm.addSeparator();
-		addPopupItem("Cut");
-		addPopupItem("Copy");
-		addPopupItem("Clear");
-		addPopupItem("Select All");
+		//EU_HOU Bundle =4
+		addPopupItem(etiq.getString("Cut"));
+		addPopupItem(etiq.getString("Copy"));
+		addPopupItem(etiq.getString("Clear"));
+		addPopupItem(etiq.getString("SelectAll"));
 		add(pm);
 	}
 
@@ -404,7 +433,21 @@ public class TextPanel extends Panel implements AdjustmentListener,
 		}
 	}
 
- 	public void mouseReleased (MouseEvent e) {}
+	/*
+	 * EU_HOU CHANGES
+	 */
+ 	public void mouseReleased (MouseEvent e) {
+        if (ListenTextPanel) {
+            String s = getLine();
+            if (s == null) {
+                return;
+            }
+            Photometer.getInstance().set(s);
+        }		
+ 	}
+ 	/*
+ 	 * EU_HOU CHANGES END
+ 	 */
 	public void mouseClicked (MouseEvent e) {}
 	public void mouseEntered (MouseEvent e) {}
 
@@ -464,16 +507,18 @@ public class TextPanel extends Panel implements AdjustmentListener,
  	void doCommand(String cmd) {
  		if (cmd==null)
  			return;
-		if (cmd.equals("Save As..."))
+ 	    //EU_HOU Bundle =5
+		if (cmd.equals(etiq.getString("SaveAs")))
 			saveAs("");
-		else if (cmd.equals("Cut"))
+		else if (cmd.equals(etiq.getString("Cut")))
 			cutSelection();
-		else if (cmd.equals("Copy"))
+		else if (cmd.equals(etiq.getString("Copy")))
 			copySelection();
-		else if (cmd.equals("Clear"))
+		else if (cmd.equals(etiq.getString("Clear")))
 			doClear();
-		else if (cmd.equals("Select All"))
+		else if (cmd.equals(etiq.getString("SelectAll")))
 			selectAll();
+		//EU_HOU MISSING Bundle =4
 		else if (cmd.equals("Find..."))
 			find(null);
 		else if (cmd.equals("Find Next"))
@@ -482,16 +527,18 @@ public class TextPanel extends Panel implements AdjustmentListener,
 			rename(null);
 		else if (cmd.equals("Duplicate..."))
 			duplicate();
-		else if (cmd.equals("Summarize"))
+		//EU_HOU Bundle =5
+		else if (cmd.equals(etiq.getString("Summarize")))
 			IJ.doCommand("Summarize");
-		else if (cmd.equals("Distribution..."))
+		else if (cmd.equals(etiq.getString("Distribution...")))
 			IJ.doCommand("Distribution...");
-		else if (cmd.equals("Clear Results"))
+		else if (cmd.equals(etiq.getString("ClearResults")))
 			IJ.doCommand("Clear Results");
-		else if (cmd.equals("Set Measurements..."))
+		else if (cmd.equals(etiq.getString("SetMeasurements")))
 			IJ.doCommand("Set Measurements...");
- 		else if (cmd.equals("Options..."))
+ 		else if (cmd.equals(etiq.getString("Set File Extension...")))
 			IJ.doCommand("Input/Output...");
+		//EU_HOU MISSING Bundle =3
  		else if (cmd.equals("Apply Macro..."))
 			new ResultsTableMacros(rt);
  		else if (cmd.equals("Sort..."))
@@ -598,9 +645,12 @@ public class TextPanel extends Panel implements AdjustmentListener,
 		if (rt2==null)
 			return;
 		rt2 = (ResultsTable)rt2.clone();
-		String title2 = IJ.getString("Title:", getNewTitle(title));
+        //EU_HOU Bundle
+		//String title2 = IJ.getString("Title:", getNewTitle(title));
+        String title2 = IJ.getString("Title:", etiq.getString("Results2"));
 		if (!title2.equals("")) {
-			if (title2.equals("Results")) title2 = "Results2";
+			//EU_HOU Bundle
+			if (title2.equals(etiq.getString("Results"))) title2 = etiq.getString("Results") + "2";
 			rt2.show(title2);
 		}
 	}
@@ -676,7 +726,8 @@ public class TextPanel extends Panel implements AdjustmentListener,
 	Returns the number of characters copied.
 	*/
 	public int copySelection() {
-		if (Recorder.record && title.equals("Results"))
+        //EU_HOU Bundle
+		if (Recorder.record && title.equals(etiq.getString("Results")))
 			Recorder.record("String.copyResults");
 		if (selStart==-1 || selEnd==-1)
 			return copyAll();
@@ -712,6 +763,7 @@ public class TextPanel extends Panel implements AdjustmentListener,
 		StringSelection cont = new StringSelection(s);
 		clip.setContents(cont,this);
 		if (s.length()>0) {
+	        //EU_HOU MISSING Bundle
 			IJ.showStatus((selEnd-selStart+1)+" lines copied to clipboard");
 			if (this.getParent() instanceof ImageJ)
 				Analyzer.setUnsavedMeasurements(false);
@@ -752,6 +804,7 @@ public class TextPanel extends Panel implements AdjustmentListener,
 	public void clearSelection() {
 		if (selStart==-1 || selEnd==-1) {
 			if (getLineCount()>0)
+		        //EU_HOU MISSING Bundle
 				IJ.error("Text selection required");
 			return;
 		}
@@ -917,7 +970,17 @@ public class TextPanel extends Panel implements AdjustmentListener,
 				IJ.wait(10);
 				boolean hasHeadings = !getColumnHeadings().equals("");
 				String ext = isResults||hasHeadings?Prefs.defaultResultsExtension():".txt";
-				SaveDialog sd = new SaveDialog("Save as Text", title, ext);
+				/*
+				 * EU_HOU CHANGES
+				 */
+			     if (isResults || isPhotometry) {
+		                ext = ".xls";
+		            }
+				/*
+				 * EU_HOU CHANGES END
+				 */
+			     //EU_HOU Bundle
+				SaveDialog sd = new SaveDialog(etiq.getString("SaveAsText"), title, ext);
 				String file = sd.getFileName();
 				if (file==null)
 					return false;
@@ -930,6 +993,7 @@ public class TextPanel extends Panel implements AdjustmentListener,
 				pw = new PrintWriter(bos);
 			}
 			catch (IOException e) {
+			     //EU_HOU MISSING Bundle
 				IJ.error("Save As>Text", e.getMessage());
 				return true;
 			}
@@ -985,15 +1049,30 @@ public class TextPanel extends Panel implements AdjustmentListener,
 		the value returned by getLineCount(). */
 	public String getLine(int index) {
 		if (index<0 || index>=iRowCount)
+            //EU_HOU MISSING Bundle
 			throw new IllegalArgumentException("index out of range: "+index);
 		return new String((char[])(vData.elementAt(index)));
 	}
+	
+	/*
+	 * EU_HOU CHANGES : legacy ImageJ?
+	 */
+    public String getLine() {
+        if ((selLine == -1) || (selLine >= getLineCount())) {
+            return null;
+        }
+        return getLine(selLine);
+    }
+    /*
+     * EU_HOU CHANGES END
+     */
 
 	/** Replaces the contents of the specified line, where 'index'
 		must be greater than or equal to zero and less than
 		the value returned by getLineCount(). */
 	public void setLine(int index, String s) {
 		if (index<0 || index>=iRowCount)
+            //EU_HOU MISSING Bundle
 			throw new IllegalArgumentException("index out of range: "+index);
 		if (vData!=null) {
 			vData.setElementAt(s.toCharArray(), index);
@@ -1002,13 +1081,13 @@ public class TextPanel extends Panel implements AdjustmentListener,
 	}
 
 	/** Returns the index of the first selected line, or -1
-		if there is no slection. */
+		if there is no selection. */
 	public int getSelectionStart() {
 		return selStart;
 	}
 
 	/** Returns the index of the last selected line, or -1
-		if there is no slection. */
+		if there is no selection. */
 	public int getSelectionEnd() {
 		return selEnd;
 	}

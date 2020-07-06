@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin.filter;
 //import ij.plugin.filter.PlugInFilter;
 import ij.*;
@@ -93,7 +94,7 @@ public class CalibrationBar implements PlugInFilter {
 	 */
 	public int setup(String arg, ImagePlus imp) {
 		/*
-		 *  EU_HOU CHANGES
+		 *  EU_HOU Bundle CHANGES
 		 */
 		colors = new String[colorKeys.length];
 		locations = new String[locationKeys.length];
@@ -111,7 +112,7 @@ public class CalibrationBar implements PlugInFilter {
 		textColor = new String(colors[3]);
 		location = new String(locations[0]);
 		/*
-		 *  EU_HOU END
+		 *  EU_HOU Bundle CHANGES END
 		 */
 		if (imp != null) {
 			this.imp = imp;

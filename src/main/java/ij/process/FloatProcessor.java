@@ -708,7 +708,7 @@ public class FloatProcessor extends ImageProcessor {
 			}
 		}
 	}
-
+	
 	public void flipVertical() {
 		int index1,index2;
 		float tmp;

@@ -1,3 +1,4 @@
+//EU_HOU
 package ij;
 import ij.plugin.Converter;
 import ij.plugin.frame.Recorder;
@@ -510,6 +511,7 @@ public class WindowManager {
 		return frame;
     }
     
+
     private static Frame getImageWindow(String title) {
 		int[] wList = getIDList();
 		int len = wList!=null?wList.length:0;
@@ -522,7 +524,17 @@ public class WindowManager {
 		}
 		return null;
     }
-
+    
+    /*
+     * EU_HOU CHANGES
+     */
+	public static Vector getImageWindows() {
+		return imageList;
+	}
+	/*
+	 * EU_HOU CHANGES END
+	 */
+	
 	/** Activates a window selected from the Window menu. */
 	synchronized static void activateWindow(String menuItemLabel, MenuItem item) {
 		for (int i=0; i<nonImageList.size(); i++) {
@@ -559,6 +571,23 @@ public class WindowManager {
 				((CheckboxMenuItem)mi).setState((j-start)==index);						
 		}
 	}
+	
+    /*
+     * EU_HOU CHANGES
+     */
+	public static synchronized void activateWindow(String title) {
+		for (int j = 4; j < Menus.window.getItemCount(); ++j) {
+			try {
+				if (((CheckboxMenuItem) Menus.window.getItem(j)).getState()) {
+					activateWindow(title, Menus.window.getItem(j));
+				}
+			} catch (Exception e) {}
+
+		}
+	}
+	/*
+	 * EU_HOU CHANGES END
+	 */
     
     /** Repaints all open image windows. */
     public synchronized static void repaintImageWindows() {

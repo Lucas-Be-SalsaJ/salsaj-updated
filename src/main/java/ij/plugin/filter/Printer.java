@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin.filter;
 import ij.*;
 import ij.gui.*;
@@ -6,6 +7,9 @@ import ij.measure.Calibration;
 import java.awt.*;
 import java.util.Properties;
 import java.awt.print.*;
+//EU_HOU CHANGES : added ResourceBundle import
+import java.util.ResourceBundle;
+
 
 /** This plugin implements the File/Page Setup and File/Print commands. */
 public class Printer implements PlugInFilter, Printable {
@@ -18,6 +22,8 @@ public class Printer implements PlugInFilter, Printable {
 	private static boolean rotate;
 	private static boolean actualSize;
 	private static int fontSize = 12;
+    // EU_HOU CHANGES : added menubun
+    private static ResourceBundle menubun;
 
 	public int setup(String arg, ImagePlus imp) {
 		if (arg.equals("setup"))
@@ -35,16 +41,20 @@ public class Printer implements PlugInFilter, Printable {
 		ImagePlus imp = WindowManager.getCurrentImage();
 		Roi roi = imp!=null?imp.getRoi():null;
 		boolean isRoi = roi!=null && roi.isArea();
-		GenericDialog gd = new GenericDialog("Page Setup");
-		gd.addNumericField("Scale:", scaling, 0, 3, "%");
-		gd.addCheckbox("Draw border", drawBorder);
-		gd.addCheckbox("Center on page", center);
-		gd.addCheckbox("Print title", label);
-		if (isRoi)
-			gd.addCheckbox("Selection only", printSelection);
-		gd.addCheckbox("Rotate 90"+IJ.degreeSymbol, rotate);
+		//EU_HOU Bundle =7
+		GenericDialog gd = new GenericDialog(IJ.getBundle().getString("PageSetup"));
+		gd.addNumericField(IJ.getBundle().getString("Scale"), scaling, 0, 3, "%");
+		gd.addCheckbox(IJ.getBundle().getString("DrawBorder"), drawBorder);
+		gd.addCheckbox(IJ.getBundle().getString("CenteronPage"), center);
+		gd.addCheckbox(IJ.getBundle().getString("PrintTitle"), label);
+		//EU_HOU CHANGES : removed if
+		//if (isRoi)
+			gd.addCheckbox(IJ.getBundle().getString("SelectionOnly"), printSelection);
+		gd.addCheckbox(IJ.getBundle().getString("Rotate90")+IJ.degreeSymbol, rotate);
+		//EU_HOU MISSING Bundle
 		gd.addCheckbox("Print_actual size", actualSize);
 		if (imp!=null)
+			//EU_HOU MISSING Bundle
 			gd.enableYesNoCancel(" OK ", "Print");
 		gd.showDialog();
 		if (gd.wasCanceled())

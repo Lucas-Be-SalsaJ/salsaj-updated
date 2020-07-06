@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.process;
 import java.util.*;
 import java.awt.*;
@@ -1706,9 +1707,23 @@ public abstract class ImageProcessor implements Cloneable {
 		this.cTable = cTable;
 	}
 
+
 	/** Returns the calibration table or null. */
 	public float[] getCalibrationTable() {
-		return cTable;
+		/*
+		 * EU_HOU CHANGES
+		 */
+		//return cTable;
+		if (cTable == null) {
+            return null;
+        }
+        float res[] = new float[cTable.length];
+
+        System.arraycopy(cTable, 0, res, 0, res.length);
+        return res;
+    	/*
+    	 * EU_HOU CHANGES END
+    	 */
 	}
 
 	/** Set the number of bins to be used for histograms of float images. */
@@ -2252,7 +2267,7 @@ public abstract class ImageProcessor implements Cloneable {
 		@see ImageProcessor#setBackgroundValue
 	*/
   	public abstract void rotate(double angle);
-
+  	
 	/**  Moves the image or selection vertically or horizontally by a specified
 	      number of pixels. Positive x values move the image or selection to the
 	      right, negative values move it to the left. Positive y values move the
