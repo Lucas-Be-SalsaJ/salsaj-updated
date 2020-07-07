@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.gui;
 import java.awt.*;
 import java.util.*;
@@ -13,6 +14,15 @@ import ij.macro.Interpreter;
 import ij.measure.Calibration;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
+
+/*
+ * EU_HOU CHANGES
+ */
+//import ij.plugin.RadioSpectrum_Reader;
+import ij.io.*;
+/*
+ * EU_HOU CHANGES END
+ */
 
 /** This class creates an image that line graphs, scatter plots and plots of vector fields
  *	(arrows) can be drawn on and displayed.
@@ -213,6 +223,14 @@ public class Plot implements Cloneable {
 	private Point2D.Double textLoc;                 // remembers position of previous addLabel call (replaces text if at the same position)
 	private int textIndex;                          // remembers index of previous addLabel call (for replacing if at the same position)
 
+	/*
+	 * EU_HOU CHANGES
+	 */
+	boolean radio = false;
+	/*
+	 * EU_HOU CHANGES END
+	 */
+	
 	/** Constructs a new Plot with the default options.
 	 * Use add(shape,xvalues,yvalues) to add curves.
 	 * @param title the window title
@@ -254,7 +272,9 @@ public class Plot implements Cloneable {
 		pp.axisFlags = flags;
 		setXYLabels(xLabel, yLabel);
 		if (yValues != null && yValues.length>0) {
-			addPoints(xValues, yValues, /*yErrorBars=*/null, LINE, /*label=*/null);
+			//EU_HOU CHANGES : added Color parameter to match called method
+			//addPoints(xValues, yValues, /*yErrorBars=*/null, LINE, /*label=*/null);
+			addPoints(xValues, yValues, /*yErrorBars=*/null, LINE, /*label=*/null, Color.black);
 			allPlotObjects.get(0).flags = PlotObject.CONSTRUCTOR_DATA;
 		}
 	}
@@ -721,7 +741,9 @@ public class Plot implements Cloneable {
 	*/
 	public void add(String type, double[] xvalues, double[] yvalues) {
 		int iShape = toShape(type);
-		addPoints(Tools.toFloat(xvalues), Tools.toFloat(yvalues), null, iShape, iShape==CUSTOM?type.substring(5, type.length()):null);
+		//EU_HOU CHANGES : added Color parameter to match called method
+		//addPoints(Tools.toFloat(xvalues), Tools.toFloat(yvalues), null, iShape, iShape==CUSTOM?type.substring(5, type.length()):null, Color.black);
+		addPoints(Tools.toFloat(xvalues), Tools.toFloat(yvalues), null, iShape, iShape==CUSTOM?type.substring(5, type.length()):null, Color.black);
 	}
 
 	/** Replaces the specified plot object (curve or set of points).
@@ -744,7 +766,9 @@ public class Plot implements Cloneable {
 		else if (iShape==-2)
 			addHorizontalErrorBars(yvalues);
 		else
-			addPoints(null, Tools.toFloat(yvalues), null, iShape, iShape==CUSTOM?type.substring(5, type.length()):null);
+			//EU_HOU CHANGES : added Color parameter to match called method
+			//addPoints(null, Tools.toFloat(yvalues), null, iShape, iShape==CUSTOM?type.substring(5, type.length()):null);
+			addPoints(null, Tools.toFloat(yvalues), null, iShape, iShape==CUSTOM?type.substring(5, type.length()):null, Color.black);
 	}
 
 	/** Adds a set of points to the plot or adds a curve if shape is set to LINE.
@@ -754,7 +778,9 @@ public class Plot implements Cloneable {
 	 * @param shape		CIRCLE, X, BOX, TRIANGLE, CROSS, DIAMOND, DOT, LINE, CONNECTED_CIRCLES
 	 * @param label		Label for this curve or set of points, used for a legend and for listing the plots
 	 */
-	public void addPoints(float[] xValues, float[] yValues, float[] yErrorBars, int shape, String label) {
+	//EU_HOU CHANGES : added Color c parameter
+	//public void addPoints(float[] xValues, float[] yValues, float[] yErrorBars, int shape, String label) {
+	public void addPoints(float[] xValues, float[] yValues, float[] yErrorBars, int shape, String label, Color c) {
 		if (xValues==null || xValues.length==0) {
 			xValues = new float[yValues.length];
 			for (int i=0; i<yValues.length; i++)
@@ -774,7 +800,9 @@ public class Plot implements Cloneable {
 	 * @param shape		CIRCLE, X, BOX, TRIANGLE, CROSS, DIAMOND, DOT, LINE, CONNECTED_CIRCLES
 	 */
 	public void addPoints(float[] x, float[] y, int shape) {
-		addPoints(x, y, null, shape, null);
+		//EU_HOU CHANGES : added Color to match called method
+		//addPoints(x, y, null, shape, null);
+		addPoints(x, y, null, shape, null, Color.black);
 	}
 
 	/** Adds a set of points to the plot using double arrays. */
@@ -832,7 +860,9 @@ public class Plot implements Cloneable {
 	 * @param shape		CIRCLE, X, BOX, TRIANGLE, CROSS, DIAMOND, DOT or LINE
 	 */
 	public void addPoints(double[] x, double[] y, double[] errorBars, int shape) {
-		addPoints(Tools.toFloat(x), Tools.toFloat(y), Tools.toFloat(errorBars), shape, null);
+		//EU_HOU CHANGES : added parameter to match called method
+		//addPoints(Tools.toFloat(x), Tools.toFloat(y), Tools.toFloat(errorBars), shape, null);
+		addPoints(Tools.toFloat(x), Tools.toFloat(y), Tools.toFloat(errorBars), shape, null, Color.black);
 	}
 
 	/** Adds a set of points to the plot using double ArrayLists.
@@ -919,6 +949,17 @@ public class Plot implements Cloneable {
 			textLoc = new Point2D.Double(x,y);
 			textIndex = allPlotObjects.size()-1;
 		}
+		/*
+		 * EU_HOU CHANGES
+		 */
+		int xt = LEFT_MARGIN + (int) (x * frameWidth);
+		int yt = TOP_MARGIN + (int) (y * frameHeight);
+		labels.add(label);
+		xlabs.add(new Integer(xt));
+		ylabs.add(new Integer(yt));
+		/*
+		 * EU_HOU CHANGES END
+		 */
 	}
 
 	/* Draws text at the specified location, using the coordinate system defined
@@ -1594,7 +1635,8 @@ public class Plot implements Cloneable {
 			} else
 				setImagePlus(null);
 		}
-		PlotWindow pw = new PlotWindow(this);		//note: this may set imp to null if pw has listValues and autoClose are set
+		//EU_HOU CHANGES : added imp parameter
+		PlotWindow pw = new PlotWindow(this, imp);		//note: this may set imp to null if pw has listValues and autoClose are set
 		if (IJ.isMacro() && imp!=null) // wait for plot to be displayed
 			IJ.selectWindow(imp.getID());
 		return pw;
@@ -3982,6 +4024,123 @@ public class Plot implements Cloneable {
 		setFont(font);
 	}
 
+	/*
+	 * EU_HOU ADD
+	 */
+	public void updatePlot(int x, int y) {
+		// EU_HOU
+		//System.out.println("PlotWindow mousemoved 0");
+		if (frame == null) {
+			return;
+		}
+
+		int xOrigine = 0;
+
+		//if ((region != null) && (horizontal)) {
+		//	xOrigine = ((Line) region).getX();
+		//}
+
+		if (frame.contains(oldX - 1, oldY)) {
+			//System.out.println("PlotWindow mousemoved 1");
+			ip.setColor(Color.white);
+			// EU_HOU
+			if (imp != null) {
+				Roi region = imp.getRoi();
+				imp.setRoi(frame);
+				ip.fill();
+				imp.setRoi(region);
+			}
+
+			/*
+			    ip.drawLine(oldX,frame.y ,oldX,frame.y+frame.height);
+			    ip.drawLine(frame.x,Ypoints[oldindex],frame.x+frame.width,Ypoints[oldindex]);
+			  */
+			ip.setColor(Color.black);
+			drawPolyline(ip, Xpoints, Ypoints, nPoints);
+			ip.setColor(Color.black);
+			ip.drawRect(frame.x, frame.y, frame.width + 1, frame.height + 1);
+			ip.setAntialiasedText(true);
+			Enumeration e = labels.elements();
+			int i = 0;
+			while (e.hasMoreElements()) {
+				int xxx = ((Integer) xlabs.elementAt(i)).intValue();
+				int yyy = ((Integer) ylabs.elementAt(i++)).intValue();
+				ip.drawString((String) e.nextElement(), xxx, yyy);
+			}
+			// EU_HOU
+			if (imp != null) {
+				imp.updateAndDraw();
+			}
+		}
+		if (frame.contains(x, y)) {
+			//System.out.println("PlotWindow mousemoved 2");
+			int index = (int) ((x - frame.x) / ((double) frame.width / xValues.length));
+			ip.setColor(Color.gray.brighter());
+			ip.drawLine(x, frame.y, x, frame.y + frame.height);
+			ip.drawLine(frame.x, Ypoints[index], frame.x + frame.width, Ypoints[index]);
+			ip.setColor(Color.black);
+
+			ip.drawRect(frame.x, frame.y, frame.width + 1, frame.height + 1);
+			// EU_HOU
+			if (imp != null) {
+				imp.updateAndDraw();
+			}
+			if (index > 0 && index < xValues.length) {
+				double xv;
+				xv = xValues[index];
+				//if(horizontal) xv-= xOrigine;
+				double yv = yValues[index];
+				//ip.drawPixel( LEFT_MARGIN + (int)((xv-xMin)*xScale),TOP_MARGIN + frame.height - (int)((yv-yMin)*yScale));
+
+
+				if ((origin != null) && (region != null) && (region.getType() == Roi.LINE)) {
+					origin.getWindow().getCanvas().setRoi(region);
+					Line lr = (Line) region;
+					if (horizontal) {
+						xv -= xOrigine;
+					}
+					// dessin du petit point dans l'image originale
+					double c = xv / (origin.getRoi().getLength());
+					int xi = lr.x1 + (int) (c * (lr.x2 - lr.x1) + 0.5);
+					int yi = lr.y1 + (int) (c * (lr.y2 - lr.y1) + 0.5);
+					origin.getWindow().getCanvas().setPoint(xi, yi, region);
+				}
+				oldindex = index;
+			}
+			//coordinates.setText("X=" + d2s(x/xScale+xMin)+", Y=" + d2s((frameHeight-y)/yScale+yMin));
+		}
+
+		oldX = x;
+		oldY = y;
+
+		if (yValuesBaseLine != null) {
+			addPoints(xValues, yValuesBaseLine, LINE, Color.red);
+		}
+		if (yValuesMergeGaussFit != null) {
+			addPoints(xValues, yValuesMergeGaussFit, LINE, Color.red);
+		}
+		//displayGaussianFit();
+		if (ZERO_LINE) {
+			addPoints(xValues, new float[xValues.length], LINE, Color.blue);
+		}
+		drawTicksEtc();
+	}
+	// EU_HOU	
+	/*
+	 * EU_HOU ADD END
+	 */
+	
+	/*
+	 * EU_HOU ADD
+	 */
+	public void killOverlayOrigin() {
+		if ((origin != null) && (region != null) && (region.getType() == Roi.LINE)) {
+			origin.getWindow().getCanvas().setPoint(-1, -1, null);
+		}
+	}
+	/*
+	 * EU_HOU ADD END
+	 */
 }
 
 /** This class contains the properties of the plot, such as size, format, range, etc, except for the data+format (plot contents).

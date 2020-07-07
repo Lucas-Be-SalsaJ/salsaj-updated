@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.macro;
 import ij.*;
 import ij.process.*;
@@ -242,6 +243,7 @@ public class Functions implements MacroConstants, Measurements {
 			case SELECTION_CONTAINS: value = selectionContains(); break;
 			case PLOT: value = doPlot(); break;
 			default:
+				//EU_HOU MISSING Bundle
 				interp.error("Numeric function expected");
 		}
 		return value;
@@ -283,6 +285,7 @@ public class Functions implements MacroConstants, Measurements {
 			case GET_RESULT_STRING: str = getResultString(null); break;
 			default:
 				str="";
+				//EU_HOU MISSING Bundle
 				interp.error("String function expected");
 		}
 		return str;
@@ -301,6 +304,7 @@ public class Functions implements MacroConstants, Measurements {
 			case ARRAY_FUNC: array = doArray(); break;
 			default:
 				array = null;
+				//EU_HOU MISSING Bundle
 				interp.error("Array function expected");
 		}
 		return array;
@@ -317,6 +321,7 @@ public class Functions implements MacroConstants, Measurements {
 			case ROI_MANAGER2: var = doRoiManager(); break;
 			case PROPERTY: var = doProperty(); break;
 			default:
+				//EU_HOU MISSING Bundle
 				interp.error("Variable function expected");
 		}
 		if (var==null)
@@ -336,9 +341,11 @@ public class Functions implements MacroConstants, Measurements {
 	private double doMath() {
 		interp.getToken();
 		if (interp.token!='.')
+			//EU_HOU MISSING Bundle
 			interp.error("'.' expected");
 		interp.getToken();
 		if (!(interp.token==WORD||interp.token==NUMERIC_FUNCTION))
+			//EU_HOU MISSING Bundle
 			interp.error("Function name expected: ");
 		String name = interp.tokenString;
 		if (name.equals("min"))
@@ -383,6 +390,7 @@ public class Functions implements MacroConstants, Measurements {
 		else if (name.equals("erf"))
 			return IJMath.erf(arg);
 		else
+			//EU_HOU MISSING Bundle
 			interp.error("Unrecognized function name");
 		return Double.NaN;
 	}
@@ -520,6 +528,7 @@ public class Functions implements MacroConstants, Measurements {
 	final Variable getVariable() {
 		interp.getToken();
 		if (interp.token!=WORD)
+			//EU_HOU MISSING Bundle
 			interp.error("Variable expected");
 		Variable v = interp.lookupLocalVariable(interp.tokenAddress);
 		if (v==null)
@@ -553,6 +562,7 @@ public class Functions implements MacroConstants, Measurements {
 	final Variable getArrayVariable() {
 		interp.getToken();
 		if (interp.token!=WORD)
+			//EU_HOU MISSING Bundle
 			interp.error("Variable expected");
 		Variable v = interp.lookupLocalVariable(interp.tokenAddress);
 		if (v==null)
@@ -608,6 +618,7 @@ public class Functions implements MacroConstants, Measurements {
 		boolean newArray = interp.token==ARRAY_FUNCTION && pgm.table[interp.tokenAddress].type==NEW_ARRAY;
 		boolean arrayFunction = interp.token==ARRAY_FUNCTION && pgm.table[interp.tokenAddress].type==ARRAY_FUNC;
 		if (!(interp.token==WORD||newArray||arrayFunction))
+			//EU_HOU MISSING Bundle
 			interp.error("Array expected");
 		Variable[] a = null;
 		if (newArray)
@@ -627,6 +638,7 @@ public class Functions implements MacroConstants, Measurements {
 			}
 		}
 		if (a==null)
+			//EU_HOU MISSING Bundle
 			interp.error("Array expected");
 		return a;
 	}
@@ -663,12 +675,14 @@ public class Functions implements MacroConstants, Measurements {
 		else if (color.startsWith("#"))
 			return Colors.decode(color, Color.black);
 		else
+			//EU_HOU MISSING Bundle
 			interp.error("'red', 'green', or '#0000ff' etc. expected");
 		return null;
 	}
 
 	void checkIndex(int index, int lower, int upper) {
 		if (index<lower || index>upper)
+			//EU_HOU MISSING Bundle
 			interp.error("Index ("+index+") is outside of the "+lower+"-"+upper+" range");
 	}
 
@@ -677,6 +691,7 @@ public class Functions implements MacroConstants, Measurements {
 		String arg1 = getString();
 		interp.getToken();
 		if (!(interp.token==')' || interp.token==','))
+			//EU_HOU MISSING Bundle
 			interp.error("',' or ')'  expected");
 		String arg2 = null;
 		if (interp.token==',') {
@@ -766,6 +781,7 @@ public class Functions implements MacroConstants, Measurements {
 		switch (imp.getBitDepth()) {
 			case 8:
 				if (value<0 || value>255)
+					//EU_HOU MISSING Bundle
 					interp.error("Argument out of 8-bit range (0-255)");
 				ip.setValue(value);
 				break;
@@ -773,6 +789,7 @@ public class Functions implements MacroConstants, Measurements {
 				if (imp.getLocalCalibration().isSigned16Bit())
 					value += 32768;
 				if (value<0 || value>65535)
+					//EU_HOU MISSING Bundle
 					interp.error("Argument out of 16-bit range (0-65535)");
 				ip.setValue(value);
 				break;
@@ -924,6 +941,7 @@ public class Functions implements MacroConstants, Measurements {
 			else
 				ip.putPixel(a1, (int)a2, (int)a3);
 		} else {
+			//EU_HOU MISSING Bundle
 			if (interp.token!=')') interp.error("')' expected");
 			if (ip instanceof ColorProcessor)
 				ip.set(a1, (int)a2);
@@ -962,6 +980,7 @@ public class Functions implements MacroConstants, Measurements {
 				}
 			}
 		} else {
+			//EU_HOU MISSING Bundle
 			if (interp.token!=')') interp.error("')' expected");
 			if (ip instanceof ColorProcessor)
 				value = ip.get((int)a1);
@@ -978,6 +997,7 @@ public class Functions implements MacroConstants, Measurements {
 		ImageStack stack = imp.getStack();
 		int size = stack.size();
 		if (z<0 || z>=size)
+			//EU_HOU MISSING Bundle
 			interp.error("Z coordinate ("+z+") is out of 0-"+(size-1)+ " range");
 		this.defaultIP = stack.getProcessor(n);
 	}
@@ -1164,12 +1184,14 @@ public class Functions implements MacroConstants, Measurements {
 					dseed = interp.getExpression();
 					long seed = (long)dseed;
 					if (seed!=dseed)
+						//EU_HOU MISSING Bundle
 						interp.error("Seed not integer");
 					ran = new Random(seed);
 					ImageProcessor.setRandomSeed(seed);
 				} else if (arg.equals("gaussian"))
 					gaussian = true;
 				else
+					//EU_HOU MISSING Bundle
 					interp.error("'seed' or ''gaussian' expected");
 			}
 			interp.getRightParen();
@@ -1204,6 +1226,7 @@ public class Functions implements MacroConstants, Measurements {
 		int counter = rt.size();
 		if (row==-1) row = counter-1;
 		if (row<0 || row>=counter)
+			//EU_HOU MISSING Bundle
 			interp.error("Row ("+row+") out of range");
 		int col = rt.getColumnIndex(column);
 		if (!rt.columnExists(col))
@@ -1238,6 +1261,7 @@ public class Functions implements MacroConstants, Measurements {
 		int counter = rt.size();
 		if (row==-1) row = counter-1;
 		if (row<0 || row>=counter)
+			//EU_HOU MISSING Bundle
 			interp.error("Row ("+row+") out of range");
 		int col = rt.getColumnIndex(column);
 		if (rt.columnExists(col))
@@ -1255,6 +1279,7 @@ public class Functions implements MacroConstants, Measurements {
 		ResultsTable rt = getResultsTable(true);
 		int counter = rt.size();
 		if (row<0 || row>=counter)
+			//EU_HOU MISSING Bundle
 			interp.error("Row ("+row+") out of range");
 		String label = rt.getLabel(row);
 		if (label!=null)
@@ -1279,6 +1304,7 @@ public class Functions implements MacroConstants, Measurements {
 			}
 		}
 		if (size==0 && reportErrors)
+			//EU_HOU MISSING Bundle
 			interp.error("No results found");
 		return rt;
 	}
@@ -1308,6 +1334,7 @@ public class Functions implements MacroConstants, Measurements {
 		} else
 			unUpdatedTable = rt;
 		if (row<0 || row>rt.size())
+			//EU_HOU MISSING Bundle
 			interp.error("Row ("+row+") out of range");
 		if (row==rt.size())
 			rt.incrementCounter();
@@ -1429,6 +1456,7 @@ public class Functions implements MacroConstants, Measurements {
 		ImagePlus imp = getImage();
 		Roi roi = imp.getRoi();
 		if (roi==null)
+			//EU_HOU MISSING Bundle
 			interp.error("Selection required");
 		Variable[] xa, ya;
 		if (roi.getType()==Roi.LINE) {
@@ -1466,6 +1494,7 @@ public class Functions implements MacroConstants, Measurements {
 		interp.getParens();
 		ImagePlus imp = getImage();
 		if (imp.getRoi()==null)
+			//EU_HOU MISSING Bundle
 			interp.error("Selection required");
 		ProfilePlot pp = new ProfilePlot(imp, IJ.altKeyDown());
 		double[] array = pp.getProfile();
@@ -1560,11 +1589,13 @@ public class Functions implements MacroConstants, Measurements {
 			interp.getToken();
 		} while (interp.token==',');
 		if (interp.token!=')')
+			//EU_HOU MISSING Bundle
 			interp.error("';' expected");
 		Variable[] array = new Variable[size];
 		vector.copyInto((Variable[])array);
 		if (array.length==1 && array[0].getString()==null) {
 			size = (int)array[0].getValue();
+			//EU_HOU MISSING Bundle
 			if (size<0) interp.error("Negative array size");
 			Variable[] array2 = new Variable[size];
 			for (int i=0; i<size; i++)
@@ -1581,6 +1612,7 @@ public class Functions implements MacroConstants, Measurements {
 		while(interp.nextToken()!=')') {
 			int value = (int)interp.getExpression();
 			if (value<0 || value>65535)
+				//EU_HOU MISSING Bundle
 				interp.error("Value (" + value + ") out of 0-65535 range");
 			chars[count++] = (char)value;
 			if (interp.nextToken()==',')
@@ -1661,6 +1693,7 @@ public class Functions implements MacroConstants, Measurements {
 				ImagePlus imp = getImage();
 				Roi roi = imp.getRoi();
 				if (roi==null)
+					//EU_HOU MISSING Bundle
 					interp.error("No selection");
 				Color color = roi.getStrokeColor();
 				return Colors.colorToString(color);
@@ -1814,10 +1847,12 @@ public class Functions implements MacroConstants, Measurements {
 					if (array!=null)
 						length = v.getArraySize();
 					else
+						//EU_HOU MISSING Bundle
 						interp.error("String or array expected");
 				}
 				break;
 			default:
+				//EU_HOU MISSING Bundle
 				interp.error("String or array expected");
 		}
 		interp.getRightParen();
@@ -1891,6 +1926,7 @@ public class Functions implements MacroConstants, Measurements {
 			histMin = getNextArg();
 			histMax = getLastArg();
 			if (bitDepth==8 || bitDepth==24)
+				//EU_HOU MISSING Bundle
 				interp.error("16 or 32-bit image required to set histMin and histMax");
 			setMinMax = true;
 		} else
@@ -1953,6 +1989,7 @@ public class Functions implements MacroConstants, Measurements {
 		else {
 			ImageProcessor ip = imp.getProcessor();
 			if (ip instanceof ColorProcessor)
+				//EU_HOU MISSING Bundle
 				interp.error("Non-RGB image expected");
 			cm = (IndexColorModel)ip.getColorModel();
 		}
@@ -1974,9 +2011,11 @@ public class Functions implements MacroConstants, Measurements {
 		double[] blues = getLastArray();
 		int length = reds.length;
 		if (greens.length!=length || blues.length!=length)
+			//EU_HOU MISSING Bundle
 			interp.error("Arrays are not the same length");
 		ImagePlus imp = getImage();
 		if (imp.getBitDepth()==24)
+			//EU_HOU MISSING Bundle
 			interp.error("Non-RGB image expected");
 		ImageProcessor ip = getProcessor();
 		byte[] r = new byte[length];
@@ -2055,6 +2094,7 @@ public class Functions implements MacroConstants, Measurements {
 		} else {
 			roiType = (int)interp.getExpression();
 			if (roiType<0 || roiType==Roi.COMPOSITE)
+				//EU_HOU MISSING Bundle
 				interp.error("Invalid selection type ("+roiType+")");
 			if (roiType==Roi.RECTANGLE) roiType = Roi.POLYGON;
 			if (roiType==Roi.OVAL) roiType = Roi.FREEROI;
@@ -2066,10 +2106,12 @@ public class Functions implements MacroConstants, Measurements {
 		if (interp.nextToken()==',') {
 			n = (int)getLastArg();
 			if (n>x.length || n>y.length)
+				//EU_HOU MISSING Bundle
 				interp.error("Array too short");
 		} else {
 			interp.getRightParen();
 			if (y.length!=n)
+				//EU_HOU MISSING Bundle
 				interp.error("Arrays are not the same length");
 		}
 		ImagePlus imp = getImage();
@@ -2102,6 +2144,7 @@ public class Functions implements MacroConstants, Measurements {
 		Roi roi = null;
 		if (roiType==Roi.LINE) {
 			if (!(xcoord!=null&&xcoord.length==2||xfcoord!=null&&xfcoord.length==2))
+				//EU_HOU MISSING Bundle
 				interp.error("2 element arrays expected");
 			if (floatCoordinates)
 				roi = new Line(xfcoord[0], yfcoord[0], xfcoord[1], yfcoord[1]);
@@ -2143,9 +2186,11 @@ public class Functions implements MacroConstants, Measurements {
 	double doPlot() {
 		interp.getToken();
 		if (interp.token!='.')
+			//EU_HOU MISSING Bundle
 			interp.error("'.' expected");
 		interp.getToken();
 		if (!(interp.token==WORD || interp.token==PREDEFINED_FUNCTION || interp.token==STRING_FUNCTION))
+			//EU_HOU MISSING Bundle
 			interp.error("Function name expected: ");
 		String name = interp.tokenString;
 		if (name.equals("create")) {
@@ -2162,6 +2207,7 @@ public class Functions implements MacroConstants, Measurements {
 		if (currentPlot == null)
 			currentPlot = (Plot)(getImage().getProperty(Plot.PROPERTY_KEY));
 		if (currentPlot==null)
+			//EU_HOU MISSING Bundle
 			interp.error("No plot window and no plot under construction");
 		if (name.equals("setFrameSize")) {
 			currentPlot.setFrameSize((int)getFirstArg(), (int)getLastArg());
@@ -2203,6 +2249,7 @@ public class Functions implements MacroConstants, Measurements {
 		}  else if (name.equals("setStyle")) {
 			int index = (int)getFirstArg();
 			if (index<0 || index>=currentPlot.getNumPlotObjects())
+				//EU_HOU MISSING Bundle
 				interp.error("Index out of bounds");
 			currentPlot.setStyle(index, getLastString());
 			if (plot == null)
@@ -2243,6 +2290,7 @@ public class Functions implements MacroConstants, Measurements {
 		}
 		// the following commands need a plot under construction
 		if (plot==null)
+			//EU_HOU MISSING Bundle
 			interp.error("No plot defined");
 		if (name.equals("show")) {
 			return showPlot();
@@ -2287,6 +2335,7 @@ public class Functions implements MacroConstants, Measurements {
 			plot.appendToStack();
 			return Double.NaN;
 		} else
+			//EU_HOU MISSING Bundle
 			interp.error("Unrecognized plot function");
 		return Double.NaN;
 	}
@@ -2323,6 +2372,7 @@ public class Functions implements MacroConstants, Measurements {
 			for (int i=0; i<y.length; i++)
 				yvalues[i] = y[i];
 		} else
+			//EU_HOU MISSING Bundle
 			interp.error("No plot or histogram window");
 		Variable[] xa = new Variable[xvalues.length];
 		Variable[] ya = new Variable[yvalues.length];
@@ -2352,6 +2402,7 @@ public class Functions implements MacroConstants, Measurements {
 			rt.show(title);
 			return Double.NaN;
 		} else
+			//EU_HOU MISSING Bundle
 			interp.error("No plot window");
 		return Double.NaN;
 	}
@@ -2448,6 +2499,7 @@ public class Functions implements MacroConstants, Measurements {
 		} else if (type.contains("boxes")) {
 			nCoords = 6;//centers, Q1s, Q2s, Q3s, Q4s, Q5s (Q= quartile border)
 		} else {
+			//EU_HOU MISSING Bundle
 			interp.error("Must contain 'rectangles' or 'boxes'");
 			return Double.NaN;
 		}
@@ -2465,6 +2517,7 @@ public class Functions implements MacroConstants, Measurements {
 				}
 				nBoxes = arr.length;
 				if (jj > 0 && arr2D[0].length != nBoxes) {
+					//EU_HOU MISSING Bundle
 					interp.error("Arrays must have same length (" + nBoxes + ")");
 					return Double.NaN;
 				}
@@ -2541,6 +2594,7 @@ public class Functions implements MacroConstants, Measurements {
 			plot.setFormatFlags(flags);
 			plot.updateImage();
 		} catch (NumberFormatException e) {
+			//EU_HOU MISSING Bundle
 			interp.error("Plot format flags not binary");
 		}
 		return Double.NaN;
@@ -2554,19 +2608,23 @@ public class Functions implements MacroConstants, Measurements {
 			String title = getString();
 			sourceImp = WindowManager.getImage(title);
 			if (sourceImp==null)
+				//EU_HOU MISSING Bundle
 				interp.error("Image \""+title+"\" not found");
 		} else {
 			int id = (int)interp.getExpression();
 			sourceImp = WindowManager.getImage(id);
 			if (sourceImp==null)
+				//EU_HOU MISSING Bundle
 				interp.error("Image ID="+id+" not found");
 		}
 		Plot sourcePlot = (Plot)(sourceImp.getProperty(Plot.PROPERTY_KEY));
 		if (sourcePlot==null)
+			//EU_HOU MISSING Bundle
 			interp.error("No plot: "+sourceImp.getTitle());
 		if (type == 'a') {
 			int objectIndex = (int)getNextArg();
 			if (objectIndex < 0 || objectIndex > plot.getNumPlotObjects())
+				//EU_HOU MISSING Bundle
 				interp.error("Plot "+sourceImp.getTitle()+" has "+plot.getNumPlotObjects()+"items, no number "+objectIndex);
 			plot.addObjectFromPlot(sourcePlot, objectIndex);
 			plot.updateImage();
@@ -2699,6 +2757,7 @@ public class Functions implements MacroConstants, Measurements {
 		else
 			interp.getRightParen();
 		if (index1>index2)
+			//EU_HOU MISSING Bundle
 			interp.error("beginIndex>endIndex");
 		checkIndex(index1, 0, s.length());
 		checkIndex(index2, 0, s.length());
@@ -2870,6 +2929,7 @@ public class Functions implements MacroConstants, Measurements {
 	void restoreSettings() {
 		interp.getParens();
 		if (!saveSettingsCalled)
+			//EU_HOU MISSING Bundle
 			interp.error("saveSettings() not called");
 		Prefs.usePointerCursor = usePointerCursor;
 		IJ.hideProcessStackDialog = hideProcessStackDialog;
@@ -3040,6 +3100,7 @@ public class Functions implements MacroConstants, Measurements {
 		}
 		RoiManager rm = roiManager!=null?roiManager:RoiManager.getInstance();
 		if (rm==null)
+			//EU_HOU MISSING Bundle
 			interp.error("ROI Manager not found");
 		if (multiSelect)
 			return setMultipleIndexes(rm);
@@ -3064,6 +3125,7 @@ public class Functions implements MacroConstants, Measurements {
 			return Double.NaN;
 		} else {
 			if (!rm.runCommand(cmd))
+				//EU_HOU MISSING Bundle
 				interp.error("Invalid ROI Manager command");
 		}
 		return countOrIndex;
@@ -3090,6 +3152,7 @@ public class Functions implements MacroConstants, Measurements {
 		for (int i=0; i<indexes.length; i++) {
 			selectedIndexes[i] = (int)indexes[i];
 			if (selectedIndexes[i]<0 || selectedIndexes[i]>=count)
+				//EU_HOU MISSING Bundle
 				interp.error("Invalid index: "+selectedIndexes[i]);
 		}
 		rm.setSelectedIndexes(selectedIndexes);
@@ -3139,12 +3202,14 @@ public class Functions implements MacroConstants, Measurements {
 		if (isStringArg()) {
 			String title = getString();
 			if (!isOpen(title))
+				//EU_HOU MISSING Bundle
 				interp.error("\""+title+"\" not found");
 			selectImage(title);
 			interp.getRightParen();
 		} else {
 			int id = (int)interp.getExpression();
 			if (WindowManager.getImage(id)==null)
+				//EU_HOU MISSING Bundle
 				interp.error("Image "+id+" not found");
 			IJ.selectWindow(id);
 			interp.getRightParen();
@@ -3175,6 +3240,7 @@ public class Functions implements MacroConstants, Measurements {
 	}
 
 	void notFound(String title) {
+		//EU_HOU MISSING Bundle
 		interp.error(title+" not found");
 	}
 
@@ -3461,6 +3527,7 @@ public class Functions implements MacroConstants, Measurements {
 		if (n==1 && nSlices==1)
 			return;
 		else if (n<1 || n>nSlices)
+			//EU_HOU MISSING Bundle
 			interp.error("Argument must be >=1 and <="+nSlices);
 		else {
 			if (imp.isHyperStack())
@@ -3486,6 +3553,7 @@ public class Functions implements MacroConstants, Measurements {
 			t = (int)getLastArg();
 		}
 		if (width<1 || height<1)
+			//EU_HOU MISSING Bundle
 			interp.error("Width or height < 1");
 		if (c<0)
 			IJ.newImage(title, type, width, height, depth);
@@ -3517,6 +3585,7 @@ public class Functions implements MacroConstants, Measurements {
 		ImagePlus imp = getImage();
 		ImageCanvas ic = imp.getCanvas();
 		if (ic==null)
+			//EU_HOU MISSING Bundle
 			{interp.error("Image not displayed"); return 0.0;}
 		else
 			return ic.getMagnification();
@@ -3533,6 +3602,7 @@ public class Functions implements MacroConstants, Measurements {
 		ImagePlus img = getImage();
 		ImageProcessor ip = getProcessor();
 		if (ip instanceof ColorProcessor)
+			//EU_HOU MISSING Bundle
 			interp.error("Non-RGB image expected");
 		ip.setRoi(img.getRoi());
 		if (mString!=null) {
@@ -3588,6 +3658,7 @@ public class Functions implements MacroConstants, Measurements {
 				return;
 			} else if (s.equals("~0~")) {
 				if (writer==null)
+					//EU_HOU MISSING Bundle
 					interp.error("File not open");
                 String s2 = getLastString();
                 if (s2.endsWith("\n"))
@@ -3619,10 +3690,12 @@ public class Functions implements MacroConstants, Measurements {
 				interp.done = true;
 				return;
 			} else
+				//EU_HOU MISSING Bundle
 				interp.error("Window not found");
 		}
 		boolean isEditor = frame instanceof Editor;
 		if (!(isEditor || frame instanceof TextWindow))
+			//EU_HOU MISSING Bundle
 			interp.error("Window is not text window");
 		if (isEditor) {
 			Editor ed = (Editor)frame;
@@ -3669,6 +3742,7 @@ public class Functions implements MacroConstants, Measurements {
 				{tp.append(s); return;}
 			String nstr = s.substring(7, cindex);
 			int line = (int)Tools.parseDouble(nstr, -1);
+			//EU_HOU MISSING Bundle
 			if (line<0) interp.error("Row index<0 or NaN");
 			int count = tp.getLineCount();
 			while (line>=count) {
@@ -3695,6 +3769,7 @@ public class Functions implements MacroConstants, Measurements {
 		else if (key.indexOf("shift")!=-1) value = IJ.shiftKeyDown()==true?1.0:0.0;
 		else if (key.indexOf("space")!=-1) value = IJ.spaceBarDown()==true?1.0:0.0;
 		else if (key.indexOf("control")!=-1) value = IJ.controlKeyDown()==true?1.0:0.0;
+		//EU_HOU MISSING Bundle
 		else interp.error("Invalid key");
 		return value;
 	}
@@ -3772,10 +3847,12 @@ public class Functions implements MacroConstants, Measurements {
 				case 4: max = getVariable(); break;
 				case 5: std = getVariable(); params += STD_DEV; break;
 				case 6: hist = getArrayVariable(); break;
+				//EU_HOU MISSING Bundle
 				default: interp.error("')' expected");
 			}
 			interp.getToken();
 		}
+		//EU_HOU MISSING Bundle
 		if (interp.token!=')') interp.error("')' expected");
 		ImagePlus imp = getImage();
 		Calibration cal = calibrated?imp.getCalibration():null;
@@ -3908,9 +3985,11 @@ public class Functions implements MacroConstants, Measurements {
 	String doDialog() {
 		interp.getToken();
 		if (interp.token!='.')
+			//EU_HOU MISSING Bundle
 			interp.error("'.' expected");
 		interp.getToken();
 		if (!(interp.token==WORD || interp.token==STRING_FUNCTION || interp.token==NUMERIC_FUNCTION || interp.token==PREDEFINED_FUNCTION))
+			//EU_HOU MISSING Bundle
 			interp.error("Function name expected: ");
 		String name = interp.tokenString;
 		try {
@@ -3922,6 +4001,7 @@ public class Functions implements MacroConstants, Measurements {
 				return null;
 			}
 			if (gd==null) {
+				//EU_HOU MISSING Bundle
 				interp.error("No dialog created with Dialog.create()");
 				return null;
 			}
@@ -4027,8 +4107,10 @@ public class Functions implements MacroConstants, Measurements {
 				interp.getParens();
 				return gd.getNextRadioButton();
 			} else
+				//EU_HOU MISSING Bundle
 				interp.error("Unrecognized Dialog function "+name);
 		} catch (IndexOutOfBoundsException e) {
+			//EU_HOU MISSING Bundle
 			interp.error("Dialog error");
 		}
 		return null;
@@ -4140,6 +4222,7 @@ public class Functions implements MacroConstants, Measurements {
 			int id = (int)interp.getExpression();
 			img = WindowManager.getImage(id);
 		}
+		//EU_HOU MISSING Bundle
 		if (img==null) interp.error("Image not found");
 		return img;
 	}
@@ -4177,6 +4260,7 @@ public class Functions implements MacroConstants, Measurements {
 			interp.getToken();
 		}
 		if (points.npoints<3)
+			//EU_HOU MISSING Bundle
 			interp.error("Fewer than 3 points");
 		ImagePlus imp = getImage();
 		Roi previousRoi = imp.getRoi();
@@ -4201,6 +4285,7 @@ public class Functions implements MacroConstants, Measurements {
 			interp.error("'.' expected");
 		interp.getToken();
 		if (!(interp.token==WORD || interp.token==STRING_FUNCTION || interp.token==NUMERIC_FUNCTION || interp.token==PREDEFINED_FUNCTION))
+			//EU_HOU MISSING Bundle
 			interp.error("Function name expected: ");
 		String name = interp.tokenString;
 		if (name.equals("open"))
@@ -4290,6 +4375,7 @@ public class Functions implements MacroConstants, Measurements {
 		else if (name.equals("delete")) {
 			return f.delete()?"1":"0";
 		} else
+			//EU_HOU MISSING Bundle
 			interp.error("Unrecognized File function "+name);
 		return null;
 	}
@@ -4306,6 +4392,7 @@ public class Functions implements MacroConstants, Measurements {
 	boolean checkPath(File f) {
 		String path = f.getPath();
 		if (path.equals("0") || path.equals("NaN")) {
+				//EU_HOU MISSING Bundle
 				interp.error("Invalid path");
 				return false;
 		} else
@@ -4326,6 +4413,7 @@ public class Functions implements MacroConstants, Measurements {
 	void setSelectionName() {
 		Roi roi = getImage().getRoi();
 		if (roi==null)
+			//EU_HOU MISSING Bundle
 			interp.error("No selection");
 		else
 			roi.setName(getStringArg());
@@ -4335,6 +4423,7 @@ public class Functions implements MacroConstants, Measurements {
 		Roi roi = getImage().getRoi();
 		String name = null;
 		if (roi==null)
+			//EU_HOU MISSING Bundle
 			interp.error("No selection");
 		else
 			name = roi.getName();
@@ -4343,6 +4432,7 @@ public class Functions implements MacroConstants, Measurements {
 
 	String openFile() {
 		if (writer!=null) {
+			//EU_HOU MISSING Bundle
 			interp.error("Currently, only one file can be open at a time");
 			return"";
 		}
@@ -4353,6 +4443,7 @@ public class Functions implements MacroConstants, Measurements {
 		else
 			defaultName = getLastString();
 		if (path.equals("") || defaultName!=null) {
+			//EU_HOU MISSING Bundle
 			String title = defaultName!=null?path:"openFile";
 			defaultName = defaultName!=null?defaultName:"log.txt";
 			SaveDialog sd = new SaveDialog(title, defaultName, ".txt");
@@ -4363,6 +4454,7 @@ public class Functions implements MacroConstants, Measurements {
 			if (file.exists() && !(path.endsWith(".txt")||path.endsWith(".java")||path.endsWith(".xls")
 			||path.endsWith(".csv")||path.endsWith(".tsv")||path.endsWith(".ijm")
 			||path.endsWith(".html")||path.endsWith(".htm")))
+				//EU_HOU MISSING Bundle
 				interp.error("File exists and suffix is not '.txt', '.java', etc.");
 		}
 		try {
@@ -4371,6 +4463,7 @@ public class Functions implements MacroConstants, Measurements {
 			writer = new PrintWriter(bos);
 		}
 		catch (IOException e) {
+			//EU_HOU MISSING Bundle
 			interp.error("File open error \n\""+e.getMessage()+"\"\n");
 			return "";
 		}
@@ -4382,6 +4475,7 @@ public class Functions implements MacroConstants, Measurements {
 		String str = IJ.openAsString(path);
 		if (str==null)
 			interp.done = true;
+		//EU_HOU MISSING Bundle
 		else if (str.startsWith("Error: "))
 			interp.error(str);
 		return str;
@@ -4397,6 +4491,7 @@ public class Functions implements MacroConstants, Measurements {
 		}
 		interp.getRightParen();
 		if (path.equals("")) {
+			//EU_HOU MISSING Bundle
 			OpenDialog od = new OpenDialog("Open As String", "");
 			String directory = od.getDirectory();
 			String name = od.getFileName();
@@ -4406,6 +4501,7 @@ public class Functions implements MacroConstants, Measurements {
 		String str = "";
 		File file = new File(path);
 		if (!file.exists())
+			//EU_HOU MISSING Bundle
 			interp.error("File not found");
 		try {
 			StringBuffer sb = new StringBuffer(5000);
@@ -4423,6 +4519,7 @@ public class Functions implements MacroConstants, Measurements {
 			str = new String(buffer2);
 		}
 		catch (Exception e) {
+			//EU_HOU MISSING Bundle
 			interp.error("File open error \n\""+e.getMessage()+"\"\n");
 		}
 		return str;
@@ -4431,6 +4528,7 @@ public class Functions implements MacroConstants, Measurements {
 	String closeFile() {
 		String f = getStringArg();
 		if (!f.equals("~0~"))
+			//EU_HOU MISSING Bundle
 			interp.error("Invalid file variable");
 		if (writer!=null) {
 			writer.close();
@@ -4474,6 +4572,7 @@ public class Functions implements MacroConstants, Measurements {
 		try {
 			c = IJ.getClassLoader().loadClass(className);
 		} catch(Exception ex) {
+			//EU_HOU MISSING Bundle
 			interp.error("Could not load class "+className);
 			return null;
 		}
@@ -4508,6 +4607,7 @@ public class Functions implements MacroConstants, Measurements {
 			}
 		}
 		if (m==null)
+			//EU_HOU MISSING Bundle
 			interp.error("Could not find the method "+methodName+" with "+
 				     args.length+" parameter(s) in class "+className);
 
@@ -4520,11 +4620,13 @@ public class Functions implements MacroConstants, Measurements {
 			e.getCause().printStackTrace(pw);
 			String s = caw.toString();
 			if (IJ.getInstance()!=null)
+				//EU_HOU MISSING Bundle
 				new TextWindow("Exception", s, 400, 400);
 			else
 				IJ.log(s);
 			return null;
 		} catch(Exception e) {
+			//EU_HOU MISSING Bundle
 			IJ.log("Call error ("+e+")");
 			return null;
 		}
@@ -4633,6 +4735,7 @@ public class Functions implements MacroConstants, Measurements {
 		//	Prefs.saveImageLocation = state;
 		//	if (!state) Prefs.set(ImageWindow.LOC_KEY,null);
 		else
+			//EU_HOU MISSING Bundle
 			interp.error("Invalid option");
 	}
 
@@ -4687,6 +4790,7 @@ public class Functions implements MacroConstants, Measurements {
 		ImagePlus imp = getImage();
 		Roi roi = imp.getRoi();
 		if (roi==null)
+			//EU_HOU MISSING Bundle
 			interp.error("Selection required");
 		roi.setLocation(x, y);
 		imp.draw();
@@ -4732,6 +4836,7 @@ public class Functions implements MacroConstants, Measurements {
 			Roi roi = getImage().getRoi();
 			state = roi!=null?roi.isLine():false;
 		} else
+			//EU_HOU MISSING Bundle
 			interp.error("Invalid argument");
 		return state?1.0:0.0;
 	}
@@ -4780,6 +4885,7 @@ public class Functions implements MacroConstants, Measurements {
 				array[i] = new Variable(0, 0.0, list[i]);
 			return array;
 		} else {
+			//EU_HOU MISSING Bundle
 			interp.error("Unvalid key");
 			return null;
 		}
@@ -4788,9 +4894,11 @@ public class Functions implements MacroConstants, Measurements {
 	String doString() {
 		interp.getToken();
 		if (interp.token!='.')
+			//EU_HOU MISSING Bundle
 			interp.error("'.' expected");
 		interp.getToken();
 		if (interp.token!=WORD)
+			//EU_HOU MISSING Bundle
 			interp.error("Function name expected: ");
 		String name = interp.tokenString;
 		if (name.equals("append"))
@@ -4814,6 +4922,7 @@ public class Functions implements MacroConstants, Measurements {
 		else if (name.equals("trim"))
 			return getStringArg().trim();
 		else
+			//EU_HOU MISSING Bundle
 			interp.error("Unrecognized String function");
 		return null;
 	}
@@ -4887,6 +4996,7 @@ public class Functions implements MacroConstants, Measurements {
 	private String copyResults() {
 		interp.getParens();
 		if (!IJ.isResultsWindow())
+			//EU_HOU MISSING Bundle
 			interp.error("No results");
 		TextPanel tp = IJ.getTextPanel();
 		if (tp!=null)
@@ -4933,6 +5043,7 @@ public class Functions implements MacroConstants, Measurements {
 		if (IJ.debugMode) IJ.log("registerExtensions");
 		Interpreter interp = Interpreter.getInstance();
 		if (interp==null) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Macro must be running to install macro extensions");
 			return;
 		}
@@ -4947,6 +5058,7 @@ public class Functions implements MacroConstants, Measurements {
 	String doExt() {
 		interp.getToken();
 		if (interp.token!='.')
+			//EU_HOU MISSING Bundle
 			interp.error("'.' expected");
 		interp.getToken();
 		if (!(interp.token==WORD || interp.token==STRING_FUNCTION || interp.token==NUMERIC_FUNCTION || interp.token==PREDEFINED_FUNCTION))
@@ -4954,6 +5066,7 @@ public class Functions implements MacroConstants, Measurements {
 		String name = interp.tokenString;
 		if (name.equals("install")) {
 			Object plugin = IJ.runPlugIn(getStringArg(), "");
+			//EU_HOU MISSING Bundle
 			if (plugin==null) interp.error("Plugin not found");
 			return null;
 		}
@@ -4961,6 +5074,7 @@ public class Functions implements MacroConstants, Measurements {
 		if (pgm.extensionRegistry!=null)
 			desc = (ExtensionDescriptor) pgm.extensionRegistry.get(name);
 		if (desc == null) {
+			//EU_HOU MISSING Bundle
 			interp.error("Unrecognized Ext function");
 			return null;
 		}
@@ -5063,6 +5177,7 @@ public class Functions implements MacroConstants, Measurements {
 			ImagePlus imp = getImage();
 			Roi roi = imp.getRoi();
 			if (roi==null)
+				//EU_HOU MISSING Bundle
 				interp.error("No selection");
 			return roi.getStrokeWidth();
 		} else if (key.equals("results.count")) {
@@ -5085,6 +5200,7 @@ public class Functions implements MacroConstants, Measurements {
 				if (key.startsWith(headings[i]))
 					return IJ.getValue(getImage(), key);
 			}
+			//EU_HOU MISSING Bundle
 			interp.error("Invalid key");
 			return 0.0;
 		}
@@ -5105,9 +5221,11 @@ public class Functions implements MacroConstants, Measurements {
 	double doStack() {
 		interp.getToken();
 		if (interp.token!='.')
+			//EU_HOU MISSING Bundle
 			interp.error("'.' expected");
 		interp.getToken();
 		if (interp.token!=WORD && interp.token!=PREDEFINED_FUNCTION)
+			//EU_HOU MISSING Bundle
 			interp.error("Function name expected: ");
 		String name = interp.tokenString;
 		if (name.equals("size"))
@@ -5157,6 +5275,7 @@ public class Functions implements MacroConstants, Measurements {
 		if (name.equals("setUnits"))
 			{setStackUnits(imp); return Double.NaN;}
 		if (imp.getStackSize()==1)
+			//EU_HOU MISSING Bundle
 			interp.error("Stack required");
 		if (name.equals("setDimensions"))
 			setDimensions(imp);
@@ -5181,6 +5300,7 @@ public class Functions implements MacroConstants, Measurements {
 		else if (name.equals("getStatistics"))
 			getStackStatistics(imp, true);
 		else
+			//EU_HOU MISSING Bundle
 			interp.error("Unrecognized Stack function");
 		return Double.NaN;
 	}
@@ -5257,10 +5377,12 @@ public class Functions implements MacroConstants, Measurements {
 				case 4: max = getVariable(); break;
 				case 5: std = getVariable(); params += STD_DEV; break;
 				case 6: hist = getArrayVariable(); break;
+				//EU_HOU MISSING Bundle
 				default: interp.error("')' expected");
 			}
 			interp.getToken();
 		}
+		//EU_HOU MISSING Bundle
 		if (interp.token!=')') interp.error("')' expected");
 		ImageStatistics stats = new StackStatistics(imp);
 		count.setValue(stats.pixelCount);
@@ -5281,6 +5403,7 @@ public class Functions implements MacroConstants, Measurements {
 
 	void getActiveChannels(ImagePlus imp) {
 		if (!imp.isComposite())
+			//EU_HOU MISSING Bundle
 			interp.error("Composite image required");
 		boolean[] active = ((CompositeImage)imp).getActiveChannels();
 		int n = active.length;
@@ -5298,8 +5421,10 @@ public class Functions implements MacroConstants, Measurements {
 
 	void toggleChannel(ImagePlus imp, int channel) {
 		if (!imp.isComposite())
+			//EU_HOU MISSING Bundle
 			interp.error("Composite image required");
 		if (channel<1 || channel>imp.getNChannels())
+			//EU_HOU MISSING Bundle
 			interp.error("Invalid channel: "+channel);
 		if (((CompositeImage)imp).getMode()!=IJ.COMPOSITE)
 			((CompositeImage)imp).setMode(IJ.COMPOSITE);
@@ -5312,6 +5437,7 @@ public class Functions implements MacroConstants, Measurements {
 	void setDisplayMode(ImagePlus imp, String mode) {
 		mode = mode.toLowerCase(Locale.US);
 		if (!imp.isComposite())
+			//EU_HOU MISSING Bundle
 			interp.error("Composite image required");
 		int m = -1;
 		if (mode.equals("composite"))
@@ -5321,6 +5447,7 @@ public class Functions implements MacroConstants, Measurements {
 		else if (mode.startsWith("gray"))
 			m = IJ.GRAYSCALE;
 		if (m==-1)
+			//EU_HOU MISSING Bundle
 			interp.error("Invalid mode");
 		((CompositeImage)imp).setMode(m);
 		imp.updateAndDraw();
@@ -5332,6 +5459,7 @@ public class Functions implements MacroConstants, Measurements {
 		ImageStack stack = imp.getStack();
 		int size = stack.size();
 		if (n1<1||n1>size||n2<1||n2>size)
+			//EU_HOU MISSING Bundle
 			interp.error("Argument out of range");
 		Object pixels = stack.getPixels(n1);
 		String label = stack.getSliceLabel(n1);
@@ -5394,6 +5522,7 @@ public class Functions implements MacroConstants, Measurements {
         interp.getLeftParen();
 		if (isStringArg()) {
 			boolean ok = IJ.setTool(getString());
+			//EU_HOU MISSING Bundle
 			if (!ok) interp.error("Unrecognized tool name");
 		} else
 			IJ.setTool((int)interp.getExpression());
@@ -5408,6 +5537,7 @@ public class Functions implements MacroConstants, Measurements {
 			s = IJ.d2s(value, (int)interp.getExpression());
 			interp.getToken();
 		}
+		//EU_HOU MISSING Bundle
 		if (interp.token!=')') interp.error("')' expected");
 		return s;
 	}
@@ -5427,6 +5557,7 @@ public class Functions implements MacroConstants, Measurements {
 	void waitForUser() {
 		IJ.wait(50);
 		if (waitForUserDialog!=null && waitForUserDialog.isShowing())
+			//EU_HOU MISSING Bundle
 			interp.error("Duplicate call");
 		String title = "Action Required";
 		String text = "   Click \"OK\" to continue     ";
@@ -5465,9 +5596,11 @@ public class Functions implements MacroConstants, Measurements {
 	String doList() {
 		interp.getToken();
 		if (interp.token!='.')
+			//EU_HOU MISSING Bundle
 			interp.error("'.' expected");
 		interp.getToken();
 		if (!(interp.token==WORD||interp.token==ARRAY_FUNCTION||interp.token==NUMERIC_FUNCTION))
+			//EU_HOU MISSING Bundle
 			interp.error("Function name expected: ");
 		if (props==null)
 			props = new Properties();
@@ -5478,6 +5611,7 @@ public class Functions implements MacroConstants, Measurements {
 			value = value!=null?value:"";
 		} else if (name.equals("getValue")) {
 			value = props.getProperty(getStringArg());
+			//EU_HOU MISSING Bundle
 			if (value==null) interp.error("Value not found");
 		} else if (name.equals("set")||name.equals("add")||name.equals("put"))
 			props.setProperty(getFirstString(), getLastString());
@@ -5515,11 +5649,13 @@ public class Functions implements MacroConstants, Measurements {
 			interp.getComma();
 			String[] values = getStringArray();
 			if (values.length != keys.length) {
+				//EU_HOU MISSING Bundle
 				interp.error("Arrays must have same length");
 			}
 			props.clear();
 			for (int i = 0; i < keys.length; i++) {
 				if (keys[i].equals("")) {
+					//EU_HOU MISSING Bundle
 					interp.error("Key cannot be an empty string");
 				}
 				props.setProperty(keys[i], values[i]);
@@ -5546,6 +5682,7 @@ public class Functions implements MacroConstants, Measurements {
 			keys.setArray(keysVar);
 			values.setArray(valuesVar);
 		} else {
+			//EU_HOU MISSING Bundle
 			interp.error("Unrecognized List function");
 		}
 		return value;
@@ -5655,9 +5792,11 @@ public class Functions implements MacroConstants, Measurements {
 	double fit() {
 		interp.getToken();
 		if (interp.token!='.')
+			//EU_HOU MISSING Bundle
 			interp.error("'.' expected");
 		interp.getToken();
 		if (!(interp.token==WORD||interp.token==ARRAY_FUNCTION))
+			//EU_HOU MISSING Bundle
 			interp.error("Function name expected: ");
 		if (props==null)
 			props = new Properties();
@@ -5677,6 +5816,7 @@ public class Functions implements MacroConstants, Measurements {
 			return Double.NaN;
 		}
 		if (fitter==null)
+			//EU_HOU MISSING Bundle
 			interp.error("No fit");
 		if (name.equals("f"))
 			return fitter.f(fitter.getParams(), getArg());
@@ -5715,6 +5855,7 @@ public class Functions implements MacroConstants, Measurements {
 			}
 			boolean isCustom = name.indexOf("y=")!=-1 || name.indexOf("y =")!=-1;
 			if (fit==-1&&!isCustom)
+				//EU_HOU MISSING Bundle
 				interp.error("Unrecognized fit");
 		} else
 			fit = (int)interp.getExpression();
@@ -5727,8 +5868,10 @@ public class Functions implements MacroConstants, Measurements {
 		}
 		interp.getRightParen();
 		if (x.length!=y.length)
+			//EU_HOU MISSING Bundle
 			interp.error("Arrays not same length");
 		if (x.length==0)
+			//EU_HOU MISSING Bundle
 			interp.error("Zero length array");
 		fitter = new CurveFitter(x, y);
 		fitter.setStatusAndEsc(null, true);
@@ -5737,6 +5880,7 @@ public class Functions implements MacroConstants, Measurements {
 			int params = fitter.doCustomFit(name, initialValues, showFitDialog);
 			Interpreter.instance = instance;
 			if (params==0)
+				//EU_HOU MISSING Bundle
 				interp.error("Invalid custom function");
 		} else
 			fitter.doFit(fit, showFitDialog);
@@ -5759,6 +5903,7 @@ public class Functions implements MacroConstants, Measurements {
 			interp.getToken();
 		}
 		if (interp.token!=')')
+			//EU_HOU MISSING Bundle
 			interp.error("')' expected");
 		checkIndex(index, 0, CurveFitter.fitList.length-1);
 		name.setString(CurveFitter.fitList[index]);
@@ -5775,6 +5920,7 @@ public class Functions implements MacroConstants, Measurements {
 		if (interp.nextToken()==',') {
 			channels = (int)getLastArg();
 			if (getImage().getBitDepth()!=24)
+				//EU_HOU MISSING Bundle
 				interp.error("RGB image required");
 		} else
 			interp.getRightParen();
@@ -5798,6 +5944,7 @@ public class Functions implements MacroConstants, Measurements {
 		if (interp.getDebugger()==null && !(arg.equals("throw")||arg.equals("dump"))) {
 			Editor ed = Editor.getInstance();
 			if (ed==null)
+				//EU_HOU MISSING Bundle
 				interp.error("Macro editor not available");
 			else
 				interp.setDebugger(ed);
@@ -5815,6 +5962,7 @@ public class Functions implements MacroConstants, Measurements {
 		else if (arg.indexOf("throw")!=-1)
 			throw new IllegalArgumentException();
 		else
+			//EU_HOU MISSING Bundle
 			interp.error("Argument must be 'run', 'break', 'trace', 'fast-trace' or 'dump'");
 		IJ.setKeyUp(IJ.ALL_KEYS);
 		return null;
@@ -5823,9 +5971,11 @@ public class Functions implements MacroConstants, Measurements {
 	Variable[] doArray() {
 		interp.getToken();
 		if (interp.token!='.')
+			//EU_HOU MISSING Bundle
 			interp.error("'.' expected");
 		interp.getToken();
 		if (!(interp.token==WORD||interp.token==PREDEFINED_FUNCTION))
+			//EU_HOU MISSING Bundle
 			interp.error("Function name expected: ");
 		String name = interp.tokenString;
 		if (name.equals("copy"))
@@ -5869,6 +6019,7 @@ public class Functions implements MacroConstants, Measurements {
 		else if (name.equals("deleteIndex"))
 			return deleteArrayIndex();
 		else
+			//EU_HOU MISSING Bundle
 			interp.error("Unrecognized Array function");
 		return null;
 	}
@@ -5938,6 +6089,7 @@ public class Functions implements MacroConstants, Measurements {
 			else if (windowS.startsWith("flat"))
 				windowType = FHT.FLATTOP;
 			else if (!windowS.startsWith("no"))
+				//EU_HOU MISSING Bundle
 				interp.error("Invalid Fourier window '"+windowType+"'");
 		}
 		interp.getRightParen();
@@ -6013,6 +6165,7 @@ public class Functions implements MacroConstants, Measurements {
 			i2 = (int)interp.getExpression();
 		}
 		if (i1<0)
+			//EU_HOU MISSING Bundle
 			interp.error("Invalid argument");
 		if (i2>len) i2 = len;
 		int len2 = i2-i1;
@@ -6081,6 +6234,7 @@ public class Functions implements MacroConstants, Measurements {
 			for (int i=0; i<len; i++)
 				a[i].setString(s[i]);
 		} else{
+			//EU_HOU MISSING Bundle
 			interp.error("Mixed strings and numbers");
 			return a;
 		}
@@ -6088,6 +6242,7 @@ public class Functions implements MacroConstants, Measurements {
 			interp.getComma();
 			Variable[] b = getArray();
 			if(b.length != len){
+				//EU_HOU MISSING Bundle
 				interp.error("Arrays must have same length");
 				return a;
 			}
@@ -6114,6 +6269,7 @@ public class Functions implements MacroConstants, Measurements {
 				nNumbers++;
 		}
 		if (nNumbers!=len && nNumbers!=0) {
+			//EU_HOU MISSING Bundle
 			interp.error("Mixed strings and numbers");
 			return a;
 		}
@@ -6148,10 +6304,12 @@ public class Functions implements MacroConstants, Measurements {
 				case 2: maxv = getVariable(); break;
 				case 3: mean = getVariable(); break;
 				case 4: std = getVariable(); break;
+				//EU_HOU MISSING Bundle
 				default: interp.error("')' expected");
 			}
 			interp.getToken();
 		}
+		//EU_HOU MISSING Bundle
 		if (interp.token!=')') interp.error("')' expected");
 		int n = a.length;
 		double sum=0.0, sum2=0.0, value;
@@ -6198,6 +6356,7 @@ public class Functions implements MacroConstants, Measurements {
 		int len1 = a1.length;
 		int len2 = (int)getLastArg();
 		if (len1 == 0 || len2<=0)
+			//EU_HOU MISSING Bundle
 			interp.error("Cannot resample from or to zero-length");
 		double[] d1 = new double[len1];
 		for (int i=0; i<len1; i++)
@@ -6276,6 +6435,7 @@ public class Functions implements MacroConstants, Measurements {
 		int arm = (int) interp.getExpression();
 		int len = xx.length;
 		if (yy.length != len)
+			//EU_HOU MISSING Bundle
 			interp.error("Same size expected");
 		double[] x = new double[len];
 		double[] y = new double[len];
@@ -6321,6 +6481,7 @@ public class Functions implements MacroConstants, Measurements {
 			interp.getToken();
 		} while (interp.token==',');
 		if (interp.token!=')')
+			//EU_HOU MISSING Bundle
 			interp.error("')' expected");
 		int n = arrays.size();
 		if (n==1) {
@@ -6388,9 +6549,11 @@ public class Functions implements MacroConstants, Measurements {
 	private String ijCall() {
 		interp.getToken();
 		if (interp.token!='.')
+			//EU_HOU MISSING Bundle
 			interp.error("'.' expected");
 		interp.getToken();
 		if (!(interp.token==WORD||interp.token==NUMERIC_FUNCTION))
+			//EU_HOU MISSING Bundle
 			interp.error("Function name expected: ");
 		String name = interp.tokenString;
 		if (name.equals("pad"))
@@ -6414,6 +6577,7 @@ public class Functions implements MacroConstants, Measurements {
 		else if (name.equals("getFullVersion"))
 			{interp.getParens(); return ""+IJ.getFullVersion();}
 		else
+			//EU_HOU MISSING Bundle
 			interp.error("Unrecognized IJ function name");
 		return null;
 	}
@@ -6455,10 +6619,12 @@ public class Functions implements MacroConstants, Measurements {
 	double overlay() {
 		interp.getToken();
 		if (interp.token!='.')
+			//EU_HOU MISSING Bundle
 			interp.error("'.' expected");
 		interp.getToken();
 		if (!(interp.token==WORD||interp.token==ARRAY_FUNCTION
 		|| interp.token==PREDEFINED_FUNCTION||interp.token==USER_FUNCTION))
+			//EU_HOU MISSING Bundle
 			interp.error("Function name expected");
 		String name = interp.tokenString;
 		ImagePlus imp = getImage();
@@ -6489,6 +6655,7 @@ public class Functions implements MacroConstants, Measurements {
 		else if (name.equals("paste")) {
 			interp.getParens();
 			if (overlayClipboard==null)
+				//EU_HOU MISSING Bundle
 				interp.error("Overlay clipboard empty");
 			getImage().setOverlay(overlayClipboard);
 			return Double.NaN;
@@ -6533,6 +6700,7 @@ public class Functions implements MacroConstants, Measurements {
 			return overlay.get(index).getType();
 		}
 		if (overlay==null)
+			//EU_HOU MISSING Bundle
 			interp.error("No overlay");
 		if (name.equals("size")||name.equals("getSize"))
 			return size;
@@ -6603,6 +6771,7 @@ public class Functions implements MacroConstants, Measurements {
 		} else if (name.equals("getBounds")) {
 			return getOverlayElementBounds(overlay);
  		} else
+ 			//EU_HOU MISSING Bundle
 			interp.error("Unrecognized function name");
 		return Double.NaN;
 	}
@@ -6679,6 +6848,7 @@ public class Functions implements MacroConstants, Measurements {
 		}
 		Roi roi = imp.getRoi();
 		if (roi==null)
+			//EU_HOU MISSING Bundle
 			interp.error("No selection");
 		if (offscreenOverlay!=null) {
 			imp.setOverlay(offscreenOverlay);
@@ -6714,6 +6884,7 @@ public class Functions implements MacroConstants, Measurements {
 		if (overlay==null)
 			overlay = offscreenOverlay;
 		if (overlay==null)
+			//EU_HOU MISSING Bundle
 			interp.error("No overlay");
 		int size = overlay.size();
 		if (size==0)
@@ -6732,6 +6903,7 @@ public class Functions implements MacroConstants, Measurements {
 		if (overlay==null)
 			overlay = offscreenOverlay;
 		if (overlay==null)
+			//EU_HOU MISSING Bundle
 			interp.error("No overlay");
 		int size = overlay.size();
 		if (size>0)
@@ -6891,9 +7063,11 @@ public class Functions implements MacroConstants, Measurements {
 	private Variable doTable() {
 		interp.getToken();
 		if (interp.token!='.')
+			//EU_HOU MISSING Bundle
 			interp.error("'.' expected");
 		interp.getToken();
 		if (!(interp.token==WORD || interp.token==NUMERIC_FUNCTION || interp.token==PREDEFINED_FUNCTION || interp.token==STRING_FUNCTION))
+			//EU_HOU MISSING Bundle
 			interp.error("Function name expected: ");
 		String name = interp.tokenString;
 		if (name.equals("create"))
@@ -6958,6 +7132,7 @@ public class Functions implements MacroConstants, Measurements {
 		else if (name.equals("setLocAndSize") || name.equals("setLocationAndSize"))
 			return setTableLocAndSize();
 		else
+			//EU_HOU MISSING Bundle
 			interp.error("Unrecognized function name");
 		return null;
 	}
@@ -6998,6 +7173,7 @@ public class Functions implements MacroConstants, Measurements {
 				tWin.getTextPanel().setSelection((int)from, (int)to);
 			return null;
 		}
+		//EU_HOU MISSING Bundle
 		interp.error("\""+title+"\" table not found");
 		return null;
 	}
@@ -7025,6 +7201,7 @@ public class Functions implements MacroConstants, Measurements {
 			selEnd = tWin.getTextPanel().getSelectionEnd();
 			return new Variable(selEnd);
 		}
+		//EU_HOU MISSING Bundle
 		interp.error("\""+title+"\" table not found");
 		return new Variable(selEnd);
 	}
@@ -7274,6 +7451,7 @@ public class Functions implements MacroConstants, Measurements {
 		if (rt==null && "Results".equals(title))
 			rt = Analyzer.getResultsTable();
 		if (rt==null)
+			//EU_HOU MISSING Bundle
 			interp.error("\""+title+"\" table not found");
 		return rt;
 	}
@@ -7320,6 +7498,7 @@ public class Functions implements MacroConstants, Measurements {
 		ImagePlus imp = getImage();
 		Roi roi = imp.getRoi();
 		if (roi==null)
+			//EU_HOU MISSING Bundle
 			interp.error("Selection required");
 		return roi.contains(x,y)?1.0:0.0;
 	}
@@ -7426,9 +7605,11 @@ public class Functions implements MacroConstants, Measurements {
 	private Variable doRoi() {
 		interp.getToken();
 		if (interp.token!='.')
+			//EU_HOU MISSING Bundle
 			interp.error("'.' expected");
 		interp.getToken();
 		if (!(interp.token==WORD||interp.token==PREDEFINED_FUNCTION))
+			//EU_HOU MISSING Bundle
 			interp.error("Function name expected: ");
 		String name = interp.tokenString;
 		if (name.equals("getDefaultStrokeWidth")) {
@@ -7474,12 +7655,14 @@ public class Functions implements MacroConstants, Measurements {
 			return new Variable(roi!=null?roi.size():0);
 		}
 		if (roi==null)
+			//EU_HOU MISSING Bundle
 			interp.error("No selection");
 		if (name.equals("contains")) {
 			int x = (int)Math.round(getFirstArg());
 			int y = (int)Math.round(getLastArg());
 			return new Variable(roi.contains(x,y)?1:0);
 		} else if (name.equals("copy")) {
+			//EU_HOU MISSING Bundle
 			interp.getParens();
 			roiClipboard = getImage().getRoi();
 			if (roiClipboard!=null)
@@ -7549,6 +7732,7 @@ public class Functions implements MacroConstants, Measurements {
 			interp.getLeftParen();
 			String key = getString();
 			if (key.contains(" "))
+				//EU_HOU MISSING Bundle
 				interp.error("Keys contain a space");
 			if (interp.nextToken()==',') {
 				interp.getComma();
@@ -7575,6 +7759,7 @@ public class Functions implements MacroConstants, Measurements {
 			return null;
 		} else if (name.equals("getPointPosition")) {
 			if (!(roi instanceof PointRoi))
+				//EU_HOU MISSING Bundle
 				interp.error("Point selection required");
 			return new Variable(((PointRoi)roi).getPointPosition((int)getArg()));
 		} else if (name.equals("setFontSize")) {
@@ -7593,6 +7778,7 @@ public class Functions implements MacroConstants, Measurements {
 			((TextRoi)roi).setJustification(just);
 			return null;
 		} else
+			//EU_HOU MISSING Bundle
 			interp.error("Unrecognized Roi function");
 		return null;
 	}
@@ -7720,6 +7906,7 @@ public class Functions implements MacroConstants, Measurements {
 		int n = x.length;
 		double[] y = getLastArray();
 		if (y.length!=n)
+			//EU_HOU MISSING Bundle
 			interp.error("Arrays are not the same length");
 		float[] xcoord = new float[n];
 		float[] ycoord = new float[n];
@@ -7740,13 +7927,16 @@ public class Functions implements MacroConstants, Measurements {
 	private Variable doRoiManager() {
 		interp.getToken();
 		if (interp.token!='.')
+			//EU_HOU MISSING Bundle
 			interp.error("'.' expected");
 		interp.getToken();
 		if (interp.token!=WORD)
+			//EU_HOU MISSING Bundle
 			interp.error("Function name expected: ");
 		String name = interp.tokenString;
 		RoiManager rm = RoiManager.getInstance2();
 		if (rm==null)
+			//EU_HOU MISSING Bundle
 			interp.error("No ROI Manager");
 		if (name.equals("size")) {
 			interp.getParens();
@@ -7757,6 +7947,7 @@ public class Functions implements MacroConstants, Measurements {
 		} else if (name.equals("setGroup")) {
 			int group = (int)getArg();
 			if (group<0 || group>255)
+				//EU_HOU MISSING Bundle
 				interp.error("Group out of range");
 			rm.setGroup(group);
 			return null;
@@ -7771,6 +7962,7 @@ public class Functions implements MacroConstants, Measurements {
 			rm.setPosition(position);
 			return null;
 		} else
+			//EU_HOU MISSING Bundle
 			interp.error("Unrecognized RoiManager function");
 		return null;
 	}
@@ -7778,9 +7970,11 @@ public class Functions implements MacroConstants, Measurements {
 	private Variable doProperty() {
 		interp.getToken();
 		if (interp.token!='.')
+			//EU_HOU MISSING Bundle
 			interp.error("'.' expected");
 		interp.getToken();
 		if (!(interp.token==WORD||interp.token==STRING_FUNCTION||interp.token==NUMERIC_FUNCTION||interp.token==ARRAY_FUNCTION))
+			//EU_HOU MISSING Bundle
 			interp.error("Function name expected: ");
 		String name = interp.tokenString;
 		ImagePlus imp = getImage();
@@ -7812,6 +8006,7 @@ public class Functions implements MacroConstants, Measurements {
 			String label = getFirstString();
 			int slice = (int)getLastArg();
 			if (slice<1 || slice>imp.getStackSize())
+				//EU_HOU MISSING Bundle
 				interp.error("Argument must be >=1 and <="+imp.getStackSize());
 			imp.getStack().setSliceLabel(label, slice);
 			if (!Interpreter.isBatchMode()) imp.repaintWindow();
@@ -7825,6 +8020,7 @@ public class Functions implements MacroConstants, Measurements {
 		} else if (name.equals("getList")) {
 			return new Variable(getPropertiesAsString(imp.getImageProperties()));
 		} else
+			//EU_HOU MISSING Bundle
 			interp.error("Unrecognized Property function");
 		return null;
 	}

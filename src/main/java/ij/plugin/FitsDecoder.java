@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 
 import java.io.*;
@@ -55,6 +56,7 @@ public class FitsDecoder {
 
         DataInputStream stream = null;
         if (directory.startsWith("http")) {
+        	//EU_HOU MISSING Bundle
             IJ.log("Reading over the Internet " + directory + " " + fileName);
             try {
                 stream = new DataInputStream((new URL(directory + fileName)).openStream());
@@ -118,7 +120,7 @@ public class FitsDecoder {
                 } else if (bitsPerPixel == -64) {
                     fi.fileType = FileInfo.GRAY64_FLOAT;
                 } else {
-                    //EU_HOU Bundle
+                    //EU_HOU MISSING Bundle
                     IJ.error("BITPIX must be 8, 16, 32, -32 (float) or -64 (double).");
                     f.close();
                     return null;

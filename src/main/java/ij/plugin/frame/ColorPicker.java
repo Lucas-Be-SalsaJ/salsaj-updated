@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin.frame;
 import ij.*;
 import ij.plugin.*;
@@ -255,8 +256,14 @@ class ColorCanvas extends Canvas implements MouseListener, MouseMotionListener {
 	public void mousePressed(MouseEvent e) {
 		//IJ.log("mousePressed "+e);
 		ip.setLineWidth(1);
-		if (Toolbar.getToolId()==Toolbar.DROPPER)
-			IJ.setTool(Toolbar.RECTANGLE );
+		/*
+		 *  EU_HOU CHANGES
+		 */
+		/*if (Toolbar.getToolId()==Toolbar.DROPPER)
+			IJ.setTool(Toolbar.RECTANGLE );*/
+		/*
+		 *  EU_HOU CHANGES END
+		 */
 		int x = (int)(e.getX()/scale);
 		int y = (int)(e.getY()/scale);
 		long difference = System.currentTimeMillis()-mouseDownTime;

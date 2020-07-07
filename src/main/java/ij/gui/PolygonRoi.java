@@ -321,19 +321,25 @@ public class PolygonRoi extends Roi {
 			ip.moveTo((int)Math.round(xbase+xSpline[0]), (int)Math.round(ybase+ySpline[0]));
 			for (int i=1; i<splinePoints; i++)
 				ip.lineTo((int)Math.round(xbase+xSpline[i]), (int)Math.round(ybase+ySpline[i]));
-			if (type==POLYGON || type==FREEROI || type==TRACED_ROI)  // close the shape
+			//EU_HOU CHANGES : removed type==FREEROI
+			//if (type==POLYGON || type==FREEROI || type==TRACED_ROI)  // close the shape
+			if (type == POLYGON || type == TRACED_ROI)
 				ip.lineTo((int)Math.round(xbase+xSpline[0]), (int)Math.round(ybase+ySpline[0]));
 		} else if (xpf!=null) {
 			ip.moveTo((int)Math.round(xbase+xpf[0]), (int)Math.round(ybase+ypf[0]));
 			for (int i=1; i<nPoints; i++)
 				ip.lineTo((int)Math.round(xbase+xpf[i]), (int)Math.round(ybase+ypf[i]));
-			if (type==POLYGON || type==FREEROI || type==TRACED_ROI)  // close the shape
+			//EU_HOU CHANGES : removed type==FREEROI
+			//if (type==POLYGON || type==FREEROI || type==TRACED_ROI)  // close the shape
+			if (type == POLYGON || type == TRACED_ROI)
 				ip.lineTo((int)Math.round(xbase+xpf[0]), (int)Math.round(ybase+ypf[0]));
 		} else {
 			ip.moveTo(x+xp[0], y+yp[0]);
 			for (int i=1; i<nPoints; i++)
 				ip.lineTo(x+xp[i], y+yp[i]);
-			if (type==POLYGON || type==FREEROI || type==TRACED_ROI)  // close the shape
+			//EU_HOU CHANGES : removed type==FREEROI
+			//if (type==POLYGON || type==FREEROI || type==TRACED_ROI)  // close the shape
+			if (type == POLYGON || type == TRACED_ROI)
 				ip.lineTo(x+xp[0], y+yp[0]);
 		}
 		ip.setLineWidth(saveWidth);
@@ -401,14 +407,9 @@ public class PolygonRoi extends Roi {
 
 		// Do rubber banding
 		int tool = Toolbar.getToolId();
-		/*
-		 * EU_HOU CHANGES
-		 */
+		//EU_HOU CHANGES : removed tool=Toolbar.Angle
 		//if (!(tool==Toolbar.POLYGON || tool==Toolbar.POLYLINE || tool==Toolbar.ANGLE)) {
 		if (!(tool == Toolbar.POLYGON || tool == Toolbar.POLYLINE)) {
-			/*
-			 * EU_HOU CHANGES END
-			 */
 			imp.deleteRoi();
 			imp.draw();
 			return;
@@ -435,12 +436,18 @@ public class PolygonRoi extends Roi {
 				y2 = yp[nPoints-1];
 			}
 			degrees = getFloatAngle(x1, y1, x2, y2);
-			if (tool!=Toolbar.ANGLE) {
+			/*
+			 * EU_HOU CHANGES
+			 */
+			/*if (tool!=Toolbar.ANGLE) {
 				Calibration cal = imp.getCalibration();
 				double pw=cal.pixelWidth, ph=cal.pixelHeight;
 				if (IJ.altKeyDown()) {pw=1.0; ph=1.0;}
 				len = Math.sqrt((x2-x1)*pw*(x2-x1)*pw + (y2-y1)*ph*(y2-y1)*ph);
-			}
+			}*/
+			/*
+			 * EU_HOU CHANGES END
+			 */
 		}
 		if (tool==Toolbar.ANGLE) {
 			if (nPoints==2)
@@ -595,16 +602,13 @@ public class PolygonRoi extends Roi {
 			}
 			bounds = null;
 		}
-		/*
-		 * EU_HOU CHANGES
-		 */
+		//EU_HOU CHANGES : removed type==ANGLE
 		//if (nPoints<2 || (!(type==FREELINE||type==POLYLINE||type==ANGLE) && (nPoints<3||width==0||height==0))) {
 		if (nPoints < 2 || (!(type == FREELINE || type == POLYLINE) && (nPoints < 3 || width == 0 || height == 0))) {
-			/*
-			 * EU_HOU CHANGES END
-			 */
 			if (imp!=null) imp.deleteRoi();
-			if (type!=POINT) return;
+			//EU_HOU CHANGES
+			//if (type!=POINT) return;
+
 		}
 		state = NORMAL;
 		if (imp!=null && !(type==TRACED_ROI))
@@ -613,7 +617,14 @@ public class PolygonRoi extends Roi {
 		if (Recorder.record && userCreated && (type==POLYGON||type==POLYLINE||type==ANGLE
 		||(type==POINT&&Recorder.scriptMode()&&nPoints==3)))
 			Recorder.recordRoi(getPolygon(), type);
-		if (type!=POINT) modifyRoi();
+		/*
+		 * EU_HOU CHANGES
+		 */
+		//if (type!=POINT) modifyRoi();
+		modifyRoi();
+		/*
+		 * EU_HOU CHANGES END
+		 */
 		LineWidthAdjuster.update();
 		notifyListeners(RoiListener.COMPLETED);
 		updateFullWindow = true;

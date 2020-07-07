@@ -21,34 +21,12 @@ import java.net.URL;
  */
 public class EuHouToolbar extends Canvas implements MouseListener, MouseMotionListener {
 
-	/**
-	 *  Description of the Field
-	 */
 	public final static int OPEN = 0;
-	/**
-	 *  Description of the Field
-	 */
 	public final static int SAVE = 1;
-
-	/**
-	 *  Description of the Field
-	 */
 	public final static int UNDO = 2;
-	/**
-	 *  Description of the Field
-	 */
 	public final static int PLOT_PROFILE = 3;
-
-	/**
-	 *  Description of the Field
-	 */
 	public final static int BRIGHTNESS_CONTRAST = 4;
-
-	/**
-	 *  Description of the Field
-	 */
 	public final static int NONE = 100;
-
 	private final static int NUM_TOOLS = 5;
 	//EU_HOU ToolBar icone dimension
 	private final static int SIZE = 42;
@@ -154,28 +132,12 @@ public class EuHouToolbar extends Canvas implements MouseListener, MouseMotionLi
 	}
 
 
-	/**
-	 *  Description of the Method
-	 *
-	 *@param  g  Description of the Parameter
-	 */
 	private void drawButtons(Graphics g) {
 		for (int i = 0; i < NUM_TOOLS; i++) {
 			drawButton(g, i);
 		}
 	}
 
-
-	/**
-	 *  Description of the Method
-	 *
-	 *@param  g       Description of the Parameter
-	 *@param  x       Description of the Parameter
-	 *@param  y       Description of the Parameter
-	 *@param  width   Description of the Parameter
-	 *@param  height  Description of the Parameter
-	 *@param  raised  Description of the Parameter
-	 */
 	private void fill3DRect(Graphics g, int x, int y, int width, int height, boolean raised) {
 		if (raised) {
 			g.setColor(gray);
@@ -193,12 +155,6 @@ public class EuHouToolbar extends Canvas implements MouseListener, MouseMotionLi
                 	}
 
 
-	/**
-	 *  Description of the Method
-	 *
-	 *@param  g     Description of the Parameter
-	 *@param  tool  Description of the Parameter
-	 */
 	private void drawButton(Graphics g, int tool) {
 		fill3DRect(g, tool * SIZE + 1, 1, SIZE, SIZE, !down[tool]);
 		g.setColor(Color.black);
@@ -217,11 +173,6 @@ public class EuHouToolbar extends Canvas implements MouseListener, MouseMotionLi
 	}
 
 
-	/**
-	 *  Description of the Method
-	 *
-	 *@param  tool  Description of the Parameter
-	 */
 	private void showMessage(int tool) {
 
 		switch (tool) {
@@ -252,32 +203,16 @@ public class EuHouToolbar extends Canvas implements MouseListener, MouseMotionLi
 		}
 	}
 
-
-	/**
-	 *  Description of the Method
-	 */
 	private void resetButtons() {
 		for (int i = 0; i < NUM_TOOLS; i++) {
 			down[i] = false;
 		}
 	}
 
-
-	/**
-	 *  Description of the Method
-	 *
-	 *@param  g  Description of the Parameter
-	 */
 	public void paint(Graphics g) {
 		drawButtons(g);
 	}
 
-
-	/**
-	 *  Description of the Method
-	 *
-	 *@param  g  Description of the Parameter
-	 */
 	public void update(Graphics g) {
 		for (int i = 0; i < NUM_TOOLS; i++) {
 			if (g.hitClip(i * SIZE, 0, SIZE, SIZE)) {
@@ -285,7 +220,6 @@ public class EuHouToolbar extends Canvas implements MouseListener, MouseMotionLi
 			}
 		}
 	}
-
 
 	/**
 	 *  Sets the tool attribute of the EuHouToolbar object
@@ -341,12 +275,6 @@ public class EuHouToolbar extends Canvas implements MouseListener, MouseMotionLi
 		}
 	}
 
-
-	/**
-	 *  Description of the Method
-	 *
-	 *@param  e  Description of the Parameter
-	 */
 	public void mouseReleased(MouseEvent e) {
 		if (drag) {
 			return;
@@ -374,13 +302,6 @@ public class EuHouToolbar extends Canvas implements MouseListener, MouseMotionLi
 
 	}
 
-
-
-	/**
-	 *  Description of the Method
-	 *
-	 *@param  e  Description of the Parameter
-	 */
 	public void mousePressed(MouseEvent e) {
 		drag = false;
 
@@ -399,38 +320,14 @@ public class EuHouToolbar extends Canvas implements MouseListener, MouseMotionLi
 		}
 	}
 
-
-	/**
-	 *  Description of the Method
-	 *
-	 *@param  e  Description of the Parameter
-	 */
 	public void mouseExited(MouseEvent e) {
 		showMessage(NONE);
 	}
 
-
-	/**
-	 *  Description of the Method
-	 *
-	 *@param  e  Description of the Parameter
-	 */
 	public void mouseClicked(MouseEvent e) { }
 
-
-	/**
-	 *  Description of the Method
-	 *
-	 *@param  e  Description of the Parameter
-	 */
 	public void mouseEntered(MouseEvent e) { }
 
-
-	/**
-	 *  Description of the Method
-	 *
-	 *@param  e  Description of the Parameter
-	 */
 	public void mouseDragged(MouseEvent e) {
 		drag = true;
 
@@ -448,12 +345,6 @@ public class EuHouToolbar extends Canvas implements MouseListener, MouseMotionLi
 		g.dispose();
 	}
 
-
-	/**
-	 *  Description of the Method
-	 *
-	 *@param  e  Description of the Parameter
-	 */
 	public void mouseMoved(MouseEvent e) {
 	int x = e.getX();
 
@@ -492,10 +383,6 @@ public class EuHouToolbar extends Canvas implements MouseListener, MouseMotionLi
 		return ps;
 	}
 
-
-	/**
-	 *  Description of the Method
-	 */
 	public void photometerButtonAction() {
             IJ.setTool(Toolbar.LINE);
             Enumeration en = WindowManager.getImageWindows().elements();
@@ -511,12 +398,7 @@ public class EuHouToolbar extends Canvas implements MouseListener, MouseMotionLi
 		}
 
 	}
-        
-
-
-	/**
-	 *  Description of the Method
-	 */
+	
 	public void settingsAction() {
 	//down[PHOTOSETTINGS] = !down[PHOTOSETTINGS];
 	//Graphics gr = getGraphics();
@@ -525,14 +407,10 @@ public class EuHouToolbar extends Canvas implements MouseListener, MouseMotionLi
 		if (s == null) {
 			s = new PhotometerParams();
 		} else {
-                        s.show();
+			s.show();
 		}
 	}
 
-
-	/**
-	 *  Description of the Method
-	 */
 	public static void clearPhotometer() {
         if (Photometer.getInstance()!=null)
 		Photometer.clear();

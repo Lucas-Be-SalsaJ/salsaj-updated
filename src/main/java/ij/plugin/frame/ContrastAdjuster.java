@@ -124,7 +124,7 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 			sanFont = sanFont.deriveFont((float)(sanFont.getSize()*scale));
 			monoFont = monoFont.deriveFont((float)(monoFont.getSize()*scale));
 		}
-
+		
 		// plot
 		c.gridx = 0;
 		y = 0;
@@ -201,12 +201,16 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 		add(brightnessSlider);
 		brightnessSlider.addAdjustmentListener(this);
 		brightnessSlider.addKeyListener(ij);
+		//EU_HOU CHANGES : setBackground (default: no background)
+		brightnessSlider.setBackground(Color.yellow);
 		brightnessSlider.setUnitIncrement(1);
 		brightnessSlider.setFocusable(false);
 		if (windowLevel)
-			addLabel("Level: ", levelLabel=new TrimmedLabel("        "));
+			//EU_HOU Bundle
+			addLabel(bun.getString("Level"), levelLabel=new TrimmedLabel("        "));
 		else
-			addLabel("Brightness", null);
+			//EU_HOU Bundle
+			addLabel(bun.getString("Brightness"), null);
 
 		// contrast slider
 		if (!balance) {
@@ -218,6 +222,8 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 			add(contrastSlider);
 			contrastSlider.addAdjustmentListener(this);
 			contrastSlider.addKeyListener(ij);
+			//EU_HOU CHANGES : setBackground (default: no background)
+			contrastSlider.setBackground(Color.pink);
 			contrastSlider.setUnitIncrement(1);
 			contrastSlider.setFocusable(false);
 			if (windowLevel)
@@ -233,9 +239,22 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 			c.gridy = y++;
 			c.insets = new Insets(5, 10, 0, 10);
 			choice = new Choice();
+			/*
+			 * EU_HOU CHANGES
+			 */
+			for (int i = 0; i < channelLabels.length; i++) {
+				choice.addItem(channelLabels[i]);
+			}
+			/*
+			 * EU_HOU CHANGES END
+			 */
 			addBalanceChoices();
 			gridbag.setConstraints(choice, c);
 			choice.addItemListener(this);
+			//EU_HOU CHANGES : added addKeyListener
+			choice.addKeyListener(ij);
+			//EU_HOU CHANGES : setBackground (default: no background)
+            choice.setBackground(Color.lightGray);
 			add(choice);
 		}
 
@@ -709,6 +728,7 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 		int[] table = new int[tableSize];
 		int min = (int)imp.getDisplayRangeMin();
 		int max = (int)imp.getDisplayRangeMax();
+		//EU_HOU MISSING Bundle
 		if (IJ.debugMode) IJ.log("Apply: mapping "+min+"-"+max+" to 0-"+(range-1));
 		for (int i=0; i<tableSize; i++) {
 			if (i<=min)
@@ -729,6 +749,7 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 			if (d.yesPressed()) {
 				if (imp.getStack().isVirtual()) {
 					imp.unlock();
+					//EU_HOU MISSING Bundle
 					IJ.error("\"Apply\" does not work with virtual stacks. Use\nImage>Duplicate to convert to a normal stack.");
 					return;
 				}
@@ -922,6 +943,7 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 		gd.addCheckbox(label, false);
 		boolean allChannels = false;
 		if (imp.isComposite() && channels>1) {
+			//EU_HOU MISSING Bundle =2
 			label = "Propagate to the other ";
 			label = channels==2?label+"channel of this image":label+(channels-1)+" channels of this image";
 			gd.addCheckbox(label, allChannels);
@@ -986,6 +1008,7 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 
 	private void propagate(ImagePlus img) {
 		if (img.getBitDepth()==24) {
+			//EU_HOU MISSING Bundle =2
 			GenericDialog gd = new GenericDialog("Contrast Adjuster");
 			gd.addMessage( "Propagation of RGB images not supported. As a work-around,\nconvert images to multi-channel composite color.");
 			gd.hideCancelButton();
@@ -1264,13 +1287,7 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
  * EU_HOU UNUSED CHANGES
  */
 
-
-/*
- * EU_HOU UNUSED CHANGES
- */
 class ColorTable extends Canvas {
-
-
 	private Image img;
 	LookUpTable lut;
 	long min = -1;
@@ -1462,118 +1479,7 @@ class ContrastPlot extends Canvas implements MouseListener {
 	}
 
 	public void paint(Graphics g) {
-		/*
-		 * EU_HOU CHANGES
-		 */
-		int x1;
-		int y1;
-		int x2;
-		int y2;
-		int x12;
-		int x22;
-
-		double scale = (double) WIDTH / (defaultMax - defaultMin);
-		double slope = 0.0;
-
-		if (max != min) {
-			slope = HEIGHT / (max - min);
-		}
-		if (min >= defaultMin) {
-			x1 = (int) (scale * (min - defaultMin));
-			y1 = HEIGHT;
-		}
-		else {
-			x1 = 0;
-			x12 = 0;
-			if (max > min) {
-				y1 = HEIGHT - (int) ((defaultMin - min) * slope);
-			}
-			else {
-				y1 = HEIGHT;
-			}
-		}
-		if (max <= defaultMax) {
-			x2 = (int) (scale * (max - defaultMin));
-			y2 = 0;
-		}
-		else {
-			x2 = WIDTH;
-			x22 = WIDTH;
-			if (max > min) {
-				y2 = HEIGHT - (int) ((defaultMax - min) * slope);
-			}
-			else {
-				y2 = 0;
-			}
-		}
-
-		if (histogram != null) {
-			// EU_HOU
-			//if (os == null && hmax != 0) {
-			os = createImage(WIDTH, HEIGHT);
-			osg = os.getGraphics();
-			osg.setColor(Color.orange);
-			osg.fillRect(0, 0, WIDTH, HEIGHT);
-			osg.setColor(color);
-			// EU_HOU
-			int idx = 0;
-			LookUpTable lut = WindowManager.getCurrentImage().createLut();
-			byte[] reds = null;
-			byte[] greens = null;
-			byte[] blues = null;
-			if (lut != null) {
-				reds = lut.getReds();
-				greens = lut.getGreens();
-				blues = lut.getBlues();
-			}
-			System.out.println("lut=" + lut + " r=" + reds);
-			for (int i = 0; i < WIDTH; i++) {
-				if (i <= x1) {
-					idx = 0;
-				}
-				else if (i >= x2) {
-					idx = 255;
-				}
-				else {
-					idx = (int) (255 * (i - x1) / (x2 - x1 - 1));
-				}
-				//System.out.println("i=" + i + " idx=" + idx + " r=" + (reds[idx] & 0xff) + " g=" + (greens[idx] & 0xff) + " b=" + (blues[idx] & 0xff));
-				if (reds != null) {
-					osg.setColor(new Color(reds[idx] & 0xff, greens[idx] & 0xff, blues[idx] & 0xff));
-				}
-				else {
-					osg.setColor(new Color(idx, idx, idx));
-				}
-				osg.drawLine(i, HEIGHT, i, HEIGHT - ((int) (HEIGHT * histogram[i]) / hmax));
-			}
-			osg.dispose();
-			//}
-			if (os != null) {
-				g.drawImage(os, 0, 0, this);
-			}
-		}
-		else {
-			g.setColor(Color.white);
-			g.fillRect(0, 0, WIDTH, HEIGHT);
-		}
-
-		//g.setColor(Color.black);
-		//g.drawLine(x1, y1, x2, y2);
-		/*
-		    EU_HOU CHANGES barres de couleur
-		  */
-		g.setColor(Color.red);
-		g.drawRect(x1, 0, WIDTH - x1, HEIGHT);
-		g.setColor(Color.blue);
-		g.drawRect(0, 0, x2, HEIGHT);
-		g.setColor(Color.green);
-		//g.drawLine(x2, HEIGHT - 5, x2, HEIGHT);
-		/*
-		    EU_HOU END
-		  */
-		g.drawRect(0, 0, WIDTH, HEIGHT);
-	}
-		/*int x1, y1, x2, y2;
+		int x1, y1, x2, y2;
 		double scale = (double)width/(defaultMax-defaultMin);
 		double slope = 0.0;
 		if (max!=min)
@@ -1599,30 +1505,86 @@ class ContrastPlot extends Canvas implements MouseListener {
 				y2 = 0;
 		}
 		if (histogram!=null) {
-			// EU_HOU CHANGES
+			//EU_HOU CHANGES
 			//if (os==null && hmax!=0) {
 				os = createImage(width,height);
 				osg = os.getGraphics();
-				osg.setColor(Color.white);
+				//EU_HOU CHANGES : white to orange
+				osg.setColor(Color.orange);
 				osg.fillRect(0, 0, width, height);
 				osg.setColor(color);
-				double scale2 = width/256.0;
+				
+				/*
+				 * EU_HOU CHANGES
+				 */
+				int idx = 0;
+				LookUpTable lut = WindowManager.getCurrentImage().createLut();
+				byte[] reds = null;
+				byte[] greens = null;
+				byte[] blues = null;
+				if (lut != null) {
+					reds = lut.getReds();
+					greens = lut.getGreens();
+					blues = lut.getBlues();
+				}
+				
+				System.out.println("lut=" + lut + " r=" + reds);
+				for (int i = 0; i < WIDTH; i++) {
+					if (i <= x1) {
+						idx = 0;
+					}
+					else if (i >= x2) {
+						idx = 255;
+					}
+					else {
+						idx = (int) (255 * (i - x1) / (x2 - x1 - 1));
+					}
+					//System.out.println("i=" + i + " idx=" + idx + " r=" + (reds[idx] & 0xff) + " g=" + (greens[idx] & 0xff) + " b=" + (blues[idx] & 0xff));
+					if (reds != null) {
+						osg.setColor(new Color(reds[idx] & 0xff, greens[idx] & 0xff, blues[idx] & 0xff));
+					}
+					else {
+						osg.setColor(new Color(idx, idx, idx));
+					}
+					osg.drawLine(i, HEIGHT, i, HEIGHT - ((int) (HEIGHT * histogram[i]) / hmax));
+				}
+				osg.dispose();
+				
+				/*double scale2 = width/256.0;
 				for (int i = 0; i < 256; i++) {
 					int x =(int)(i*scale2);
 					osg.drawLine(x, height, x, height - ((int)(height*histogram[i])/hmax));
 				}
-				osg.dispose();
-			}
+				osg.dispose();*/
+				
+				/*
+				 * EU_HOU CHANGES END
+				 */
+				
+				
+			//EU_HOU CHANGES
+			//}
 			if (os!=null) g.drawImage(os, 0, 0, this);
 		} else {
 			g.setColor(Color.white);
 			g.fillRect(0, 0, width, height);
 		}
-		g.setColor(Color.black);
+		/*
+		 * EU_HOU CHANGES : color bars 
+		 */
+		/*g.setColor(Color.black);
  		g.drawLine(x1, y1, x2, y2);
- 		g.drawLine(x2, height-5, x2, height);
+ 		g.drawLine(x2, height-5, x2, height);*/
+		g.setColor(Color.red);
+		g.drawRect(x1, 0, WIDTH - x1, HEIGHT);
+		g.setColor(Color.blue);
+		g.drawRect(0, 0, x2, HEIGHT);
+		g.setColor(Color.green);
+ 		/*
+ 		 * EU_HOU CHANGES END
+ 		 */
  		g.drawRect(0, 0, width, height);
-     }*/
+	}
 
 	public void mousePressed(MouseEvent e) {}
 	public void mouseReleased(MouseEvent e) {}

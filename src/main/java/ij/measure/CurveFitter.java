@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.measure;
 import ij.*;
 import ij.gui.*;
@@ -196,8 +197,10 @@ public class CurveFitter implements UserFunction{
 	 */
 	public void doFit(int fitType, boolean showSettings) {
 		if (!(fitType>=STRAIGHT_LINE && fitType<fitList.length || fitType==CUSTOM))
+			//EU_HOU MISSING Bundle
 			throw new IllegalArgumentException("Invalid fit type");
 		if (fitType==CUSTOM && macro==null && userFunction==null)
+			//EU_HOU MISSING Bundle
 			throw new IllegalArgumentException("No custom formula!");
 		this.fitType = fitType;
 		if (isModifiedFitType(fitType))			// these fits don't use the original data and a different fit type (this.fitType)
@@ -631,13 +634,16 @@ public class CurveFitter implements UserFunction{
 	 *	including the fit parameters).
 	 */
 	public String getResultString() {
+		//EU_HOU MISSING Bundle
 		String resultS =  "\nFormula: " + getFormula()
 				+ "\nMacro code: "+getMacroCode()
 				+ "\nStatus: "+getStatusString();
 		if (getStatus()==Minimizer.INITIALIZATION_FAILURE)
 			return resultS;
+		//EU_HOU MISSING Bundle
 		if (!linearRegressionUsed) resultS += "\nNumber of completed minimizations: " + minimizer.getCompletedMinimizations();
 		resultS += "\nNumber of iterations: " + getIterations();
+		//EU_HOU MISSING Bundle =2
 		if (!linearRegressionUsed) resultS += " (max: " + minimizer.getMaxIterations() + ")";
 		resultS += "\nTime: "+time+" ms" +
 				"\nSum of residuals squared: " + IJ.d2s(getSumResidualsSqr(),5,9) +
@@ -1309,11 +1315,13 @@ public class CurveFitter implements UserFunction{
 	private void settingsDialog() {
 	    if (initialParamVariations == null)
 	        initialParamVariations = new double[numParams];
+		//EU_HOU MISSING Bundle =2
 		GenericDialog gd = new GenericDialog("Simplex Fitting Options");
 		gd.addMessage("Function name: " + getName() + "\n" +
 		"Formula: " + getFormula());
 		char pChar = 'a';
 		for (int i = 0; i < numParams; i++)
+			//EU_HOU MISSING Bundle =4
 			gd.addNumericField("Initial_"+(char)(pChar+i)+":", initialParams[i], 2);
 		gd.addNumericField("Maximum iterations:", minimizer.getMaxIterations(), 0);
 		gd.addNumericField("Number of restarts:", minimizer.getMaxRestarts(), 0);

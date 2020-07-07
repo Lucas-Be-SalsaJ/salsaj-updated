@@ -127,9 +127,9 @@ public class LutViewer implements PlugInFilter {
 		boolean isGray;
 		double scale;
 
-        ip = imp.getChannelProcessor();
+        //ip = imp.getChannelProcessor();
         IndexColorModel cm = (IndexColorModel)ip.getColorModel();
-        LookUpTable lut = new LookUpTable(cm);
+        //LookUpTable lut = new LookUpTable(cm);
 		int mapSize = lut.getMapSize();
 		byte[] reds = lut.getReds();
 		byte[] greens = lut.getGreens();
@@ -137,20 +137,25 @@ public class LutViewer implements PlugInFilter {
         isGray = lut.isGrayscale();
 
 		imageWidth = width + 2*xMargin;
-		imageHeight = height + 3*yMargin;
+		//imageHeight = height + 3*yMargin;
+        imageHeight = 2 * yMargin + barHeight + 2;
 		Image img = IJ.getInstance().createImage(imageWidth, imageHeight);
 		Graphics g = img.getGraphics();
 		g.setColor(Color.white);
 		g.fillRect(0, 0, imageWidth, imageHeight);
 		g.setColor(Color.black);
-		g.drawRect(xMargin, yMargin, width, height);
+		//g.drawRect(xMargin, yMargin, width, height);
 
 		scale = 256.0/mapSize;
 		if (isGray)
 			g.setColor(Color.black);
 		else
 			g.setColor(Color.red);
-		x1 = xMargin;
+		
+		/*
+		 * EU_HOU CHANGES
+		 */
+		/*x1 = xMargin;
 		y1 = yMargin + height - (reds[0]&0xff)/2;
 		for (int i = 1; i<256; i++) {
 			x2 = xMargin + i;
@@ -184,19 +189,34 @@ public class LutViewer implements PlugInFilter {
 				x1 = x2;
 				y1 = y2;
 			}
-		}
+		}*/
 
-		x = xMargin;
-		y = yMargin + height + 2;
-		lut.drawColorBar(g, x, y, 256, barHeight);
+		//x = xMargin;
+		x = xMargin + 2;
+		//y = yMargin + height + 2;
+		y = yMargin;
 		
-		y += barHeight + 15;
+        double min = ip.getMin();
+        double max = ip.getMax();
+        
+	    if (cal != null) {
+	    	min = cal.getCValue(min);
+	        max = cal.getCValue(max);
+	    }
+		//lut.drawColorBar(g, x, y, 256, barHeight);
+        lut.drawVertColorBar(g, x, y, width, barHeight, min, max);
+
+		/*y += barHeight + 15;
 		g.setColor(Color.black);
 		g.drawString("0", x - 4, y);
 		g.drawString(""+(mapSize-1), x + width - 10, y);
 		g.drawString("255", 7, yMargin + 4);
-		g.dispose();
+		g.dispose();*/
+        /*
+         * EU_HOU CHANGES END
+         */
 		
+		//EU_HOU Bundle
         return new ImagePlus(IJ.getPluginBundle().getString("LUTTitle"), img);
     }
     

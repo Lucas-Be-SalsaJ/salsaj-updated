@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 
 import ij.IJ;
@@ -65,7 +66,7 @@ public class FITS extends ImagePlus implements PlugIn
         {
             Logger.getLogger(FITS.class.getName()).log(Level.SEVERE, null, e);
             IJ.error(e.getMessage());
-            if (IJ.debug)
+            if (IJ.debugMode)
             {
                 System.out.println("This is the exception case " + e);
             }
@@ -103,6 +104,7 @@ public class FITS extends ImagePlus implements PlugIn
 
         if ((wi < 0) || (he < 0))
         {
+        	//EU_HOU MISSING Bundle
             throw new FitsException("This does not appear to be a FITS file. " + wi + " " + he);
         }
         if (de == 1)
@@ -149,8 +151,9 @@ public class FITS extends ImagePlus implements PlugIn
         ImageProcessor imageProcessor = null;
         int dim = hdu.getAxes().length;
 
-        if (IJ.debug)
+        if (IJ.debugMode)
         {
+        	//EU_HOU MISSING Bundle
             System.out.println("Bits " + hdu.getBitPix() + " " + wi + " " + he);
         }
         if (hdu.getHeader().getIntValue(NAXIS) == 2)
@@ -188,6 +191,7 @@ public class FITS extends ImagePlus implements PlugIn
 
     private void OpenFileUsingFileOpener(String path)
     {
+    	//EU_HOU MISSING Bundle
         OpenDialog od = new OpenDialog("Open FITS...", path);
         String directory = od.getDirectory();
         String fileName = od.getFileName();
@@ -195,6 +199,7 @@ public class FITS extends ImagePlus implements PlugIn
         {
             return;
         }
+    	//EU_HOU MISSING Bundle
         IJ.showStatus("Opening: " + directory + fileName);
         fitsDecoder = new FitsDecoder(directory, fileName);
         try
@@ -247,8 +252,9 @@ public class FITS extends ImagePlus implements PlugIn
                 bhduExc = myFits.read();
                 Header HH = bhduExc[0].getHeader();
                 wcs = new WCS(HH);
-                if (IJ.debug)
+                if (IJ.debugMode)
                 {
+                	//EU_HOU MISSING Bundle
                     System.out.println("Reading the Wcs in the exception");
                 }
                 buildImageDescriptionFromHeader(bhduExc[0]);
@@ -265,6 +271,7 @@ public class FITS extends ImagePlus implements PlugIn
         }
         else
         {
+        	//EU_HOU MISSING Bundle
             IJ.error("This does not appear to be a FITS file.");
         }
         IJ.showStatus("");
@@ -279,8 +286,9 @@ public class FITS extends ImagePlus implements PlugIn
         try
         {
             wcs = new WCS(hdu.getHeader());
-            if (IJ.debug)
+            if (IJ.debugMode)
             {
+            	//EU_HOU MISSING Bundle
                 System.out.println("Reading the WCS");
             }
         }
@@ -305,8 +313,9 @@ public class FITS extends ImagePlus implements PlugIn
             throws FitsException
     {
         ImageProcessor ip;
-        if (IJ.debug)
+        if (IJ.debugMode)
         {
+        	//EU_HOU MISSING Bundle
             System.out.println("For radiotelescope UPMC SRT");
         }
         short[] Upmcitab = (short[]) imgData.getKernel();
@@ -353,7 +362,7 @@ public class FITS extends ImagePlus implements PlugIn
         // crop spectra between Freq= [1419.9 , 1420.9]
         double OliFrqMin = 1419.9;
         double OliFrqMax = 1420.9;
-        if (IJ.debug)
+        if (IJ.debugMode)
         {
             System.out.println(OliFrqMin + "  " + OliFrqMax);
         }
@@ -364,7 +373,7 @@ public class FITS extends ImagePlus implements PlugIn
             x++;
         }
         Olicut = yValues[x];
-        if (IJ.debug)
+        if (IJ.debugMode)
         {
             System.out.println(
                     "X= " + x + "  X(x)= " + xValues[x] + " Y(x)= "
@@ -374,7 +383,7 @@ public class FITS extends ImagePlus implements PlugIn
         {
             x++;
         }
-        if (IJ.debug)
+        if (IJ.debugMode)
         {
             System.out.println(
                     "X= " + x + " X(x)= " + xValues[x] + " Y(x)= "
@@ -401,8 +410,9 @@ public class FITS extends ImagePlus implements PlugIn
             throws FitsException
     {
         ImageProcessor ip;
-        if (IJ.debug)
+        if (IJ.debugMode)
         {
+        	//EU_HOU MISSING Bundle
             System.out.println("For radio telescope UPMC/OBSPM spectra");
         }
         short[] Upmcitab = (short[]) imgData.getKernel();
@@ -449,7 +459,7 @@ public class FITS extends ImagePlus implements PlugIn
         // crop spectra between Freq= [1419.9 , 1420.9]
         double OliFrqMin = 1419.9;
         double OliFrqMax = 1420.9;
-        if (IJ.debug)
+        if (IJ.debugMode)
         {
             System.out.println(OliFrqMin + "  " + OliFrqMax);
         }
@@ -460,7 +470,7 @@ public class FITS extends ImagePlus implements PlugIn
             x++;
         }
         Olicut = yValues[x];
-        if (IJ.debug)
+        if (IJ.debugMode)
         {
             System.out.println(
                     "X= " + x + "  X(x)= " + xValues[x] + " Y(x)= "
@@ -470,7 +480,7 @@ public class FITS extends ImagePlus implements PlugIn
         {
             x++;
         }
-        if (IJ.debug)
+        if (IJ.debugMode)
         {
             System.out.println(
                     "X= " + x + " X(x)= " + xValues[x] + " Y(x)= "
@@ -497,8 +507,9 @@ public class FITS extends ImagePlus implements PlugIn
             throws FitsException
     {
         ImageProcessor ip;
-        if (IJ.debug)
+        if (IJ.debugMode)
         {
+        	//EU_HOU MISSING Bundle
             System.out.println("Spectre radio Onsala");
         }
         short[][][] itab = (short[][][]) imgData.getKernel();
@@ -623,7 +634,7 @@ public class FITS extends ImagePlus implements PlugIn
             {
                 imgtmp = (FloatProcessor) imgtmp.resize(100, he);
             }
-            if (IJ.debug)
+            if (IJ.debugMode)
             {
                 System.out.println("ip " + imgtmp + " imp " + this);
             }
@@ -665,7 +676,7 @@ public class FITS extends ImagePlus implements PlugIn
             {
                 imgtmp = (FloatProcessor) imgtmp.resize(100, he);
             }
-            if (IJ.debug)
+            if (IJ.debugMode)
             {
                 System.out.println("ip " + imgtmp + " imp " + this);
             }
@@ -749,7 +760,7 @@ public class FITS extends ImagePlus implements PlugIn
                     .equals("SPECTRUM")) && (
                     hdu.getHeader().getIntValue(NAXIS) == 2))
             {
-                if (IJ.debug)
+                if (IJ.debugMode)
                 {
                     System.out.println("spectre optique");
                 }
@@ -816,7 +827,7 @@ public class FITS extends ImagePlus implements PlugIn
         } // -32 bits
         else
         {
-            if (IJ.debug)
+            if (IJ.debugMode)
             {
                 System.out.println("other case ");
             }
@@ -834,8 +845,9 @@ public class FITS extends ImagePlus implements PlugIn
         }
         else
         {
-            if (IJ.debug)
+            if (IJ.debugMode)
             {
+            	//EU_HOU MISSING Bundle
                 System.out.println("No data in fits !");
             }
         }
@@ -904,8 +916,9 @@ public class FITS extends ImagePlus implements PlugIn
                 + "*************************************************************"
                 + "\n";
 
-        if (IJ.debug)
+        if (IJ.debugMode)
         {
+        	//EU_HOU MISSING Bundle
             System.out.println("Header: \n" + imageDescription);
         }
         setProperty("Info", imageDescription + fitsDecoder.getHeaderInfo());
@@ -937,7 +950,7 @@ public class FITS extends ImagePlus implements PlugIn
                 de = 1;
             }
         }
-        if (IJ.debug)
+        if (IJ.debugMode)
         {
             System.out.println(
                     "Dim= " + dim + "  -- Height= " + he + " pixels -- Width= " + wi
@@ -954,6 +967,7 @@ public class FITS extends ImagePlus implements PlugIn
         {
             throw new IOException("Null filename.");
         }
+    	//EU_HOU MISSING Bundle =2
         IJ.showStatus("Opening: " + directory + fileName);
         IJ.log("Opening: " + directory + fileName);
         fitsDecoder = new FitsDecoder(directory, fileName);
@@ -983,8 +997,9 @@ public class FITS extends ImagePlus implements PlugIn
             {
                 reader.show();
             }
-            if (IJ.debug)
+            if (IJ.debugMode)
             {
+            	//EU_HOU MISSING Bundle
                 System.out.println("PB reading fits");
 
             }

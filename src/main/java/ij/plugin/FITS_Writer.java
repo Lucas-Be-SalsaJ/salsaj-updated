@@ -179,6 +179,7 @@ public class FITS_Writer implements PlugIn {
                         dos.writeByte(pixels[j]);
 				dos.close();
             } catch (IOException e) {
+            	//EU_HOU MISSING Bundle
 				IJ.showStatus("Error writing file!");
 				return;
             }    
@@ -191,6 +192,7 @@ public class FITS_Writer implements PlugIn {
                         dos.writeShort(pixels[j]^0x8000);
 				dos.close();
             } catch (IOException e) {
+            	//EU_HOU MISSING Bundle
 				IJ.showStatus("Error writing file!");
 				return;
             }
@@ -203,6 +205,7 @@ public class FITS_Writer implements PlugIn {
 					dos.writeFloat(pixels[j]);
 				dos.close();
             } catch (IOException e) {
+            	//EU_HOU MISSING Bundle
 				IJ.showStatus("Error writing file!");
 				return;
                 }					   
