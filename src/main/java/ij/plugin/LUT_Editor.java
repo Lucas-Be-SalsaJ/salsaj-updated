@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.process.*;
@@ -19,12 +20,14 @@ public class LUT_Editor implements PlugIn, ActionListener{
     public void run(String args) {
      	ImagePlus imp = WindowManager.getCurrentImage();
     	if (imp==null) {
+    		//EU_HOU MISSING Bundle
     		IJ.showMessage("LUT Editor", "No images are open");
     		return;
     	}
     	bitDepth = imp.getBitDepth();
     	if (bitDepth==24) {
-    		IJ.showMessage("LUT Editor", "RGB images do not use LUTs");
+    		//EU_HOU Bundle
+    		IJ.showMessage("LUT Editor", IJ.getPluginBundle().getString("LutRGBErr"));
     		return;
     	}
     	if (bitDepth!=8) {
@@ -34,6 +37,7 @@ public class LUT_Editor implements PlugIn, ActionListener{
     	
         colorPanel = new ColorPanel(imp);
     	if (colorPanel.getMapSize()!=256) {
+    		//EU_HOU MISSING Bundle
     		IJ.showMessage("LUT Editor", "LUT must have 256 entries");
     		return;
     	}
@@ -42,16 +46,20 @@ public class LUT_Editor implements PlugIn, ActionListener{
         int red=0, green=0, blue=0;
         GenericDialog gd = new GenericDialog("LUT Editor");
         Panel buttonPanel = new Panel(new GridLayout(4, 1, 0, 5));
-        openButton = new Button("Open...");
+		//EU_HOU Bundle
+        openButton = new Button(IJ.getBundle().getString("OpenGeneric"));
         openButton.addActionListener(this);
         buttonPanel.add(openButton);
-        saveButton = new Button("Save...");
+        //EU_HOU Bundle
+        saveButton = new Button(IJ.getBundle().getString("SaveCmd"));
         saveButton.addActionListener(this);
         buttonPanel.add(saveButton);
-        resizeButton = new Button("Set...");
+        //EU_HOU Bundle
+        resizeButton = new Button(IJ.getPluginBundle().getString("SetKey"));
         resizeButton.addActionListener(this);
         buttonPanel.add(resizeButton);
-        invertButton = new Button("Invert...");
+        //EU_HOU Bundle
+        invertButton = new Button(IJ.getPluginBundle().getString("Invert"));
         invertButton.addActionListener(this);
         buttonPanel.add(invertButton);
         Panel panel = new Panel();
@@ -200,6 +208,7 @@ class ColorPanel extends Panel implements MouseListener, MouseMotionListener{
             finalC = 0;
         if (initialC == finalC) {
             b = c[finalC];
+            //EU_HOU MISSING Bundle
             ColorChooser cc = new ColorChooser("Color at Entry " + (finalC) , c[finalC] ,  false);
             c[finalC] = cc.getColor();
             if (c[finalC]==null){
@@ -208,6 +217,7 @@ class ColorPanel extends Panel implements MouseListener, MouseMotionListener{
             colorRamp();
         } else {
             b = c[initialC];
+            //EU_HOU MISSING Bundle
             ColorChooser icc = new ColorChooser("Initial Entry (" + (initialC)+")" , c[initialC] , false);
             c[initialC] = icc.getColor();
             if (c[initialC]==null){
@@ -216,6 +226,7 @@ class ColorPanel extends Panel implements MouseListener, MouseMotionListener{
                 return;
             }
             b = c[finalC];
+            //EU_HOU MISSING Bundle
             ColorChooser fcc = new ColorChooser("Final Entry (" + (finalC)+")" , c[finalC] , false);
             c[finalC] = fcc.getColor();
             if (c[finalC]==null){
@@ -249,6 +260,7 @@ class ColorPanel extends Panel implements MouseListener, MouseMotionListener{
            int red = reds[entry]&255;
            int green = greens[entry]&255;
            int blue = blues[entry]&255;
+           //EU_HOU MISSING Bundle
            IJ.showStatus("index=" + getIndex(entry) + ", color=" + red + "," + green + "," + blue);
         } else
            IJ.showStatus("");
@@ -303,6 +315,7 @@ class ColorPanel extends Panel implements MouseListener, MouseMotionListener{
     }
 
     void resize() {
+        //EU_HOU MISSING Bundle =3
         GenericDialog sgd = new GenericDialog("LUT Editor");
         sgd.addNumericField("Number of Colors:", mapSize, 0);
         sgd.addChoice("Scale Using:", choices, scaleMethod);

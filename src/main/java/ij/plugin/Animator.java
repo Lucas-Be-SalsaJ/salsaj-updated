@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.gui.*;
@@ -23,8 +24,10 @@ public class Animator implements PlugIn {
 		imp = IJ.getImage();
 		nSlices = imp.getStackSize();
 		if (nSlices<2)
-			{IJ.error("Stack required."); return;}
+			//EU_HOU Bundle
+			{IJ.error(IJ.getBundle().getString("StackReqErr")); return;}
 		if (imp.isLocked())
+			//EU_HOU MISSING Bundle
 			{IJ.beep(); IJ.showStatus("Image is locked: \""+imp.getTitle()+"\""); return;}
 		ImageWindow win = imp.getWindow();
 		if ((win==null || !(win instanceof StackWindow)) && !arg.equals("options")) {
@@ -229,14 +232,17 @@ public class Animator implements PlugIn {
 		else if (cal.frameInterval!=0.0 && cal.getTimeUnit().equals("sec"))
 			animationRate = 1.0/cal.frameInterval;
 		int decimalPlaces = (int)animationRate==animationRate?0:3;
-		GenericDialog gd = new GenericDialog("Animation Options");
-		gd.addNumericField("Speed (0.1-1000 fps):", animationRate, decimalPlaces);
+		//EU_HOU Bundle =2
+		GenericDialog gd = new GenericDialog(IJ.getPluginBundle().getString("AnimOptTitle"));
+		gd.addNumericField(IJ.getPluginBundle().getString("AnimOptSpeed"), animationRate, decimalPlaces);
 		if (!imp.isDisplayedHyperStack()) {
-			gd.addNumericField("First Frame:", firstFrame, 0);
-			gd.addNumericField("Last Frame:", lastFrame, 0);
+			//EU_HOU Bundle =2
+			gd.addNumericField(IJ.getPluginBundle().getString("AnimOptFirstFrame"), firstFrame, 0);
+			gd.addNumericField(IJ.getPluginBundle().getString("AnimOptLastFrame"), lastFrame, 0);
 		}
-		gd.addCheckbox("Loop Back and Forth", cal.loop);
-		gd.addCheckbox("Start Animation", start);
+		//EU_HOU Bundle =2
+		gd.addCheckbox(IJ.getPluginBundle().getString("AnimOptLoop"), cal.loop);
+		gd.addCheckbox(IJ.getPluginBundle().getString("AnimOptStart"), start);
 		gd.showDialog();
 		if (gd.wasCanceled()) {
 			if (firstFrame==1 && lastFrame==nSlices)
@@ -358,6 +364,7 @@ public class Animator implements PlugIn {
 	}
 
 	void setSlice() {
+		//EU_HOU MISSING Bundle =2
         GenericDialog gd = new GenericDialog("Set Slice");
         gd.addNumericField("Slice Number (1-"+nSlices+"):", slice, 0);
         gd.showDialog();

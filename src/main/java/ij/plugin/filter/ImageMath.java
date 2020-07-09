@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin.filter;
 import ij.*;
 import ij.gui.*;
@@ -70,7 +71,8 @@ public class ImageMath implements ExtendedPlugInFilter, DialogListener {
 				ip.and(Integer.parseInt(andValue,2));
 			} catch (NumberFormatException e) {
 				andValue = defaultAndValue;
-				IJ.error("Binary number required");
+				//EU_HOU Bundle
+				IJ.error(IJ.getPluginBundle().getString("BinValReqErr"));
 			}
 		} else if (arg.equals("or")) {
 	 		try {
@@ -84,7 +86,8 @@ public class ImageMath implements ExtendedPlugInFilter, DialogListener {
 				ip.xor(Integer.parseInt(andValue,2));
 			} catch (NumberFormatException e) {
 				andValue = defaultAndValue;
-				IJ.error("Binary number required");
+				//EU_HOU Bundle
+				IJ.error(IJ.getPluginBundle().getString("BinValReqErr"));
 			}
 		} else if (arg.equals("min")) {
 	 		ip.min(minValue);
@@ -98,7 +101,8 @@ public class ImageMath implements ExtendedPlugInFilter, DialogListener {
 	 		if (gammaValue<0.05 || gammaValue>5.0) {
 		 		if (!previewing() && !canceled) {
 	 				canceled = true;
-	 				IJ.error("Gamma must be between 0.05 and 5.0");
+	 				//EU_HOU Bundle
+	 				IJ.error(IJ.getPluginBundle().getString("GammaValErr"));
 	 			}
 	 			gammaValue = defaultGammaValue;
 	 		} else
@@ -128,7 +132,8 @@ public class ImageMath implements ExtendedPlugInFilter, DialogListener {
 	 		setBackgroundToNaN(ip);
 		} else if (arg.equals("abs")) {
 			if (!((ip instanceof FloatProcessor)||imp.getCalibration().isSigned16Bit())) {
-				IJ.error("32-bit or signed 16-bit image required");
+				//EU_HOU Bundle
+				IJ.error(IJ.getPluginBundle().getString("32BitSigned16BitImgReqErr"));
 				canceled = true;
 			} else {
 				ip.abs();
@@ -146,7 +151,8 @@ public class ImageMath implements ExtendedPlugInFilter, DialogListener {
  
  	boolean isFloat(ImageProcessor ip) {
 		if (!(ip instanceof FloatProcessor)) {
-			IJ.error("32-bit float image required");
+			//EU_HOU Bundle
+			IJ.error(IJ.getPluginBundle().getString("32BitFloatImgReqErr"));
 			canceled = true;
 			return false;
 		} else
@@ -173,11 +179,14 @@ public class ImageMath implements ExtendedPlugInFilter, DialogListener {
 	}
 
 	void getGammaValue (double defaultValue) {
-		gd = NonBlockingGenericDialog.newDialog("Gamma", imp);
+		//EU_HOU Bundle
+		gd = NonBlockingGenericDialog.newDialog(IJ.getPluginBundle().getString("Gamma"), imp);
 		if (GraphicsEnvironment.isHeadless())
-			gd.addNumericField("Value:", defaultValue, 2);
+			//EU_HOU Bundle
+			gd.addNumericField(IJ.getPluginBundle().getString("Value01"), defaultValue, 2);
 		else
-			gd.addSlider("Value:", 0.0, 5.0, defaultValue, 0.02);
+			//EU_HOU Bundle
+			gd.addSlider(IJ.getPluginBundle().getString("Value01"), 0.0, 5.0, defaultValue, 0.02);
 		gd.addPreviewCheckbox(pfr);
 		gd.addDialogListener(this);
 		gd.showDialog();
@@ -190,7 +199,8 @@ public class ImageMath implements ExtendedPlugInFilter, DialogListener {
 			upper = ip.getMaxThreshold();
 			if (lower==ImageProcessor.NO_THRESHOLD || !(ip instanceof FloatProcessor)) {
 				String title = imp!=null?"\n\""+imp.getTitle()+"\"":"";
-				IJ.error("NaN Backround", "Thresholded 32-bit float image required:"+title);
+				//EU_HOU MISSING Bundle //EU_HOU Bundle
+				IJ.error("NaN Backround", IJ.getPluginBundle().getString("Thresh32BitFloatImgReqErr")+title);
 				canceled = true;
 				return;
 			}
@@ -417,9 +427,11 @@ public class ImageMath implements ExtendedPlugInFilter, DialogListener {
 		String options = Macro.getOptions();
 		if (options!=null && options.startsWith("v="))
 			Macro.setOptions("code="+options);
+		//EU_HOU MISSING Bundle
 		gd = NonBlockingGenericDialog.newDialog("Expression Evaluator", imp);
 		gd.addStringField("Code:", macro, 42);
 		gd.setInsets(0,40,0);
+		//EU_HOU MISSING Bundle
 		gd.addMessage("v=pixel value, x,y&z=pixel coordinates, w=image width,\nh=image height, a=angle, d=distance from center\n");
 		gd.setInsets(5,40,0);
 		gd.addPreviewCheckbox(pfr);
@@ -443,28 +455,38 @@ public class ImageMath implements ExtendedPlugInFilter, DialogListener {
 	 	if (arg.equals("macro"))
 			getMacro(macro);
     	else if (arg.equals("add"))
-	 		getValue("Add", "Value: ", addValue, 0);
+    		//EU_HOU Bundle
+	 		getValue(IJ.getPluginBundle().getString("Add"), IJ.getPluginBundle().getString("Value"), addValue, 0);
 	 	else if (arg.equals("sub"))
-	 		getValue("Subtract", "Value: ", addValue, 0);
+    		//EU_HOU Bundle
+	 		getValue(IJ.getPluginBundle().getString("Subtract"), IJ.getPluginBundle().getString("Value"), addValue, 0);
 	 	else if (arg.equals("mul"))
-	 		getValue("Multiply", "Value: ", mulValue, 2);
+    		//EU_HOU Bundle
+	 		getValue(IJ.getPluginBundle().getString("Multiply"), IJ.getPluginBundle().getString("Value"), mulValue, 2);
 	 	else if (arg.equals("div"))
-	 		getValue("Divide", "Value: ", mulValue, 2);
+    		//EU_HOU Bundle
+	 		getValue(IJ.getPluginBundle().getString("Divide"), IJ.getPluginBundle().getString("Value"), mulValue, 2);
 	 	else if (arg.equals("and"))
-	 		getBinaryValue("AND", "Value (binary): ", andValue);
+    		//EU_HOU Bundle
+	 		getBinaryValue("AND", IJ.getPluginBundle().getString("BinValue"), andValue);
 	 	else if (arg.equals("or"))
-	 		getBinaryValue("OR", "Value (binary): ", andValue);
+    		//EU_HOU Bundle
+	 		getBinaryValue("OR", IJ.getPluginBundle().getString("BinValue"), andValue);
 	 	else if (arg.equals("xor"))
-	 		getBinaryValue("XOR", "Value (binary): ", andValue);
+    		//EU_HOU Bundle
+	 		getBinaryValue("XOR", IJ.getPluginBundle().getString("BinValue"), andValue);
 	 	else if (arg.equals("min"))
-	 		getValue("Min", "Value: ", minValue, 0);
+    		//EU_HOU Bundle
+	 		getValue(IJ.getPluginBundle().getString("Min"), IJ.getPluginBundle().getString("Value"), minValue, 0);
 	 	else if (arg.equals("max"))
-	 		getValue("Max", "Value: ", maxValue, 0);
+    		//EU_HOU Bundle
+	 		getValue(IJ.getPluginBundle().getString("Max"), IJ.getPluginBundle().getString("Value"), maxValue, 0);
 	 	else if (arg.equals("gamma"))
 	 		getGammaValue(gammaValue);
 	 	else if (arg.equals("set")) {
 	 		boolean rgb = imp.getBitDepth()==24;
-	 		String prompt = rgb?"Value (0-255): ":"Value: ";
+	 		//EU_HOU MISSING Bundle //EU_HOU Bundle
+	 		String prompt = rgb?"Value (0-255): ":IJ.getPluginBundle().getString("Value");
 	 		getValue("Set", prompt, addValue, 0);
 		}
 		if (gd!=null && gd.wasCanceled())
@@ -503,7 +525,8 @@ public class ImageMath implements ExtendedPlugInFilter, DialogListener {
 	 		gammaValue = gd.getNextNumber();
 	 		if (gammaValue<0.05 || gammaValue>5.0) {
 	 			if (previewing()) {
-	 				IJ.showStatus("Gamma must be between 0.05 and 5.0");
+	 				//EU_HOU Bundle
+	 				IJ.showStatus(IJ.getPluginBundle().getString("GammaValErr"));
 	 				gammaValue = defaultGammaValue;
 	 				return false;
 	 			}
@@ -511,6 +534,7 @@ public class ImageMath implements ExtendedPlugInFilter, DialogListener {
 	 	}
 		canceled = gd.invalidNumber();
 		if (gd.wasOKed() && canceled) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Value is invalid.");
 			return false;
 		}

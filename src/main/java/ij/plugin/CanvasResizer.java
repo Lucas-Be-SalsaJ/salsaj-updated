@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.plugin.filter.*;
@@ -31,13 +32,26 @@ public class CanvasResizer implements PlugIn {
 			"Center-Left", "Center", "Center-Right",
 			"Bottom-Left", "Bottom-Center", "Bottom-Right"
 		};
+		
+		/*
+		 * EU_HOU Bundle CHANGES
+		 */
+		int i = 0;
+		for (i = 0; i < 9; i++) {
+			sPositions[i] = IJ.getPluginBundle().getString(sPositions[i]);
+		}
+		/*
+		 * EU_HOU Bundle CHANGES END
+		 */
 			
-		String strTitle = fIsStack ? "Resize Stack Canvas" : "Resize Image Canvas";
+		//EU_HOU Bundle
+		String strTitle = fIsStack ? IJ.getPluginBundle().getString("CanvasResizerTitle2") : IJ.getPluginBundle().getString("CanvasResizerTitle1");
 		GenericDialog gd = new GenericDialog(strTitle);
-		gd.addNumericField("Width:", wOld, 0, 5, "pixels");
-		gd.addNumericField("Height:", hOld, 0, 5, "pixels");
-		gd.addChoice("Position:", sPositions, sPositions[4]);
-		gd.addCheckbox("Zero Fill", zeroFill);
+		//EU_HOU Bundle =4
+		gd.addNumericField(IJ.getBundle().getString("Width") + ":", wOld, 0, 5, "pixels");
+		gd.addNumericField(IJ.getBundle().getString("Height") + ":", hOld, 0, 5, "pixels");
+		gd.addChoice(IJ.getPluginBundle().getString("Position") + ":", sPositions, sPositions[4]);
+		gd.addCheckbox(IJ.getPluginBundle().getString("ZeroFile"), zeroFill);
 		gd.showDialog();
 		if (gd.wasCanceled())
 			return;

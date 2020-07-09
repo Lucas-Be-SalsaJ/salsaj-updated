@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin.filter;
 import ij.*;
 import ij.process.*;
@@ -72,6 +73,7 @@ public class Convolver implements ExtendedPlugInFilter, DialogListener, ActionLi
 			kernelText = lastKernelText;
 			normalizeFlag = lastNormalizeFlag;
 		}
+		//EU_HOU MISSING Bundle
 		gd = NonBlockingGenericDialog.newDialog("Convolver...", imp);
 		gd.setInsets(5,20,0);
 		gd.addMessage(" \nKernel:"); //reserve two lines
@@ -79,6 +81,7 @@ public class Convolver implements ExtendedPlugInFilter, DialogListener, ActionLi
 		gd.setInsets(5,20,0);
 		gd.addTextAreas(kernelText, null, 10, 30);
 		gd.addPanel(makeButtonPanel(gd));
+		//EU_HOU MISSING Bundle
 		gd.addCheckbox("Normalize Kernel", normalizeFlag);
 		gd.addPreviewCheckbox(pfr);
 		gd.addDialogListener(this);
@@ -99,6 +102,7 @@ public class Convolver implements ExtendedPlugInFilter, DialogListener, ActionLi
 		normalize = normalizeFlag;
 		kernelError = !decodeKernel(kernelText);
 		if (!kernelError) {
+			//EU_HOU MISSING Bundle
 			IJ.showStatus("Convolve: "+kw+"x"+kh+" kernel");
 			return true;
 		} else
@@ -120,17 +124,20 @@ public class Convolver implements ExtendedPlugInFilter, DialogListener, ActionLi
 		for (int y=0; y<kh; y++) {
 			values = Tools.split(rows[y]);
 			if (values.length!=kw)
+				//EU_HOU MISSING Bundle
 				err = "Row "+(y+1)+" is not the same length\nas the first row";
 			else
 				for (int x=0; x<kw; x++)
 					kernel[i++] = (float)Tools.parseDouble(values[x], 0.0);
 		}
 		if ((kw&1)!=1 || (kh&1)!=1)
+			//EU_HOU MISSING Bundle
 			err = "Kernel must have odd width and height.\nThis one is "+kw+"x"+kh+".";
 		if (err == null) {
 			messageLabel.setText(kw+"x"+kh+" kernel");
 		} else {
 			if (done)
+				//EU_HOU MISSING Bundle
 				IJ.error("Convolver", err);
 			else
 				messageLabel.setText(err);
@@ -169,6 +176,7 @@ public class Convolver implements ExtendedPlugInFilter, DialogListener, ActionLi
 			gd.getTextArea1().setText(new String(sb));
 			return true;
 		} else {
+			//EU_HOU MISSING Bundle
 			IJ.error("Kernel must be square with odd width. This one is "+kw+"x"+kh+".");
 			return false;
 		}
@@ -192,11 +200,13 @@ public class Convolver implements ExtendedPlugInFilter, DialogListener, ActionLi
 	public boolean convolve(ImageProcessor ip, float[] kernel, int kw, int kh) {
 		if (canceled || kw*kh!=kernel.length) return false;
 		if ((kw&1)!=1 || (kh&1)!=1)
+			//EU_HOU MISSING Bundle
 			throw new IllegalArgumentException("Kernel width or height not odd ("+kw+"x"+kh+")");
 		boolean notFloat = !(ip instanceof FloatProcessor);
 		ImageProcessor ip2 = ip;
 		if (notFloat) {
 			if (ip2 instanceof ColorProcessor)
+				//EU_HOU MISSING Bundle
 				throw new IllegalArgumentException("RGB images not supported");
 			ip2 = ip2.convertToFloat();
 		}
@@ -226,6 +236,7 @@ public class Convolver implements ExtendedPlugInFilter, DialogListener, ActionLi
 		the user cancels the operation by pressing 'Esc'. */
 	public boolean convolveFloat(ImageProcessor ip, float[] kernel, int kw, int kh) {
 		if (!(ip instanceof FloatProcessor))
+			//EU_HOU MISSING Bundle
 			throw new IllegalArgumentException("FloatProcessor required");
 		if (canceled) return false;
 		int width = ip.getWidth();
@@ -278,6 +289,7 @@ public class Convolver implements ExtendedPlugInFilter, DialogListener, ActionLi
 					for(int u = -uc; u <= uc; u++) {
 						if (edgePixel) {
  							if (i>=kernel.length) // work around for JIT compiler bug on Linux
+ 								//EU_HOU MISSING Bundle
  								IJ.log("kernel index error: "+i);
 							sum += getPixel(x+u, y+v, pixels2, width, height)*kernel[i++];
 						} else
@@ -374,6 +386,7 @@ public class Convolver implements ExtendedPlugInFilter, DialogListener, ActionLi
 		if (text==null || text.length()==0)
 			return;
 		text += "\n";
+		//EU_HOU MISSING Bundle
 		SaveDialog sd = new SaveDialog("Save as Text...", "kernel", ".txt");
 		String name = sd.getFileName();
 		if (name == null)
@@ -395,6 +408,7 @@ public class Convolver implements ExtendedPlugInFilter, DialogListener, ActionLi
 	}
 
 	void open() {
+		//EU_HOU MISSING Bundle
 		OpenDialog od = new OpenDialog("Open Kernel...", "");
 		String directory = od.getDirectory();
 		String name = od.getFileName();
@@ -408,6 +422,7 @@ public class Convolver implements ExtendedPlugInFilter, DialogListener, ActionLi
 		int width = ip.getWidth();
 		int height = ip.getHeight();
 		if ((width&1)!=1 || (height&1)!=1) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Convolver", "Kernel must be have odd width and height");
 			return;
 		}

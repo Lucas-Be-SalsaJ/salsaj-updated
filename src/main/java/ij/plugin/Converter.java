@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.process.*;
@@ -28,6 +29,7 @@ public class Converter implements PlugIn {
 				imp.unlock();
 				imp.setTitle(imp.getTitle());
 			} else 
+				//EU_HOU MISSING Bundle
 				IJ.log("<<Converter: image is locked ("+imp+")>>");
 		} else
 			IJ.noImage();
@@ -41,6 +43,7 @@ public class Converter implements PlugIn {
 		ImageStack stack = null;
 		if (imp.getStackSize()>1)
 			stack = imp.getStack();
+		//EU_HOU MISSING Bundle
 		String msg = "Converting to " + item;
 		IJ.showStatus(msg + "...");
 	 	long start = System.currentTimeMillis();
@@ -55,6 +58,7 @@ public class Converter implements PlugIn {
  			if (stack!=null) {
  				boolean wasVirtual = stack.isVirtual();
 				// do stack conversions
+				//EU_HOU MISSING Bundle =11
 		    	if (stack.isRGB() && item.equals("RGB Color")) {
 					new ImageConverter(imp).convertRGBStackToRGB();
 					if (win!=null) new ImageWindow(imp, imp.getCanvas()); // replace StackWindow with ImageWindow
@@ -88,6 +92,7 @@ public class Converter implements PlugIn {
 				// do single image conversions
 				Undo.setup(Undo.TYPE_CONVERSION, imp);
 		    	ImageConverter ic = new ImageConverter(imp);
+				//EU_HOU MISSING Bundle =8
 				if (item.equals("8-bit"))
 					ic.convertToGray8();
 				else if (item.equals("16-bit"))
@@ -116,6 +121,7 @@ public class Converter implements PlugIn {
 				}
 				IJ.showProgress(1.0);
 			}
+			//EU_HOU MISSING Bundle
 			if ("RGB Color".equals(item))
 				imp.setProp(LUT.nameKey,null);
 		}
@@ -136,6 +142,7 @@ public class Converter implements PlugIn {
 	}
 
 	void unsupportedConversion(ImagePlus imp) {
+		//EU_HOU MISSING Bundle
 		IJ.error("Converter",
 			"Supported Conversions:\n" +
 			" \n" +
@@ -165,6 +172,7 @@ public class Converter implements PlugIn {
 	int getNumber() {
 		if (imp.getType()!=ImagePlus.COLOR_RGB)
 			return 256;
+		//EU_HOU MISSING Bundle =2
 		GenericDialog gd = new GenericDialog("MedianCut");
 		gd.addNumericField("Number of Colors (2-256):", 256, 0);
 		gd.showDialog();

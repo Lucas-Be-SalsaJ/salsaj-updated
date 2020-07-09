@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.process.*;
@@ -101,9 +102,11 @@ public class Commands implements PlugIn {
 				if (imp!=null && imp.changes) imagesWithChanges++;
 			}
 			if (imagesWithChanges>0 && !IJ.macroRunning()) {
+				//EU_HOU MISSING Bundle
 				GenericDialog gd = new GenericDialog("Close All");
 				String msg = null;
 				String pronoun = null;
+				//EU_HOU MISSING Bundle
 				if (imagesWithChanges==1) {
 					msg = "There is one image";
 					pronoun = "It";
@@ -162,6 +165,7 @@ public class Commands implements PlugIn {
 				f = new File(path);
 			}
 			if (!f.exists())
+				//EU_HOU MISSING Bundle
 				IJ.error("\"StartupMacros.txt\" not found in ImageJ/macros/");
 			else
 				IJ.open(path);

@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.process;
 
 import java.awt.*;
@@ -183,8 +184,8 @@ public class ImageConverter {
 	public void convertRGBStackToRGB() {
 		int stackSize = imp.getStackSize();
 		if (stackSize<2 || stackSize>3 || type!=ImagePlus.GRAY8)
-            //EU_HOU MISSING Bundle
-			throw new IllegalArgumentException("2 or 3 slice 8-bit stack required");
+            //EU_HOU Bundle
+			throw new IllegalArgumentException(IJ.getBundle().getString("TwoThreeSliceReqErr"));
 		int width = imp.getWidth();
 		int height = imp.getHeight();
 		ImageStack stack = imp.getStack();

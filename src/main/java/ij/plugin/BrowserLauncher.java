@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.IJ;
 import java.io.File;
@@ -85,6 +86,7 @@ public class BrowserLauncher implements PlugIn {
 				process.waitFor();
 				process.exitValue();
 			} catch (InterruptedException ie) {
+				//EU_HOU MISSING Bundle
 				throw new IOException("InterruptedException while launching browser: " + ie.getMessage());
 			}
 		} else {
@@ -101,10 +103,12 @@ public class BrowserLauncher implements PlugIn {
 							browserName = browsers[count];
 					}
 					if (browserName==null)
+						//EU_HOU MISSING Bundle
 						ij.IJ.error("BrowserLauncher", "Could not find a browser");
 					else
 						Runtime.getRuntime().exec(new String[] {browserName, url});
 				} catch (Exception e) {
+					//EU_HOU MISSING Bundle
 					throw new IOException("Exception while launching browser: " + e.getMessage());
 				}
 		}

@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import java.awt.*;
 import java.awt.event.*;
@@ -45,6 +46,7 @@ public class Duplicator implements PlugIn, TextListener, ItemListener {
 		if (roiA!=null) {
 			Rectangle r = roiA.getBounds();
 			if (r.x>=imp.getWidth() || r.y>=imp.getHeight() || r.x+r.width<=0 || r.y+r.height<=0) {
+				//EU_HOU MISSING Bundle
 				IJ.error("Roi is outside image");
 				return;
 			}
@@ -62,7 +64,8 @@ public class Duplicator implements PlugIn, TextListener, ItemListener {
 				}								
 				return;
 			} else
-				newTitle = showDialog(imp, "Duplicate...", "Title: ");
+				//EU_HOU Bundle
+				newTitle = showDialog(imp, IJ.getBundle().getString("Duplicate"), IJ.getPluginBundle().getString("Title") + ": ");
 		}
 		if (newTitle==null) {
 			if (isRotatedRect)
@@ -218,6 +221,7 @@ public class Duplicator implements PlugIn, TextListener, ItemListener {
 		boolean showProgress = virtualStack || ((double)n*stack.getWidth()*stack.getHeight()>=209715200.0);
 		for (int i=1; i<=n; i++) {
 			if (showProgress) {
+				//EU_HOU MISSING Bundle
 				IJ.showStatus("Duplicating: "+i+"/"+n);
 				IJ.showProgress(i,n);
 			}
@@ -332,6 +336,7 @@ public class Duplicator implements PlugIn, TextListener, ItemListener {
 		boolean showProgress = virtualStack || ((double)n*stack.getWidth()*stack.getHeight()>=209715200.0);
 		for (int i=firstSlice; i<=lastSlice; i++) {
 			if (showProgress) {
+				//EU_HOU MISSING Bundle
 				IJ.showStatus("Duplicating: "+i+"/"+lastSlice);
 				IJ.showProgress(i-firstSlice,n);
 			}
@@ -453,8 +458,10 @@ public class Duplicator implements PlugIn, TextListener, ItemListener {
 		this.gd = gd;
 		gd.addStringField(prompt, title, 15);
 		if (stackSize>1) {
-			gd.addCheckbox("Duplicate stack", duplicateStack);
+			//EU_HOU Bundle
+			gd.addCheckbox(IJ.getPluginBundle().getString("DupliStack"), duplicateStack);
 			gd.setInsets(2, 30, 3);
+			//EU_HOU MISSING Bundle
 			gd.addStringField("Range:", "1-"+stackSize);
 			if (!isMacro) {
 				checkbox = (Checkbox)(gd.getCheckboxes().elementAt(0));
@@ -532,6 +539,7 @@ public class Duplicator implements PlugIn, TextListener, ItemListener {
 		if (imp2==null) return;
 		imp2.setTitle(newTitle);
 		if (imp2.getWidth()==0 || imp2.getHeight()==0) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Duplicator", "Selection is outside the image");
 			return;
 		}
@@ -553,23 +561,28 @@ public class Duplicator implements PlugIn, TextListener, ItemListener {
 		boolean composite = imp.isComposite() && nChannels==imp.getStackSize();
 		String options = Macro.getOptions();
 		boolean isMacro = options!=null;
-		GenericDialog gd = new GenericDialog("Duplicate");
-		gd.addStringField("Title:", newTitle, 15);
+		//EU_HOU Bundle =2
+		GenericDialog gd = new GenericDialog(IJ.getPluginBundle().getString("DupliTitle"));
+		gd.addStringField(IJ.getPluginBundle().getString("DupliNewName"), newTitle, 15);
 		gd.setInsets(12, 20, 8);
+		//EU_HOU MISSING Bundle
 		gd.addCheckbox("Duplicate hyperstack", (duplicateStack&&!isMacro)||composite);
 		int nRangeFields = 0;
 		if (nChannels>1) {
 			gd.setInsets(2, 30, 3);
+			//EU_HOU MISSING Bundle
 			gd.addStringField("Channels (c):", "1-"+nChannels);
 			nRangeFields++;
 		}
 		if (nSlices>1) {
 			gd.setInsets(2, 30, 3);
+			//EU_HOU MISSING Bundle
 			gd.addStringField("Slices (z):", "1-"+nSlices);
 			nRangeFields++;
 		}
 		if (nFrames>1) {
 			gd.setInsets(2, 30, 3);
+			//EU_HOU MISSING Bundle
 			gd.addStringField("Frames (t):", "1-"+nFrames);
 			nRangeFields++;
 		}
@@ -645,6 +658,7 @@ public class Duplicator implements PlugIn, TextListener, ItemListener {
 			roi = shape2.and(shape1);
 		}
 		if (roi.getBounds().width==0 || roi.getBounds().height==0)
+			//EU_HOU MISSING Bundle
 			throw new IllegalArgumentException("Selection is outside the image");
 		return roi;
 	}

@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.gui.*;
@@ -37,6 +38,7 @@ public class Compiler implements PlugIn, FilenameFilter {
 			showDialog();
 		else {
 			if (arg!=null && arg.length()>0 && !arg.endsWith(".java"))
+				//EU_HOU MISSING Bundle
 				IJ.error("Compiler", "File name must end with \".java\"");
 			else
 				compileAndRun(arg);
@@ -44,6 +46,7 @@ public class Compiler implements PlugIn, FilenameFilter {
 	 }
 	 
 	void edit() {
+		//EU_HOU MISSING Bundle
 		if (open("", "Open macro or plugin")) {
 			Editor ed = (Editor)IJ.runPlugIn("ij.plugin.frame.Editor", "");
 			if (ed!=null) ed.open(dir, name);
@@ -51,6 +54,7 @@ public class Compiler implements PlugIn, FilenameFilter {
 	}
 	
 	void compileAndRun(String path) {
+		//EU_HOU MISSING Bundle
 		if (!open(path, "Compile and Run Plugin..."))
 			return;
 		if (name.endsWith(".class")) {
@@ -58,6 +62,7 @@ public class Compiler implements PlugIn, FilenameFilter {
 			return;
 		}
 		if (!isJavac()) {
+			//EU_HOU MISSING Bundle
 			if (IJ.debugMode) IJ.log("Compiler: javac not found");
 			if (!checkForUpdateDone) {
 				checkForUpdate("/plugins/compiler/Compiler.jar", "1.48c");
@@ -82,6 +87,7 @@ public class Compiler implements PlugIn, FilenameFilter {
 		String className = plugin.substring(slashIndex+1, plugin.length()-4);
 		File f = new File(Prefs.getImageJDir()+"plugins"+File.separator+"jars"+File.separator+className+".jar");
 		if (!f.exists() || !f.canWrite()) {
+			//EU_HOU MISSING Bundle
 			if (IJ.debugMode) IJ.log("checkForUpdate: jar not found ("+plugin+")");
 			return;
 		}
@@ -94,14 +100,17 @@ public class Compiler implements PlugIn, FilenameFilter {
 		}
 		catch (Exception e) {}
 		if (version==null) {
+			//EU_HOU MISSING Bundle
 			if (IJ.debugMode) IJ.log("checkForUpdate: class not found ("+className+")");
 			return;
 		}
 		if (version.compareTo(currentVersion)>=0) {
+			//EU_HOU MISSING Bundle
 			if (IJ.debugMode) IJ.log("checkForUpdate: up to date ("+className+"  "+version+")");
 			return;
 		}
 		boolean ok = Macro_Runner.downloadJar(plugin);
+		//EU_HOU MISSING Bundle
 		if (IJ.debugMode) IJ.log("checkForUpdate: "+className+" "+version+" "+ok);
 	}
 	 
@@ -145,6 +154,7 @@ public class Compiler implements PlugIn, FilenameFilter {
 		}
 		
 		boolean errors = true;
+		//EU_HOU MISSING Bundle
 		String s = "not compiled";
 		if (compilerTool != null) {
 			final StringWriter outputWriter = new StringWriter();
@@ -227,10 +237,12 @@ public class Compiler implements PlugIn, FilenameFilter {
 			if (okay) {
 				if (msg.startsWith("Compile")) {
 					if (!(lcName.endsWith(".java")||lcName.endsWith(".class"))) {
+						//EU_HOU MISSING Bundle
 						IJ.error("File name must end with \".java\" or \".class\".");
 						okay = false;
 					}
 				} else if (!(lcName.endsWith(".java")||lcName.endsWith(".txt")||lcName.endsWith(".ijm")||lcName.endsWith(".js"))) {
+					//EU_HOU MISSING Bundle
 					IJ.error("File name must end with \".java\", \".txt\" or \".js\".");
 					okay = false;
 				}
@@ -270,9 +282,11 @@ public class Compiler implements PlugIn, FilenameFilter {
 	
 	public void showDialog() {
 		validateTarget();
+		//EU_HOU MISSING Bundle =2
 		GenericDialog gd = new GenericDialog("Compile and Run");
 		gd.addChoice("Target: ", targets, targets[target]);
 		gd.setInsets(15,5,0);
+		//EU_HOU MISSING Bundle =2
 		gd.addCheckbox("Generate debugging info (javac -g)", generateDebuggingInfo);
 		gd.addHelp(IJ.URL+"/docs/menus/edit.html#compiler");
 		Font font = new Font("SansSerif", Font.PLAIN, 10);
@@ -320,6 +334,7 @@ class PlugInExecuter implements Runnable {
 	}
 	
 	void runCompiledPlugin(String className) {
+		//EU_HOU MISSING Bundle
 		if (IJ.debugMode) IJ.log("Compiler: running \""+className+"\"");
 		IJ.resetClassLoader();
 		ClassLoader loader = IJ.getClassLoader();
@@ -333,10 +348,12 @@ class PlugInExecuter implements Runnable {
 		}
 		catch (ClassNotFoundException e) {
 			if (className.indexOf('_')!=-1)
+				//EU_HOU MISSING Bundle
 				IJ.error("Plugin or class not found: \"" + className + "\"\n(" + e+")");
 		}
 		catch (NoClassDefFoundError e) {
 			String err = e.getMessage();
+			//EU_HOU MISSING Bundle
 			if (IJ.debugMode) IJ.log("NoClassDefFoundError: "+err);
 			int index = err!=null?err.indexOf("wrong name: "):-1;
 			if (index>-1 && !className.contains(".")) {
@@ -350,12 +367,14 @@ class PlugInExecuter implements Runnable {
 					}
 				}
 				if (className2.equals(className))
+					//EU_HOU MISSING Bundle
 					IJ.error("Plugin not found: "+className2);
 				else
 					runCompiledPlugin(className2);
 				return;
 			}
 			if (className.indexOf('_')!=-1)
+				//EU_HOU MISSING Bundle
 				IJ.error("Plugin or class not found: \"" + className + "\"\n(" + e+")");
 		}
 		catch (Exception e) {
@@ -372,6 +391,7 @@ abstract class CompilerTool {
 	public static class JavaxCompilerTool extends CompilerTool {
 
 		public boolean compile(List sources, List options, StringWriter log) {
+			//EU_HOU MISSING Bundle
 			if (IJ.debugMode) IJ.log("Compiler: using javax.tool.JavaCompiler");
 			try {
 				JavaCompiler javac = getJavac();
@@ -399,6 +419,7 @@ abstract class CompilerTool {
 		protected static Class javacC;
 
 		public boolean compile(List sources, List options, StringWriter log) {
+			//EU_HOU MISSING Bundle
 			if (IJ.debugMode) IJ.log("Compiler: using com.sun.tools.javac");
 			try {
 				final String[] args = new String[sources.size() + options.size()];

@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin.filter;
 import ij.*;
 import ij.gui.*;
@@ -61,6 +62,7 @@ public class Calibrator implements PlugInFilter, Measurements, ActionListener {
 			if (choiceIndex==0)
 				imp.getCalibration().setValueUnit(unit);
 			else
+				//EU_HOU MISSING Bundle
 				IJ.error("Calibrate", "Function must be \"None\" for 32-bit images,\nbut you can change the Unit.");
 		} else
 			calibrate(imp);
@@ -91,13 +93,15 @@ public class Calibrator implements PlugInFilter, Measurements, ActionListener {
 			
 		String tmpText = getMeans();
 		if (!importedValues && !tmpText.equals(""))	
-			xText = tmpText;	
+			xText = tmpText;
+		//EU_HOU MISSING Bundle =3
 		gd = new GenericDialog("Calibrate...");
 		gd.addChoice("Function:", functions, defaultChoice);
 		gd.addStringField("Unit:", unit, 16);
 		gd.addTextAreas(xText, yText, 20, 14);
 		//gd.addMessage("Left column contains uncalibrated measured values,\n right column contains known values (e.g., OD).");
 		gd.addPanel(makeButtonPanel(gd));
+		//EU_HOU MISSING Bundle =2
 		gd.addCheckbox("Global calibration", IJ.isMacro()?false:global1);
 		gd.addCheckbox("Show plot", IJ.isMacro()?false:showPlotFlagSaved);
 		//gd.addCheckbox("Show Simplex Settings", showSettings);
@@ -123,9 +127,11 @@ public class Calibrator implements PlugInFilter, Measurements, ActionListener {
 	Panel makeButtonPanel(GenericDialog gd) {
 		Panel buttons = new Panel();
     	buttons.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
+		//EU_HOU MISSING Bundle
 		open = new Button("Open...");
 		open.addActionListener(this);
 		buttons.add(open);
+		//EU_HOU MISSING Bundle
 		save = new Button("Save...");
 		save.addActionListener(this);
 		buttons.add(save);
@@ -145,6 +151,7 @@ public class Calibrator implements PlugInFilter, Measurements, ActionListener {
 		curveFitter = null;
 		if (choiceIndex<=0) {
 			if (oldFunction==Calibration.NONE&&!yText.equals("")&&!xText.equals("")) {
+				//EU_HOU MISSING Bundle
 				IJ.error("Calibrate", "Please select a function");
 			    return;
 			}
@@ -181,9 +188,11 @@ public class Calibrator implements PlugInFilter, Measurements, ActionListener {
 			else
 				parameters[0] = 255;
 			parameters[1] = -1.0;
+			//EU_HOU MISSING Bundle
 			unit = "Inverted Gray Value";
 		} else if (choiceIndex==odIndex) {
 			if (is16Bits) {
+				//EU_HOU MISSING Bundle
 				IJ.error("Calibrate", "Uncalibrated OD is not supported on 16-bit images.");
 				return;
 			}
@@ -227,6 +236,7 @@ public class Calibrator implements PlugInFilter, Measurements, ActionListener {
 			max = 65535;
 		for (int i=0; i<x.length; i++) {
 			if (x[i]<0 || x[i]>max) {
+				//EU_HOU MISSING Bundle =2
 			    String title = (bitDepth==8?"8-bit":"16-bit") + " Calibration";
 				String msg = "Measured (uncalibrated) values in the left\ncolumn must be in the range 0-";
 				IJ.error(title, msg+max+".");
@@ -238,6 +248,7 @@ public class Calibrator implements PlugInFilter, Measurements, ActionListener {
 
 	double[] doCurveFitting(double[] x, double[] y, int fitType) {
 		if (x.length!=y.length || y.length==0) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Calibrate",
 				"To create a calibration curve, the left column must\n"
 				+"contain a list of measured mean pixel values and the\n"
@@ -299,6 +310,7 @@ public class Calibrator implements PlugInFilter, Measurements, ActionListener {
 		double ymax = a[1];
 		int fit = cal.getFunction();
 		String unit = cal.getValueUnit();
+		//EU_HOU MISSING Bundle
 		Plot plot = new Plot("Calibration Function","pixel value",unit,px,py);
 		plot.setLimits(xmin,xmax,ymin,ymax);
 		if (x!=null&&y!=null&&x.length>0&&y.length>0)
@@ -406,6 +418,7 @@ public class Calibrator implements PlugInFilter, Measurements, ActionListener {
 		ta2.select(0, 0);
 		double[] x = getData(text1);
 		double[] y = getData(text2);
+		//EU_HOU MISSING Bundle
 		SaveDialog sd = new SaveDialog("Save as Text...", "calibration", ".txt");
 		String name = sd.getFileName();
 		if (name == null)
@@ -432,6 +445,7 @@ public class Calibrator implements PlugInFilter, Measurements, ActionListener {
 	}
 	
 	void open() {
+		//EU_HOU MISSING Bundle
 		OpenDialog od = new OpenDialog("Open Calibration...", "");
 		String directory = od.getDirectory();
 		String name = od.getFileName();
@@ -445,6 +459,7 @@ public class Calibrator implements PlugInFilter, Measurements, ActionListener {
 		int width = ip.getWidth();
 		int height = ip.getHeight();
 		if (!((width==1||width==2)&&height>1)) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Calibrate", "This appears to not be a one or two column text file");
 			return;
 		}

@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin.filter;
 import java.awt.*;
 import java.util.Vector;
@@ -164,9 +165,11 @@ public class Analyzer implements PlugInFilter, Measurements {
 		if (macroOptions!=null && macroOptions.indexOf("slice ")!=-1)
 			Macro.setOptions(macroOptions.replaceAll("slice ", "stack "));
 
+		//EU_HOU MISSING Bundle
  		GenericDialog gd = new GenericDialog("Set Measurements");
 		String[] labels = new String[18];
 		boolean[] states = new boolean[18];
+		//EU_HOU MISSING Bundle =18
 		labels[0]="Area"; states[0]=(systemMeasurements&AREA)!=0;
 		labels[1]="Mean gray value"; states[1]=(systemMeasurements&MEAN)!=0;
 		labels[2]="Standard deviation"; states[2]=(systemMeasurements&STD_DEV)!=0;
@@ -189,6 +192,7 @@ public class Analyzer implements PlugInFilter, Measurements {
 		gd.addCheckboxGroup(10, 2, labels, states);
 		labels = new String[6];
 		states = new boolean[6];
+		//EU_HOU MISSING Bundle =6
 		labels[0]="Limit to threshold"; states[0]=(systemMeasurements&LIMIT)!=0;
 		labels[1]="Display label"; states[1]=(systemMeasurements&LABELS)!=0;
 		labels[2]="Invert Y coordinates"; states[2]=(systemMeasurements&INVERT_Y)!=0;
@@ -198,8 +202,10 @@ public class Analyzer implements PlugInFilter, Measurements {
 		gd.setInsets(0, 0, 0);
 		gd.addCheckboxGroup(3, 2, labels, states);
 		gd.setInsets(15, 0, 0);
+		//EU_HOU MISSING Bundle
         gd.addChoice("Redirect to:", titles, target);
 		gd.setInsets(5, 0, 0);
+		//EU_HOU MISSING Bundle
 		gd.addNumericField("Decimal places (0-9):", precision, 0, 2, "");
 		gd.addHelp(IJ.URL+"/docs/menus/analyze.html#set");
 		gd.showDialog();
@@ -343,6 +349,7 @@ public class Analyzer implements PlugInFilter, Measurements {
 		if (rimp==null)
 			rimp = redirectImage;
 		if (rimp==null) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Analyzer", "Redirect image (\""+redirectTitle+"\")\n"
 				+ "not found.");
 			redirectTarget = 0;
@@ -350,6 +357,7 @@ public class Analyzer implements PlugInFilter, Measurements {
 			return null;
 		}
 		if (rimp.getWidth()!=cimp.getWidth() || rimp.getHeight()!=cimp.getHeight()) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Analyzer", "Redirect image (\""+redirectTitle+"\") \n"
 				+ "is not the same size as the current image.");
 			Macro.abort();

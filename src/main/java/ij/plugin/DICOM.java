@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import java.io.*;
 import java.util.*;
@@ -79,6 +80,7 @@ public class DICOM extends ImagePlus implements PlugIn {
 	}
 
 	public void run(String arg) {
+		//EU_HOU MISSING Bundle
 		OpenDialog od = new OpenDialog("Open Dicom...", arg);
 		String directory = od.getDirectory();
 		String fileName = od.getFileName();
@@ -96,6 +98,7 @@ public class DICOM extends ImagePlus implements PlugIn {
 				IJ.error("DICOM Reader", e.getClass().getName()+"\n \n"+msg);
 				return;
 			} else if (!dd.dicmFound()&&showErrors) {
+				//EU_HOU MISSING Bundle
 				msg = "This does not appear to be a valid\n"
 				+ "DICOM file. It does not have the\n"
 				+ "characters 'DICM' at offset 128.";
@@ -113,6 +116,7 @@ public class DICOM extends ImagePlus implements PlugIn {
 			boolean openAsFloat = (dd.rescaleSlope!=1.0&&!Prefs.ignoreRescaleSlope) || Prefs.openDicomsAsFloat;		
 			String options = Macro.getOptions();
 			if (openAsFloat) {
+				//EU_HOU MISSING Bundle
 				IJ.run(imp, "32-bit", "");
 				if (dd.rescaleSlope!=1.0)
 					IJ.run(imp, "Multiply...", "value="+dd.rescaleSlope+" stack");
@@ -158,6 +162,7 @@ public class DICOM extends ImagePlus implements PlugIn {
 			setFileInfo(fi); // needed for revert
 			if (arg.equals("")) show();
 		} else if (showErrors)
+			//EU_HOU MISSING Bundle
 			IJ.error("DICOM Reader","Unable to decode DICOM header.");
 		IJ.showStatus("");
 	}
@@ -299,6 +304,7 @@ class DicomDecoder {
 				InputStream is = new BufferedInputStream(new FileInputStream(f));
 				dictionary.load(is);
 				is.close();
+				//EU_HOU MISSING Bundle
 				if (IJ.debugMode) IJ.log("DicomDecoder: using "+dictionary.size()+" tag dictionary at "+path);
 			} catch (Exception e) {
 				dictionary = null;
@@ -307,6 +313,7 @@ class DicomDecoder {
 		if (dictionary==null) {
 			DicomDictionary d = new DicomDictionary();
 			dictionary = d.getDictionary();
+			//EU_HOU MISSING Bundle
 			if (IJ.debugMode) IJ.log("DicomDecoder: "+path+" not found; using "+dictionary.size()+" tag built in dictionary");
 		}
 	}
@@ -317,6 +324,7 @@ class DicomDecoder {
 		while (pos<length) {
 			int count = f.read(buf, pos, length-pos);
 			if (count==-1)
+				//EU_HOU MISSING Bundle
 				throw new IOException("unexpected EOF");
 			pos += count;
 		}
@@ -334,6 +342,7 @@ class DicomDecoder {
 	int getByte() throws IOException {
 		int b = f.read();
 		if (b ==-1)
+			//EU_HOU MISSING Bundle
 			throw new IOException("unexpected EOF");
 		++location;
 		return b;
@@ -543,6 +552,7 @@ class DicomDecoder {
 			f = new BufferedInputStream(new FileInputStream(directory + fileName));
 		if (IJ.debugMode) {
 			IJ.log("");
+			//EU_HOU MISSING Bundle
 			IJ.log("DicomDecoder: decoding "+fileName);
 		}
 		
@@ -552,6 +562,7 @@ class DicomDecoder {
 		
 		if (!getString(4).equals(DICM)) {
 			if (!((bytes[0]==8||bytes[0]==2) && bytes[1]==0 && bytes[3]==0))
+				//EU_HOU MISSING Bundle
 				throw new IOException("This is not a DICOM or ACR/NEMA file");
 			if (inputStream==null) f.close();
 			if (inputStream!=null)
@@ -559,9 +570,11 @@ class DicomDecoder {
 			else
 				f = new BufferedInputStream(new FileInputStream(directory + fileName));
 			location = 0;
+			//EU_HOU MISSING Bundle
 			if (IJ.debugMode) IJ.log(DICM + " not found at offset "+ID_OFFSET+"; reseting to offset 0");
 		} else {
 			dicmFound = true;
+			//EU_HOU MISSING Bundle
 			if (IJ.debugMode) IJ.log(DICM + " found at offset " + ID_OFFSET);
 		}
 		
@@ -583,6 +596,7 @@ class DicomDecoder {
 					addInfo(tag, s);
 					if (s.indexOf("1.2.4")>-1||s.indexOf("1.2.5")>-1) {
 						f.close();
+						//EU_HOU MISSING Bundle =2
 						String msg = "ImageJ cannot open compressed DICOM images.\n \n";
 						msg += "Transfer Syntax UID = "+s;
 						throw new IOException(msg);
@@ -733,6 +747,7 @@ class DicomDecoder {
 			fi.intelByteOrder = false;
 		
 		if (IJ.debugMode) {
+			//EU_HOU MISSING Bundle =5
 			IJ.log("width: " + fi.width);
 			IJ.log("height: " + fi.height);
 			IJ.log("images: " + fi.nImages);
@@ -773,6 +788,7 @@ class DicomDecoder {
 			vrLetters[0] = (byte)(vr >> 8);
 			vrLetters[1] = (byte)(vr & 0xFF);
 			String VR = new String(vrLetters);
+			//EU_HOU MISSING Bundle
 			IJ.log("(" + tag2hex(tag) + VR
 			+ " " + elementLength
 			+ " bytes from "

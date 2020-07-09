@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin.filter;
 import ij.*;
 import ij.gui.*;
@@ -23,6 +24,7 @@ public class Filler implements PlugInFilter, Measurements {
 		isTextRoi = roi!=null && (roi instanceof TextRoi);
 	 	if (isTextRoi && (arg.equals("draw") || arg.equals("fill")) && ((TextRoi)roi).getAngle()!=0.0) {
 	 		String s = IJ.isMacOSX()?"command+b":"ctrl+b";
+	 		//EU_HOU MISSING Bundle
 	 		IJ.error("Draw rotated text by pressing "+s+" (Image>Overlay>Add Selection).");
 	 		return DONE;
 		}
@@ -30,6 +32,7 @@ public class Filler implements PlugInFilter, Measurements {
 		int baseCapabilities = DOES_ALL+ROI_REQUIRED;
 	 	if (arg.equals("clear")) {
 	 		if (roi!=null && roi.getType()==Roi.POINT) {
+		 		//EU_HOU MISSING Bundle
 	 			IJ.error("Clear", "Area selection required");
 	 			return DONE;
 	 		}
@@ -47,6 +50,7 @@ public class Filler implements PlugInFilter, Measurements {
 		} else if (arg.equals("outside"))
 				return IJ.setupDialog(imp,baseCapabilities);
 		else if (roi!=null && roi.getType()==Roi.POINT && arg.equals("fill")) {
+	 			//EU_HOU MISSING Bundle
 	 			IJ.error("Fill", "Area selection required");
 	 			return DONE;
 	 	} else
@@ -122,10 +126,12 @@ public class Filler implements PlugInFilter, Measurements {
 
 	public void label(ImageProcessor ip) {
 		if (!IJ.isMacro()) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Label", "To label a selection, enable \"Add to overlay\" in Analyze>\nSet Measurements and press 'm' (Analyze>Measure).");
 			return;
 		}
 		if (Analyzer.getCounter()==0) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Label", "Measurement counter is zero");
 			return;
 		}
@@ -156,6 +162,7 @@ public class Filler implements PlugInFilter, Measurements {
 		if (count==0 || first>=count || last>=count)
 			return;
 		if (!rt.columnExists(ResultsTable.X_CENTROID)) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Label", "\"Centroids\" required to label particles");
 			return;
 		}
@@ -209,6 +216,7 @@ public class Filler implements PlugInFilter, Measurements {
 	*/
 	public synchronized void clearOutside(ImageProcessor ip) {
 		if (isLineSelection()) {
+			//EU_HOU MISSING Bundle
 			IJ.error("\"Clear Outside\" does not work with line selections.");
 			return;
 		}

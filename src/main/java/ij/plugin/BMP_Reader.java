@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 
 import java.awt.*;
@@ -16,6 +17,7 @@ import ij.io.*;
 public class BMP_Reader extends ImagePlus implements PlugIn {
 
         public void run(String arg) {
+        		//EU_HOU MISSING Bundle
                 OpenDialog od = new OpenDialog("Open BMP...", arg);
                 String directory = od.getDirectory();
                 String name = od.getFileName();
@@ -33,6 +35,7 @@ public class BMP_Reader extends ImagePlus implements PlugIn {
                         String msg = e.getMessage();
                         if (msg==null || msg.equals(""))
                                 msg = ""+e;
+                		//EU_HOU MISSING Bundle
                         IJ.error("BMP Reader", msg);
                         return;
                 } finally {
@@ -44,6 +47,7 @@ public class BMP_Reader extends ImagePlus implements PlugIn {
 				}
 
                 MemoryImageSource mis = bmp.makeImageSource();
+        		//EU_HOU MISSING Bundle
                 if (mis==null) IJ.log("BMP_Reader: mis=null");
                 Image img = Toolkit.getDefaultToolkit().createImage(mis);
                 FileInfo fi = new FileInfo();
@@ -112,6 +116,7 @@ class BMPDecoder {
 
                 fileType = readShort();
                 if (fileType != 0x4d42)
+            			//EU_HOU MISSING Bundle
                         throw new Exception("Not a BMP file");  // wrong file type
                 fileSize = readInt();
                 reserved1 = readShort();
@@ -209,6 +214,7 @@ class BMPDecoder {
                 case 4: mask = (byte)0x0f; pixPerByte = 2; break;
                 case 8: mask = (byte)0xff; pixPerByte = 1; break;
                 default:
+            			//EU_HOU MISSING Bundle
                         throw new Exception("Unsupported bits-per-pixel value: " + bpp);
                 }
 
@@ -275,6 +281,7 @@ class BMPDecoder {
                 int offset = (height - 1) * width;
                 for (int i = height - 1; i >= 0; i--) {
                         int n = is.read(rawData, rawOffset, len);
+                		//EU_HOU MISSING Bundle
                         if (n < len) throw new Exception("Scan line ended prematurely after " + n + " bytes");
                         if (bitsPerPixel==24)
                                 unpack24(rawData, rawOffset, intData, offset, width);
@@ -293,6 +300,7 @@ class BMPDecoder {
                 getFileHeader();
                 getBitmapHeader();
                 if (compression!=0)
+            			//EU_HOU MISSING Bundle
                         throw new Exception("Compression not supported");
                 getPalette();
                 getPixelData();

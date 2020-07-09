@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.io.*;
@@ -54,6 +55,7 @@ public class BMP_Writer implements PlugIn {
      String msg = e.getMessage();
      if (msg==null || msg.equals(""))
    msg = ""+e;
+     //EU_HOU MISSING Bundle
      IJ.error("BMP Writer", "An error occured writing the file.\n \n" + msg);
    }
    IJ.showProgress(1);
@@ -70,6 +72,7 @@ public class BMP_Writer implements PlugIn {
      bfOffBits+=biClrUsed*4;
    }
    if (path==null || path.equals("")) {
+	 //EU_HOU MISSING Bundle
      String prompt = "Save as " + biBitCount + " bit BMP";
      SaveDialog sd = new SaveDialog(prompt, imp.getTitle(), ".bmp");
      if(sd.getFileName()==null)

@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin.filter;
 import ij.*;
 import ij.plugin.*;
@@ -440,6 +441,7 @@ public class EDM implements ExtendedPlugInFilter {
     /** Sets the output type (BYTE_OVERWRITE, BYTE, SHORT or FLOAT) */
     public static void setOutputType(int type) {
         if (type<BYTE_OVERWRITE || type>FLOAT)
+        	//EU_HOU MISSING Bundle
             throw new IllegalArgumentException("Invalid type: "+type);
         outputType = type;
     }

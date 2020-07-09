@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin; 
 import java.awt.*;
 import java.awt.event.*;
@@ -88,6 +89,7 @@ public class Clipboard implements PlugIn, Transferable {
 	
 	void showSystemClipboard() {
 		setup();
+		//EU_HOU MISSING Bundle
 		IJ.showStatus("Opening system clipboard...");
 		try {
 			Transferable transferable = clipboard.getContents(null);
@@ -96,6 +98,7 @@ public class Clipboard implements PlugIn, Transferable {
 			if (imageSupported) {
 				Image img = (Image)transferable.getTransferData(DataFlavor.imageFlavor);
 				if (img==null) {
+					//EU_HOU MISSING Bundle
 					IJ.error("Unable to convert image on system clipboard");
 					IJ.showStatus("");
 					return;
@@ -107,6 +110,7 @@ public class Clipboard implements PlugIn, Transferable {
 				g.drawImage(img, 0, 0, null);
 				g.dispose();
 				WindowManager.checkForDuplicateName = true;
+				//EU_HOU MISSING Bundle
 				new ImagePlus("Clipboard", bi).show();
 			} else if (textSupported) {
 				String text = (String)transferable.getTransferData(DataFlavor.stringFlavor);
@@ -114,9 +118,11 @@ public class Clipboard implements PlugIn, Transferable {
 					text = Tools.fixNewLines(text);
 				Editor ed = new Editor();
 				ed.setSize(600, 300);
+				//EU_HOU MISSING Bundle
 				ed.create("Clipboard", text);
 				IJ.showStatus("");
 			} else
+				//EU_HOU MISSING Bundle
 				IJ.error("Unable to find an image on the system clipboard");
 		} catch (Throwable e) {
 			IJ.handleException(e);
@@ -153,6 +159,7 @@ public class Clipboard implements PlugIn, Transferable {
 		ImagePlus clipboard = ImagePlus.getClipboard();
 		if (clipboard!=null) {
 			ImageProcessor ip = clipboard.getProcessor();
+			//EU_HOU MISSING Bundle
 			ImagePlus imp2 = new ImagePlus("Clipboard", ip.duplicate());
 			Roi roi = clipboard.getRoi();
 			imp2.deleteRoi();
@@ -160,12 +167,14 @@ public class Clipboard implements PlugIn, Transferable {
 				roi = (Roi)roi.clone();
 				roi.setLocation(0, 0);
 				imp2.setRoi(roi);
+				//EU_HOU MISSING Bundle
 				IJ.run(imp2, "Clear Outside", null);
 				imp2.deleteRoi();
 			}
 			WindowManager.checkForDuplicateName = true;          
 			imp2.show();
 		} else
+			//EU_HOU MISSING Bundle
 			IJ.error("The internal clipboard is empty.");
 	}
 

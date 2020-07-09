@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.gui.*;
@@ -28,6 +29,7 @@ public class Distribution implements PlugIn, TextListener {
 		ResultsTable rt=ResultsTable.getResultsTable();
 		int count = rt.size();
 		if (count==0) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Distribution", "The \"Results\" table is empty");
 			return;
 		}
@@ -43,6 +45,7 @@ public class Distribution implements PlugIn, TextListener {
 
 		defaultNBins = ""+nBins;
 		defaultRange = range;
+		//EU_HOU MISSING Bundle =6
 		GenericDialog gd = new GenericDialog("Distribution");
 		gd.addChoice("Parameter: ", strings, strings[getIndex(strings)]);
 		gd.setInsets(0, 40, 0);
@@ -85,6 +88,7 @@ public class Distribution implements PlugIn, TextListener {
 		if (index>=0)
 			data = rt.getColumn(index);
 		if (data==null) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Distribution", "No available results: \""+parameter+"\"");
 			return;
 		}
@@ -108,6 +112,7 @@ public class Distribution implements PlugIn, TextListener {
 				maxCount = stats.histogram[i];
 		}
 		stats.histYMax = maxCount;
+		//EU_HOU MISSING Bundle
 		new HistogramWindow(parameter+" Distribution", imp, stats);
 	}
 	
