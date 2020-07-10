@@ -14,32 +14,38 @@ import ij.plugin.RectToolOptions;
 import ij.plugin.tool.PlugInTool;
 import ij.plugin.tool.MacroToolRunner;
 import ij.macro.Program;
+//EU_HOU CHANGES : import ResourceBundle and URL
+import java.util.ResourceBundle;
+import java.net.URL;
 
 /** The ImageJ toolbar. */
 public class Toolbar extends Canvas implements MouseListener, MouseMotionListener, ItemListener, ActionListener {
 
-	public static final int RECTANGLE = 0;
-	public static final int OVAL = 1;
-	public static final int POLYGON = 2;
-	public static final int FREEROI = 3;
-	public static final int LINE = 4;
-	public static final int POLYLINE = 5;
-	public static final int FREELINE = 6;
-	public static final int POINT = 7, CROSSHAIR = 7;
-	public static final int WAND = 8;
-	public static final int TEXT = 9;
-	public static final int UNUSED = 10;
-	public static final int MAGNIFIER = 11;
-	public static final int HAND = 12;
-	public static final int DROPPER = 13;
-	public static final int ANGLE = 14;
-	public static final int CUSTOM1 = 15;
-	public static final int CUSTOM2 = 16;
-	public static final int CUSTOM3 = 17;
-	public static final int CUSTOM4 = 18;
-	public static final int CUSTOM5 = 19;
-	public static final int CUSTOM6 = 20;
-	public static final int CUSTOM7 = 21;
+	public static final int RECTANGLE = 3; //0
+	public static final int OVAL = 4; //1
+	public static final int POLYGON = 5; //2
+	public static final int FREEROI = -3;
+	public static final int LINE = 0; //4
+	public static final int POLYLINE = 1; //5
+	public static final int FREELINE = 2; //6
+	public static final int POINT = -7, CROSSHAIR = -7;
+	public static final int WAND = -8;
+	public static final int TEXT = -9;
+	public static final int UNUSED = -10;
+	public static final int MAGNIFIER = 6; //11
+	public static final int HAND = 7; //12
+	public static final int DROPPER = -13;
+	public static final int ANGLE = -14;
+	public static final int CUSTOM1 = 8;
+	public static final int CUSTOM2 = 9;
+	public static final int CUSTOM3 = 10;
+	public static final int CUSTOM4 = 11;
+	public static final int CUSTOM5 = 12;
+	public static final int CUSTOM6 = 13;
+	public static final int CUSTOM7 = 14;
+	public static final int CUSTOM8 = 15;
+	public static final int CUSTOM9 = 16;
+
 	
 	public static final int DOUBLE_CLICK_THRESHOLD = 650;
 
@@ -51,20 +57,21 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 		"Spray Can","Stacks Menu","ROI Menu"};
 	private static final String[] builtInTools2 = {"Pixel Inspection Tool","Paintbrush Tool","Flood Fill Tool"};
 
-	private static final int NUM_TOOLS = 23;
+	private static final int NUM_TOOLS = 17; //23
 	private static final int MAX_EXTRA_TOOLS = 8;
-	private static final int MAX_TOOLS = NUM_TOOLS+MAX_EXTRA_TOOLS;
-	private static final int NUM_BUTTONS = 21;
+	private static final int MAX_TOOLS = 17; //NUM_TOOLS+MAX_EXTRA_TOOLS;
+	private static final int NUM_BUTTONS = 17; //17
 	private static final int BUTTON_WIDTH = 30;
 	private static final int BUTTON_HEIGHT = 31;
-	private static final int SIZE = 28;  // no longer used
-	private static final int GAP_SIZE = 9;
+	private static final int SIZE = 42; //28 // no longer used
+	private static final int GAP_SIZE = 150; //9
 	private static final int OFFSET = 7;
 	private static final String BRUSH_SIZE = "toolbar.brush.size";
 	public static final String CORNER_DIAMETER = "toolbar.arc.size";
 	public static String TOOL_KEY = "toolbar.tool";
 		
-	private Dimension ps;
+	//EU_HOU ToolBar dimension
+	private Dimension ps = new Dimension((SIZE) * 13 +100, SIZE+5);
 	private boolean[] down;
 	private static int current;
 	private int previous;
@@ -86,15 +93,40 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 	private int pc;
 	private String icon;
 	private int startupTime;
-	private PopupMenu rectPopup, ovalPopup, pointPopup, linePopup, switchPopup;
+	/*
+	 * EU_HOU CHANGES
+	 */
+	//private PopupMenu rectPopup, ovalPopup, pointPopup, linePopup, switchPopup;
+	private PopupMenu rectPopup, ovalPopup, pointPopup;
 	private CheckboxMenuItem rectItem, roundRectItem, rotatedRectItem;
-	private CheckboxMenuItem ovalItem, ellipseItem, brushItem;
+	
+	//private CheckboxMenuItem ovalItem, ellipseItem, brushItem;
+	private CheckboxMenuItem ellipseItem, brushItem;
+	
 	private CheckboxMenuItem pointItem, multiPointItem;
-	private CheckboxMenuItem straightLineItem, polyLineItem, freeLineItem, arrowItem;
+	//private CheckboxMenuItem straightLineItem, polyLineItem, freeLineItem, arrowItem;
+	private CheckboxMenuItem  arrowItem;
+
+	//EU_HOU multibouton
+	private PopupMenu drawPopup, linePopup, switchPopup;
+	//EU_HOU multibouton
+	private CheckboxMenuItem ovalItem, rectangleItem, polygonItem;
+	private CheckboxMenuItem straightLineItem, polyLineItem, freeLineItem, profileLineItem;
+	/*
+	 * EU_HOU CHANGES END
+	 */
 	private String currentSet = "Startup Macros";
 
+	
 	private static Color foregroundColor = Prefs.getColor(Prefs.FCOLOR,Color.white);
 	private static Color backgroundColor = Prefs.getColor(Prefs.BCOLOR,Color.black);
+	/*
+	 * EU_HOU CHANGES
+	 */
+	private static boolean brushEnabled;
+	/*
+	 * EU_HOU CHANGES END
+	 */
 	private static int ovalType = OVAL_ROI;
 	private static int rectType = RECT_ROI;
 	private static boolean multiPointMode = Prefs.multiPointMode;
@@ -110,12 +142,28 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 	private static int gapSize;
 	private static int offset;
 	
-	private Color gray = new Color(228,228,228);
+	/*
+	 * EU_HOU CHANGES
+	 */
+	//EU_HOU multibouton
+	private int drawType = RECTANGLE;
+
+	//EU_HOU ToolBar Color
+	private Color gray = ImageJ.backgroundColor;//new Color(228,228,228);
 	private Color brighter = gray.brighter();
-	private Color darker = new Color(180, 180, 180);
+	private Color darker = new Color(246, 160, 60);//new Color(180, 180, 180);
 	private Color evenDarker = new Color(110, 110, 110);
-	private Color triangleColor = new Color(150, 0, 0);
-	private Color toolColor = new Color(0, 25, 45);
+	private Color triangleColor = new Color(150, 100, 40);//new Color(150, 0, 0);
+	private Color toolColor = new Color(250, 100, 40);//new Color(0, 25, 45);
+
+	//EU_HOU ToolBar icone
+	private Image imgs[] = new Image[NUM_TOOLS];
+
+	private ResourceBundle table;
+	private boolean drag = false;
+	/*
+	 * EU_HOU CHANGES END
+	 */
 	
 	/** Obsolete public constants */
 	public static final int SPARE1=UNUSED, SPARE2=CUSTOM1, SPARE3=CUSTOM2, SPARE4=CUSTOM3, 
@@ -125,6 +173,28 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 	public Toolbar() {
 		init();
 		down = new boolean[MAX_TOOLS];
+		
+		/*
+		 * EU_HOU CHANGES
+		 */
+		ClassLoader cl = this.getClass().getClassLoader();
+		//EU_HOU ToolBar icone
+		for (int i = 0; i < NUM_TOOLS; ++i) {
+			URL path = cl.getResource("images/bas-" + i + ".png");
+			//System.out.println("path" + i + ":" + path);
+			if (path != null) {
+				imgs[i] = Toolkit.getDefaultToolkit().getImage(path);
+			}
+                        else {
+				path = cl.getResource("images/none.png");
+				imgs[i] = Toolkit.getDefaultToolkit().getImage(path);
+			}
+			//System.out.println("imgs[" + i + "]=" + imgs[i] + "path" + i + ":" + path);
+		}
+		/*
+		 * EU_HOU CHANGES END
+		 */
+		
 		resetButtons();
 		down[0] = true;
 		setForeground(Color.black);
@@ -132,8 +202,19 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		instance = this;
-		names[getNumTools()-1] = "\"More Tools\" menu (switch toolsets or add tools)";
-		icons[getNumTools()-1] = "C900T0d18>T6d18>"; // ">>"
+		/*
+		 * EU_HOU CHANGES
+		 */
+		//names[getNumTools()-1] = "\"More Tools\" menu (switch toolsets or add tools)";
+		//icons[getNumTools()-1] = "C900T0d18>T6d18>"; // ">>"
+		table = ResourceBundle.getBundle("ij/i18n/ToolBundle", IJ.getLocale());
+		//EU_HOU Bundle
+		names[NUM_TOOLS - 1] = "Switch to alternate macro tool sets";
+		//icons[NUM_TOOLS - 1] = "C900T1c12>T7c12>";// ">>"
+		icons[NUM_TOOLS - 1] = "Cf60T5c15>Tcc15>";// ">>"
+		/*
+		 * EU_HOU CHANGES END
+		 */
 		addPopupMenus();
 	}
 	
@@ -157,65 +238,48 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 	}
 
 	void addPopupMenus() {
-		rectPopup = new PopupMenu();
-		if (Menus.getFontSize()!=0)
-			rectPopup.setFont(Menus.getFont());
-		rectItem = new CheckboxMenuItem("Rectangle", rectType==RECT_ROI);
-		rectItem.addItemListener(this);
-		rectPopup.add(rectItem);
-		roundRectItem = new CheckboxMenuItem("Rounded Rectangle", rectType==ROUNDED_RECT_ROI);
-		roundRectItem.addItemListener(this);
-		rectPopup.add(roundRectItem);
-		rotatedRectItem = new CheckboxMenuItem("Rotated Rectangle", rectType==ROTATED_RECT_ROI);
-		rotatedRectItem.addItemListener(this);
-		rectPopup.add(rotatedRectItem);
-		add(rectPopup);
-
-		ovalPopup = new PopupMenu();
-		if (Menus.getFontSize()!=0)
-			ovalPopup.setFont(Menus.getFont());
-		ovalItem = new CheckboxMenuItem("Oval selections", ovalType==OVAL_ROI);
-		ovalItem.addItemListener(this);
-		ovalPopup.add(ovalItem);
-		ellipseItem = new CheckboxMenuItem("Elliptical selections", ovalType==ELLIPSE_ROI);
-		ellipseItem.addItemListener(this);
-		ovalPopup.add(ellipseItem);
-		brushItem = new CheckboxMenuItem("Selection Brush Tool", ovalType==BRUSH_ROI);
-		brushItem.addItemListener(this);
-		ovalPopup.add(brushItem);
-		add(ovalPopup);
-
-		pointPopup = new PopupMenu();
-		if (Menus.getFontSize()!=0)
-			pointPopup.setFont(Menus.getFont());
-		pointItem = new CheckboxMenuItem("Point Tool", !multiPointMode);
-		pointItem.addItemListener(this);
-		pointPopup.add(pointItem);
-		multiPointItem = new CheckboxMenuItem("Multi-point Tool", multiPointMode);
-		multiPointItem.addItemListener(this);
-		pointPopup.add(multiPointItem);
-		add(pointPopup);
+		//System.out.println("addPopupMenus");
 
 		linePopup = new PopupMenu();
-		if (Menus.getFontSize()!=0)
+		if (Menus.getFontSize() != 0) {
 			linePopup.setFont(Menus.getFont());
-		straightLineItem = new CheckboxMenuItem("Straight Line", lineType==LINE&&!arrowMode);
+		}
+		//EU_HOU Bundle
+		straightLineItem = new CheckboxMenuItem(IJ.getBundle().getString("StraightLines"), lineType == LINE);
 		straightLineItem.addItemListener(this);
 		linePopup.add(straightLineItem);
-		polyLineItem = new CheckboxMenuItem("Segmented Line", lineType==POLYLINE);
+		//EU_HOU Bundle
+		polyLineItem = new CheckboxMenuItem(IJ.getBundle().getString("SegmentedLines"), lineType == POLYLINE);
 		polyLineItem.addItemListener(this);
 		linePopup.add(polyLineItem);
-		freeLineItem = new CheckboxMenuItem("Freehand Line", lineType==FREELINE);
+		//EU_HOU Bundle
+		freeLineItem = new CheckboxMenuItem(IJ.getBundle().getString("FreehandLines"), lineType == FREELINE);
 		freeLineItem.addItemListener(this);
 		linePopup.add(freeLineItem);
-		arrowItem = new CheckboxMenuItem("Arrow tool", lineType==LINE&&!arrowMode);
-		arrowItem.addItemListener(this);
-		linePopup.add(arrowItem);
-		add(linePopup);
-
+                add(linePopup);
+		//EU_HOU Add
+		drawPopup = new PopupMenu();
+		if (Menus.getFontSize() != 0) {
+			drawPopup.setFont(Menus.getFont());
+		}
+		//EU_HOU Bundle
+		rectangleItem = new CheckboxMenuItem(IJ.getBundle().getString("Rectangle"), drawType == RECTANGLE);
+		rectangleItem.addItemListener(this);
+		drawPopup.add(rectangleItem);
+		//EU_HOU Bundle
+		ovalItem = new CheckboxMenuItem(IJ.getBundle().getString("Oval"), drawType == OVAL);
+		ovalItem.addItemListener(this);
+		drawPopup.add(ovalItem);
+		//EU_HOU Bundle
+		polygonItem = new CheckboxMenuItem(IJ.getBundle().getString("Polygon"), drawType == POLYGON);
+		polygonItem.addItemListener(this);
+		drawPopup.add(polygonItem);
+		add(drawPopup);
+		//EU_HOU End
 		switchPopup = new PopupMenu();
-		if (Menus.getFontSize()!=0)
+		if (Menus.getFontSize() != 0) {
 			switchPopup.setFont(Menus.getFont());
+		}
 		add(switchPopup);
 	}
 	
@@ -256,11 +320,23 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		setStrokeWidth(g2d);
-		for (int i=0; i<LINE; i++)
+		/*
+		 * EU_HOU CHANGES
+		 */
+		/*for (int i=0; i<LINE; i++)
 			drawButton(g, i);
 		drawButton(g, lineType);
 		for (int i=POINT; i<getNumTools(); i++)
+			drawButton(g, i);*/
+		drawButton(g, lineType);
+		drawButton(g, drawType);
+		for (int i = MAGNIFIER; i < NUM_BUTTONS; i++) {
+			//System.out.println("drawButtons bouton nb=" + i);
 			drawButton(g, i);
+		}
+		/*
+		 * EU_HOU CHANGES END
+		 */
 	}
 
 	private void setStrokeWidth(Graphics2D g2d) {
@@ -277,16 +353,30 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 			g.setColor(gray);
 		else
 			g.setColor(darker);
-		g.fillRect(x+1, y+1, width-2, height-2);
-		g.setColor(raised ? brighter : evenDarker);
+		/*
+		 * EU_HOU CHANGES
+		 */
+		//EU_HOU CHANGES : [...]width-2, height-2 to [...]width - 1, height - 1
+		//g.fillRect(x+1, y+1, width-2, height-2);
+		g.fillRect(x + 1, y + 1, width - 1, height - 1);
+		//EU_HOU CHANGES : default: g.setColor(raised ? brighter : evenDarker);
+		g.setColor(brighter);
 		g.drawLine(x, y, x, y + height - 1);
-		g.drawLine(x + 1, y, x + width - 2, y);
+		//EU_HOU CHANGES : default: g.drawLine(x + 1, y, x + width - 2, y);
+		g.drawLine(x, y, x + width - 1, y);
 		g.setColor(raised ? evenDarker : brighter);
 		g.drawLine(x + 1, y + height - 1, x + width - 1, y + height - 1);
-		g.drawLine(x + width - 1, y, x + width - 1, y + height - 2);
+		//g.drawLine(x + width - 1, y, x + width - 1, y + height - 2);
+		g.drawLine(x + width - 1, y, x + width - 1, y + height - 1);
+		/*
+		 * EU_HOU CHANGES END
+		 */
 	}    
 
-	private void drawButton(Graphics g, int tool) {
+	/*
+	 * EU_HOU CHANGES
+	 */
+	/*private void drawButton(Graphics g, int tool) {
 		if (g==null) return;
 		if (legacyMode) {
 			if (tool==UNUSED)
@@ -422,13 +512,176 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 				drawDot(13,-2); drawDot(16,10);
 				return;
 		}
+	}*/
+	private void drawButton(Graphics g, int tool) {
+		//System.out.println("drawButton tool=" + tool);
+		if (g == null) {
+			return;
+		}
+		int index = toolIndex(tool);
+		//System.out.println("drawButton index=" + index);
+		/*
+		 *  EU_HOU CHANGES
+		 */
+		fill3DRect(g, index * SIZE + 1, 1, SIZE, SIZE, !down[tool]);
+		g.setColor(Color.black);
+
+		int x = index * SIZE + OFFSET + 5;
+		int y = OFFSET + 10;
+
+		/*
+		 *  EU_HOU END
+		 */
+		if (down[tool]) {
+			x++;
+			y++;
+		}
+		this.g = g;
+		//if (tool >= SPARE1 && tool <= SPARE9 && icons[tool] != null) {
+		if (tool >= CUSTOM1 && tool <= CUSTOM9 && icons[tool] != null) {
+			drawIcon(g, tool, x, y);
+			//drawIcon(g, icons[tool], x, y);
+			return;
+		}
+		/*
+		 *  EU_HOU CHANGES
+		 */
+		//EU_HOU ToolBar icone
+		if (imgs[tool] == null) {
+			imgs[tool] = createImage(SIZE - 2, SIZE - 2);
+
+			Graphics gr = imgs[tool].getGraphics();
+
+			/*
+			 *  EU_HOU END
+			 */
+			switch (tool) {
+							case LINE:
+								xOffset = x + 3;
+								yOffset = y + 8;
+								m(0, 10);
+								d(16, 4, gr);
+								drawTriangle(11, 13, gr);
+								return;
+							case POLYLINE:
+								xOffset = x + 5;
+								yOffset = y + 7;
+								m(14, 6);
+								d(11, 3, gr);
+								d(1, 3, gr);
+								d(1, 4, gr);
+								d(6, 9, gr);
+								d(2, 13, gr);
+								drawTriangle(11, 13, gr);
+								return;
+							case FREELINE:
+								xOffset = x + 5;
+								yOffset = y + 7;
+								m(16, 4);
+								d(14, 6, gr);
+								d(12, 6, gr);
+								d(9, 3, gr);
+								d(8, 3, gr);
+								d(6, 7, gr);
+								d(2, 11, gr);
+								d(1, 11, gr);
+								drawTriangle(11, 13, gr);
+								return;
+							case MAGNIFIER:
+								xOffset = x + 5;
+								yOffset = y + 5;
+								m(3, 0);
+								d(3, 0, gr);
+								d(5, 0, gr);
+								d(8, 3, gr);
+								d(8, 5, gr);
+								d(7, 6, gr);
+								d(7, 7, gr);
+								d(6, 7, gr);
+								d(5, 8, gr);
+								d(3, 8, gr);
+								d(0, 5, gr);
+								d(0, 3, gr);
+								d(3, 0, gr);
+								m(8, 8);
+								d(9, 8, gr);
+								d(13, 12, gr);
+								d(13, 13, gr);
+								d(12, 13, gr);
+								d(8, 9, gr);
+								d(8, 8, gr);
+								return;
+							case HAND:
+								xOffset = x + 5;
+								yOffset = y + 4;
+								m(5, 14);
+								d(2, 11, gr);
+								d(2, 10, gr);
+								d(0, 8, gr);
+								d(0, 7, gr);
+								d(1, 6, gr);
+								d(2, 6, gr);
+								d(4, 8, gr);
+								d(4, 6, gr);
+								d(3, 5, gr);
+								d(3, 4, gr);
+								d(2, 3, gr);
+								d(2, 2, gr);
+								d(3, 1, gr);
+								d(4, 1, gr);
+								d(5, 2, gr);
+								d(5, 3, gr);
+								m(6, 5);
+								d(6, 1, gr);
+								d(7, 0, gr);
+								d(8, 0, gr);
+								d(9, 1, gr);
+								d(9, 5, gr);
+								m(9, 1);
+								d(11, 1, gr);
+								d(12, 2, gr);
+								d(12, 6, gr);
+								m(13, 4);
+								d(14, 3, gr);
+								d(15, 4, gr);
+								d(15, 7, gr);
+								d(14, 8, gr);
+								d(14, 10, gr);
+								d(13, 11, gr);
+								d(13, 12, gr);
+								d(12, 13, gr);
+								d(12, 14, gr);
+								return;
+			}
+		}
+		//EU_HOU ToolBar icone
+		g.drawImage(imgs[tool], index * SIZE + 5, 5, this);
 	}
-	
+/*
+ * EU_HOU CHANGES END
+ */
 	void drawTriangle(int x, int y) {
 		g.setColor(triangleColor);
 		xOffset+=x*scale; yOffset+=y*scale;
 		m(0,0); d(4,0); m(1,1); d(3,1); m(2,2); d(2,2);
 	}
+	
+	/*
+	 * EU_HOU ADD
+	 */
+	void drawTriangle(int x, int y, Graphics gr) {
+		g.setColor(triangleColor);
+		xOffset += x;
+		yOffset += y;
+		m(0, 0);
+		d(4, 0, gr);
+		m(1, 1);
+		d(3, 1, gr);
+		dot(2, 2);
+	}
+	/*
+	 * EU_HOU ADD END
+	 */
 	
 	void drawDot(int x, int y) {
 		g.fillRect(xOffset+x*scale, yOffset+y*scale, 2*scale, 2*scale);
@@ -586,7 +839,8 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 				else if (rectType==ROTATED_RECT_ROI)
 					IJ.showStatus("Rectangle, rounded rect or *rotated rect*"+hint);
 				else
-					IJ.showStatus("*Rectangle*, rounded rect or rotated rect"+hint);
+					//EU_HOU Bundle
+					IJ.showStatus(table.getString("RectSel")+hint);
 				return;
 			case OVAL:
 				if (ovalType==BRUSH_ROI)
@@ -594,10 +848,12 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 				else if (ovalType==ELLIPSE_ROI)
 					IJ.showStatus("Oval, *elliptical* or brush selections"+hint);
 				else
-					IJ.showStatus("*Oval*, elliptical or brush selections"+hint);
+					//EU_HOU Bundle
+					IJ.showStatus(table.getString("OvalSel")+hint);
 				return;
 			case POLYGON:
-				IJ.showStatus("Polygon selections");
+				//EU_HOU Bundle
+				IJ.showStatus(table.getString("PolySel"));
 				return;
 			case FREEROI:
 				IJ.showStatus("Freehand selections");
@@ -606,13 +862,16 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 				if (arrowMode)
 					IJ.showStatus("Straight, segmented or freehand lines, or *arrows*"+hint);
 				else
-					IJ.showStatus("*Straight*, segmented or freehand lines, or arrows"+hint);
+					//EU_HOU Bundle
+					IJ.showStatus(table.getString("StraightSel"));
 				return;
 			case POLYLINE:
-				IJ.showStatus("Straight, *segmented* or freehand lines, or arrows"+hint);
+				//EU_HOU Bundle
+				IJ.showStatus(table.getString("SegSel"));
 				return;
 			case FREELINE:
-				IJ.showStatus("Straight, segmented or *freehand* lines, or arrows"+hint);
+				//EU_HOU Bundle
+				IJ.showStatus(table.getString("FreeLineSel"));
 				return;
 			case POINT:
 				if (multiPointMode)
@@ -627,10 +886,12 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 				IJ.showStatus("Text tool (double-click to configure)");
 				return;
 			case MAGNIFIER:
-				IJ.showStatus("Magnifying glass (or use \"+\" and \"-\" keys)");
+				//EU_HOU Bundle
+				IJ.showStatus(table.getString("MagTool"));
 				return;
 			case HAND:
-				IJ.showStatus("Scrolling tool (or press space bar and drag)");
+				//EU_HOU Bundle
+				IJ.showStatus(table.getString("ScrollTool"));
 				return;
 			case DROPPER:
 				String fg = foregroundColor.getRed() + "," + foregroundColor.getGreen() + "," + foregroundColor.getBlue();
@@ -641,7 +902,8 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 				IJ.showStatus("Angle tool");
 				return;
 			default:
-				IJ.showStatus("ImageJ "+IJ.getVersion()+" / Java "+System.getProperty("java.version")+(IJ.is64Bit()?" (64-bit)":" (32-bit)"));
+				//IJ.showStatus("ImageJ "+IJ.getVersion()+" / Java "+System.getProperty("java.version")+(IJ.is64Bit()?" (64-bit)":" (32-bit)"));
+				IJ.showStatus("");
 				return;
 		}
 	}
@@ -660,6 +922,20 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 		this.x = x;
 		this.y = y;
 	}
+	
+	/*
+	 * EU_HOU ADD
+	 */
+	private void d(int x, int y, Graphics gr) {
+		x += xOffset;
+		y += yOffset;
+		gr.drawLine(this.x, this.y, x, y);
+		this.x = x;
+		this.y = y;
+	}
+	/*
+	 * EU_HOU ADD END
+	 */
 	
 	private void dot(int x, int y) {
 		g.fillRect(xOffset+x*scale, yOffset+y*scale, 1*scale, 1*scale);
@@ -984,7 +1260,10 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 	// Returns the toolbar position index of the specified tool
     int toolIndex(int tool) {
     	switch (tool) {
-			case RECTANGLE: return 0;
+			/*
+			 * EU_HOU CHANGES
+			 */
+    		/*case RECTANGLE: return 0;
 			case OVAL: return 1;
 			case POLYGON: return 2;
 			case FREEROI: return 3;
@@ -999,17 +1278,36 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 			case DROPPER: return 11;
 			case ANGLE: return 5;
 			case UNUSED: return 12;
-			default: return tool - 2;
+			default: return tool - 2;*/
+			case LINE: return 0;
+			case POLYLINE: return 0;
+			case FREELINE: return 0;
+	        case RECTANGLE: return 1;
+			case OVAL: return 1;
+			case POLYGON: return 1;
+			case MAGNIFIER: return 2;
+			case HAND: return 3;
+			case CUSTOM1: return 4;
+			default: return tool - 4;
+    		/*
+    		 * EU_HOU CHANGES END
+    		 */
 		}
     }
 
 	// Returns the tool corresponding to the specified x coordinate
-	private int toolID(int x) {
-		if (x>buttonWidth*12+gapSize)
+    /*
+     * EU_HOU CHANGES
+     */
+	private int toolID(int index) {
+		/*if (x>buttonWidth*12+gapSize)
 			x -= gapSize;
-		int index = x/buttonWidth;
+		int index = x/buttonWidth;*/
     	switch (index) {
-			case 0: return RECTANGLE;
+    	/*
+    	 * EU_HOU CHANGES
+    	 */
+			/*case 0: return RECTANGLE;
 			case 1: return OVAL;
 			case 2: return POLYGON;
 			case 3: return FREEROI;
@@ -1021,7 +1319,16 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 			case 9: return MAGNIFIER;
 			case 10: return HAND;
 			case 11: return DROPPER;
-			default: return index + 3;
+			default: return index + 3;*/
+			case 0: return lineType;
+			case 1: return drawType;
+			case 2: return MAGNIFIER;
+			case 3: return HAND;
+			case 4: return CUSTOM1;
+			default: return index + 4;
+    	/*
+    	 * EU_HOU CHANGES END
+    	 */
 		}
     }
     
@@ -1030,7 +1337,125 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
  	}
 
 	public void mousePressed(MouseEvent e) {
+		/*
+		 *  EU_HOU CHANGES
+		 */
+		if (drag) {
+			return;
+		}
+		/*
+		 *  EU_HOU END
+		 */
 		int x = e.getX();
+		int newTool = 0;
+
+		for (int i = 0; i < NUM_BUTTONS; i++) {
+			if (x > i * SIZE && x < i * SIZE + SIZE) {
+				newTool = toolID(i);
+			}
+		}
+
+		if (newTool == CUSTOM9) {
+			showSwitchPopupMenu(e);
+			return;
+		}
+
+		if (!isValidTool(newTool)) {
+			return;
+		}
+		if (menus[newTool] != null && menus[newTool].getItemCount() > 0) {
+			menus[newTool].show(e.getComponent(), e.getX(), e.getY());
+			return;
+		}
+		boolean doubleClick = newTool == current && (System.currentTimeMillis() - mouseDownTime) <= DOUBLE_CLICK_THRESHOLD;
+
+		mouseDownTime = System.currentTimeMillis();
+		if (!doubleClick) {
+			mpPrevious = current;
+			if (isMacroTool(newTool)) {
+				String name = names[newTool];
+
+				if (name.indexOf("Unused Tool") != -1) {
+					return;
+				}
+				if (name.indexOf("Action Tool") != -1) {
+					drawTool(newTool, true);
+					IJ.wait(50);
+					drawTool(newTool, false);
+					runMacroTool(newTool);
+					return;
+				} else {
+					name = name.endsWith(" ") ? name : name + " ";
+					macroInstaller.runMacroTool(name + "Selected");
+				}
+			}
+			setTool2(newTool);
+
+			if (isLine(current) && (e.isPopupTrigger() || e.isMetaDown())) {
+				straightLineItem.setState(lineType == LINE);
+				polyLineItem.setState(lineType == POLYLINE);
+				freeLineItem.setState(lineType == FREELINE);
+				if (IJ.isMacOSX()) {
+					IJ.wait(10);
+				}
+				linePopup.show(e.getComponent(), x, y);
+				mouseDownTime = 0L;
+			}
+			//EU_HOU multibouton
+			if (isDraw(current) && (e.isPopupTrigger() || e.isMetaDown())) {
+				rectangleItem.setState(drawType == RECTANGLE);
+				ovalItem.setState(drawType == OVAL);
+				polygonItem.setState(drawType == POLYGON);
+				if (IJ.isMacOSX()) {
+					IJ.wait(10);
+				}
+				drawPopup.show(e.getComponent(), x, y);
+				mouseDownTime = 0L;
+				//EU_HOU End
+			}
+		} else {
+			if (isMacroTool(current)) {
+				String name = names[current].endsWith(" ") ? names[current] : names[current] + " ";
+
+				macroInstaller.runMacroTool(name + "Options");
+				return;
+			}
+			ImagePlus imp = WindowManager.getCurrentImage();
+
+			switch (current) {
+
+							case MAGNIFIER:
+								if (imp != null) {
+									ImageCanvas ic = imp.getCanvas();
+
+									if (ic != null) {
+										ic.unzoom();
+									}
+								}
+								break;
+							case LINE:
+							case POLYLINE:
+							case FREELINE:
+								//IJ.runPlugIn("ij.plugin.frame.LineWidthAdjuster", "");
+								IJ.doCommand(Prefs.getCommand("options01"));
+								break;
+							default:
+			}
+		}
+	}
+	
+	/*public void mousePressed(MouseEvent e) {
+		/*
+		 *  EU_HOU CHANGES
+		 */
+		/*if (drag) {
+			return;
+		}
+		/*
+		 *  EU_HOU CHANGES END
+		 */
+		
+		/*int x = e.getX();
 		if (inGap(x))
 			return;
  		int newTool = toolID(x);
@@ -1071,7 +1496,7 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 			setTool2(newTool);
 			//boolean isRightClick = e.isPopupTrigger()||e.isMetaDown();
 			int flags = e.getModifiers();
-			boolean isRightClick = e.isPopupTrigger()||(!IJ.isMacintosh()&&(flags&Event.META_MASK)!=0);
+			/*boolean isRightClick = e.isPopupTrigger()||(!IJ.isMacintosh()&&(flags&Event.META_MASK)!=0);
 			if (current==RECTANGLE && isRightClick) {
 				rectItem.setState(rectType==RECT_ROI);
 				roundRectItem.setState(rectType==ROUNDED_RECT_ROI);
@@ -1161,9 +1586,61 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 					setTool2(mpPrevious);
 					break;
 				default:
+			} // -------------------------------------------------
+			if (isLine(current) && (e.isPopupTrigger() || e.isMetaDown())) {
+				straightLineItem.setState(lineType == LINE);
+				polyLineItem.setState(lineType == POLYLINE);
+				freeLineItem.setState(lineType == FREELINE);
+				if (IJ.isMacOSX()) {
+					IJ.wait(10);
+				}
+				linePopup.show(e.getComponent(), x, y);
+				mouseDownTime = 0L;
+			}
+			//EU_HOU multibouton
+			if (isDraw(current) && (e.isPopupTrigger() || e.isMetaDown())) {
+				rectangleItem.setState(drawType == RECTANGLE);
+				ovalItem.setState(drawType == OVAL);
+				polygonItem.setState(drawType == POLYGON);
+				if (IJ.isMacOSX()) {
+					IJ.wait(10);
+				}
+				drawPopup.show(e.getComponent(), x, y);
+				mouseDownTime = 0L;
+				//EU_HOU End
+			}
+		} else {
+			if (isMacroTool(current)) {
+				String name = names[current].endsWith(" ") ? names[current] : names[current] + " ";
+
+				macroInstaller.runMacroTool(name + "Options");
+				return;
+			}
+			ImagePlus imp = WindowManager.getCurrentImage();
+
+			switch (current) {
+
+							case MAGNIFIER:
+								if (imp != null) {
+									ImageCanvas ic = imp.getCanvas();
+
+									if (ic != null) {
+										ic.unzoom();
+									}
+								}
+								break;
+							case LINE:
+							case POLYLINE:
+							case FREELINE:
+								//IJ.runPlugIn("ij.plugin.frame.LineWidthAdjuster", "");
+								IJ.doCommand(Prefs.getCommand("options01"));
+								break;
+							default:
 			}
 		}
-	}
+	}*/
+
+
 	
 	void showSwitchPopupMenu(MouseEvent e) {
 		String path = IJ.getDir("macros")+"toolsets/";
@@ -1289,6 +1766,23 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 		return tool==LINE || tool==POLYLINE || tool==FREELINE;
 	}
 	
+	/*
+	 * EU_HOU ADD
+	 */
+	/**
+	 *  Gets the draw attribute of the Toolbar object
+	 *
+	 * @param  tool  Description of the Parameter
+	 * @return       The draw value
+	 */
+	//EU_HOU multibouton
+	boolean isDraw(int tool) {
+		//System.out.println("isLine" + tool);
+		return tool == RECTANGLE || tool == OVAL || tool == POLYGON;
+	}
+	/*
+	 * EU_HOU ADD END
+	 */
 	public void restorePreviousTool() {
 		setTool2(mpPrevious);
 	}
@@ -1307,7 +1801,10 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 	public void mouseEntered(MouseEvent e) {}
     public void mouseDragged(MouseEvent e) {}
 	
-	public void itemStateChanged(ItemEvent e) {
+    /*
+     * EU_HOU CHANGES
+     */
+	/*public void itemStateChanged(ItemEvent e) {
 		CheckboxMenuItem item = (CheckboxMenuItem)e.getSource();
 		String previousName = getToolName();
 		if (item==rectItem || item==roundRectItem || item==rotatedRectItem) {
@@ -1429,7 +1926,99 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
                 } catch(Exception ex) {}
             }
 		}
-	}
+	}*/
+    //EU_HOU multibouton
+  	public void itemStateChanged(ItemEvent e) {
+  		CheckboxMenuItem item = (CheckboxMenuItem) e.getSource();
+
+  		//System.out.println("itemStateChanged" + e + " " + item);
+  		if (item == straightLineItem) {
+  			lineType = LINE;
+  			setTool2(LINE);
+  			showMessage(LINE);
+  		} else if (item == polyLineItem) {
+  			lineType = POLYLINE;
+  			setTool2(POLYLINE);
+  			showMessage(POLYLINE);
+  		} else if (item == freeLineItem) {
+  			lineType = FREELINE;
+  			setTool2(FREELINE);
+  			showMessage(FREELINE);
+  		} else if (item == rectangleItem) {
+  			drawType = RECTANGLE;
+  			setTool2(RECTANGLE);
+  			showMessage(RECTANGLE);
+  		} else if (item == ovalItem) {
+  			drawType = OVAL;
+  			setTool2(OVAL);
+  			showMessage(OVAL);
+  		} else if (item == polygonItem) {
+  			drawType = POLYGON;
+  			setTool2(POLYGON);
+  			showMessage(POLYGON);
+  		} else {
+  			String label = item.getActionCommand();
+
+  			if (!label.equals("Help...")) {
+  				currentSet = label;
+  			}
+  			String path;
+  			//EU_HOU Bundle
+  			if (label.equals("Help...")) {
+  				//EU_HOU Bundle
+  				IJ.showMessage("Tool Switcher",
+  						"Use this drop down menu to switch to macro tool\n" +
+  						"sets located in the ImageJ/macros/toolsets folder,\n" +
+  						"or to revert to the ImageJ/macros/StartupMacros\n" +
+  						"set. The default tool sets, which have names\n" +
+  						"ending in '*', are loaded from ij.jar.\n" +
+  						" \n" +
+  						"Hold the shift key down while selecting a tool\n" +
+  						"set to view its source code.\n" +
+  						" \n" +
+  						"Several example tool sets are available at\n" +
+  						"<http://rsb.info.nih.gov/ij/macros/toolsets/>."
+  						);
+  				return;
+  			} else if (label.endsWith("*")) {
+  				// load from ij.jar
+  				MacroInstaller mi = new MacroInstaller();
+
+  				label = label.substring(0, label.length() - 1) + ".txt";
+  				path = "/macros/" + label;
+  				if (IJ.shiftKeyDown()) {
+  					String macros = mi.openFromIJJar(path);
+  					Editor ed = new Editor();
+
+  					ed.setSize(350, 300);
+  					ed.create(label, macros);
+  					IJ.setKeyUp(KeyEvent.VK_SHIFT);
+  				} else {
+  					mi.installFromIJJar(path);
+  				}
+  			} else {
+  				// load from ImageJ/macros/toolsets
+  				if (label.equals("Startup Macros")) {
+  					path = IJ.getDirectory("macros") + "StartupMacros.txt";
+  				} else if (label.endsWith(" ")) {
+  					path = IJ.getDirectory("macros") + "toolsets/" + label.substring(0, label.length() - 1) + ".ijm";
+  				} else {
+  					path = IJ.getDirectory("macros") + "toolsets/" + label + ".txt";
+  				}
+  				try {
+  					if (IJ.shiftKeyDown()) {
+  						IJ.open(path);
+  						IJ.setKeyUp(KeyEvent.VK_SHIFT);
+  					} else {
+  						new MacroInstaller().run(path);
+  					}
+  				} catch (Exception ex) {}
+  			}
+  		}
+  	}
+  	/*
+  	 * EU_HOU CHANGES END
+  	 */
 	
 	private void removeTools() {
 		removeMacroTools();
@@ -1570,7 +2159,9 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 			names[tool] = toolTip;
 		}
         if (tool==current && (names[tool].indexOf("Action Tool")!=-1||names[tool].indexOf("Unused Tool")!=-1))
-        	setTool(RECTANGLE);
+        	//EU_HOU CHANGES
+        	//setTool(RECTANGLE);
+			setTool(LINE);
         if (names[tool].endsWith(" Menu Tool"))
             installMenu(tool);
         if (IJ.debugMode) IJ.log("Toolbar.addTool: "+tool+" "+toolTip);
@@ -1608,7 +2199,10 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 				menus[tool].add(mi);
 			}
         }
-        if (tool==current) setTool(RECTANGLE);
+        if (tool==current)
+        	//EU_HOU CHANGES
+        	//setTool(RECTANGLE);
+			setTool(LINE);
     }
     
 	/** Used by the MacroInstaller class to install a set of macro tools. */
@@ -1749,7 +2343,10 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 	}
 	
 	void showBrushDialog() {
-		GenericDialog gd = new GenericDialog("Selection Brush");
+		/*
+		 * EU_HOU CHANGES
+		 */
+		/*GenericDialog gd = new GenericDialog("Selection Brush");
 		gd.addCheckbox("Enable selection brush", ovalType==BRUSH_ROI);
 		gd.addNumericField("           Size:", brushSize, 0, 4, "pixels");
 		gd.showDialog();
@@ -1763,7 +2360,23 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 		Roi roi = img!=null?img.getRoi():null;
 		if (roi!=null && roi.getType()==Roi.OVAL && ovalType==BRUSH_ROI)
 			img.deleteRoi();
-		Prefs.set(BRUSH_SIZE, brushSize);
+		Prefs.set(BRUSH_SIZE, brushSize);*/
+		GenericDialog gd = new GenericDialog("Selection Brush");
+
+		gd.addCheckbox("Enable Selection Brush", brushEnabled);
+		gd.addNumericField("           Size:", brushSize, 0, 4, "pixels");
+		gd.showDialog();
+		if (gd.wasCanceled()) {
+			return;
+		}
+		brushEnabled = gd.getNextBoolean();
+		brushSize = (int) gd.getNextNumber();
+
+		ImagePlus img = WindowManager.getCurrentImage();
+		Roi roi = img != null ? img.getRoi() : null;
+		/*
+		 * EU_HOU CHANGES END
+		 */
 	}
 
 	void showAngleDialog() {

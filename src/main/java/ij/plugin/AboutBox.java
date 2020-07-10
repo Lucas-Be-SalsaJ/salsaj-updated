@@ -11,7 +11,8 @@ import java.awt.image.*;
 /** This plugin implements the Help/About ImageJ command by opening
 	the about.jpg in ij.jar, scaling it 400% and adding some text. */
 	public class AboutBox implements PlugIn {
-		static final int SMALL_FONT=14, LARGE_FONT=30;
+		//EU_HOU CHANGES : default:LARGE_FONT=30
+		static final int SMALL_FONT=14, LARGE_FONT=40;
 
 	public void run(String arg) {
 		System.gc();
@@ -35,9 +36,9 @@ import java.awt.image.*;
 		ImageProcessor ip = null;
 		ImageJ ij = IJ.getInstance();
 		/*
-		 * EU_HOU CHANGES : url "/about.jpg" --> "images/about2.jpg"
+		 * EU_HOU CHANGES FIXME : url "/about.jpg" --> "images/about2.jpg" + [...].getClassLoader()[...]
 		 */
-		URL url = ij .getClass() .getResource("images/about2.jpg");
+		URL url = ij.getClass().getClassLoader().getResource("images/about2.jpg");
 		/*
 		 * EU_HOU CHANGES END
 		 */

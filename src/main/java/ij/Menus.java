@@ -499,9 +499,6 @@ public class Menus {
 	void addPlugInItem(Menu menu, String label, String className, int shortcut, boolean shift) {
 		// EU_HOU Bundle
 		menubun = IJ.getBundle();
-		if (IJ.getBundle() == null) {
-			System.out.println("jajja");
-		}
 		pluginsTable.put(menubun.getString(label), className);
 		nPlugins++;
 		// EU_HOU Bundle
