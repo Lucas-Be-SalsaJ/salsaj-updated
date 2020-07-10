@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin; 
 import ij.*; 
 import ij.gui.*; 
@@ -30,6 +31,7 @@ public class ZProjector implements PlugIn {
     private static final int SHORT_TYPE = 1; 
     private static final int FLOAT_TYPE = 2;
     
+    //EU_HOU MISSING Bundle
     public static final String lutMessage =
     	"Stacks with inverter LUTs may not project correctly.\n"
     	+"To create a standard LUT, invert the stack (Edit/Invert)\n"
@@ -91,6 +93,7 @@ public class ZProjector implements PlugIn {
     	else if (method.startsWith("sd")) m = SD_METHOD;
     	else if (method.startsWith("median")) m = MEDIAN_METHOD;
     	if (m<0)
+    		//EU_HOU MISSING Bundle
     		throw new IllegalArgumentException("Invalid projection method: "+method);
     	zp.allTimeFrames = method.contains("all");
     	zp.setMethod(m);
@@ -137,13 +140,15 @@ public class ZProjector implements PlugIn {
 
 		//  Make sure input image is a stack.
 		if(imp.getStackSize()==1) {
+		    //EU_HOU MISSING Bundle
 	    	IJ.error("Z Project", "Stack required"); 
 	    	return; 
 		}
 	
 		//  Check for inverting LUT.
 		if (imp.getProcessor().isInvertedLut()) {
-	    	if (!IJ.showMessageWithCancel("ZProjection", lutMessage))
+		    //EU_HOU MISSING Bundle
+			if (!IJ.showMessageWithCancel("ZProjection", lutMessage))
 	    		return; 
 		}
 
@@ -174,6 +179,7 @@ public class ZProjector implements PlugIn {
 		if (arg.equals("") && projImage!=null) {
 			long tstop = System.currentTimeMillis();
 			if (simpleComposite) IJ.run(projImage, "Grays", "");
+		    //EU_HOU MISSING Bundle
 			projImage.show("ZProjector: " +IJ.d2s((tstop-tstart)/1000.0,2)+" seconds");
 		}
 
@@ -237,6 +243,7 @@ public class ZProjector implements PlugIn {
 
     private void doRGBProjection(ImageStack stack) {
         ImageStack[] channels = ChannelSplitter.splitRGB(stack, true);
+        //EU_HOU MISSING Bundle =3
         ImagePlus red = new ImagePlus("Red", channels[0]);
         ImagePlus green = new ImagePlus("Green", channels[1]);
         ImagePlus blue = new ImagePlus("Blue", channels[2]);
@@ -276,6 +283,7 @@ public class ZProjector implements PlugIn {
 	@param start starting slice to display
 	@param stop last slice */
     protected GenericDialog buildControlDialog(int start, int stop) {
+        //EU_HOU MISSING Bundle =5
 		GenericDialog gd = new GenericDialog("ZProjection"); 
 		gd.addNumericField("Start slice:",startSlice,0/*digits*/); 
 		gd.addNumericField("Stop slice:",stopSlice,0/*digits*/);
@@ -308,6 +316,7 @@ public class ZProjector implements PlugIn {
 		ImageStack stack = imp.getStack();
 		RayFunction rayFunc = getRayFunction(method, fp);
 		if (IJ.debugMode==true) {
+		    //EU_HOU MISSING Bundle
 	    	IJ.log("\nProjecting stack from: "+startSlice
 		     	+" to: "+stopSlice); 
 		}
@@ -322,6 +331,7 @@ public class ZProjector implements PlugIn {
 		else if (stack.getProcessor(1) instanceof ShortProcessor) ptype = SHORT_TYPE; 
 		else if (stack.getProcessor(1) instanceof FloatProcessor) ptype = FLOAT_TYPE; 
 		else {
+		    //EU_HOU MISSING Bundle
 	    	IJ.error("Z Project", "Non-RGB stack required"); 
 	    	return; 
 		}
@@ -330,6 +340,7 @@ public class ZProjector implements PlugIn {
 		int sliceCount = 0;
 		for (int n=startSlice; n<=stopSlice; n+=increment) {
 			if (!isHyperstack) {
+			    //EU_HOU MISSING Bundle
 	    		IJ.showStatus("ZProjection " + color +": " + n + "/" + stopSlice);
 	    		IJ.showProgress(n-startSlice, stopSlice-startSlice);
 	    	}
@@ -353,6 +364,7 @@ public class ZProjector implements PlugIn {
 		}
 
 		if(projImage==null)
+		    //EU_HOU MISSING Bundle
 	    	IJ.error("Z Project", "Error computing projection.");
     }
 
@@ -522,6 +534,7 @@ public class ZProjector implements PlugIn {
 			case SD_METHOD:
 	    		return new StandardDeviation(fp, sliceCount); 
 			default:
+			    //EU_HOU MISSING Bundle
 	    		IJ.error("Z Project", "Unknown method.");
 	    		return null;
 	    }

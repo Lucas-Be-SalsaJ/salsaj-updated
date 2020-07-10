@@ -118,6 +118,7 @@ public class Editor extends PlugInFrame implements ActionListener, ItemListener,
 	}
 
 	public Editor(int rows, int columns, int fontSize, int options) {
+		//EU_HOU MISSING Bundle
 		super("Editor");
 		WindowManager.addWindow(this);
 		addMenuBar(options);	
@@ -142,6 +143,7 @@ public class Editor extends PlugInFrame implements ActionListener, ItemListener,
 		mb = new MenuBar();
 		if (Menus.getFontSize()!=0) ;
 			mb.setFont(Menus.getFont());
+		//EU_HOU MISSING Bundle =5
 		Menu m = new Menu("File");
 		m.add(new MenuItem("New...", new MenuShortcut(KeyEvent.VK_N, true)));
 		m.add(new MenuItem("Open...", new MenuShortcut(KeyEvent.VK_O)));
@@ -153,30 +155,40 @@ public class Editor extends PlugInFrame implements ActionListener, ItemListener,
 		fileMenu = m;
 		mb.add(m);
 		
+		//EU_HOU MISSING Bundle
 		m = new Menu("Edit");
 		MenuItem item = null;
 		if (IJ.isWindows())
+			//EU_HOU MISSING Bundle
 			item = new MenuItem("Undo  Ctrl+Z");
 		else
+			//EU_HOU MISSING Bundle
 			item = new MenuItem("Undo",new MenuShortcut(KeyEvent.VK_Z));		
 		m.add(item);
 		m.addSeparator();		
 		if (IJ.isWindows())
+			//EU_HOU MISSING Bundle
 			item = new MenuItem("Cut  Ctrl+X");
 		else
+			//EU_HOU MISSING Bundle
 			item = new MenuItem("Cut",new MenuShortcut(KeyEvent.VK_X));
 		m.add(item);
 		if (IJ.isWindows())
+			//EU_HOU MISSING Bundle
 			item = new MenuItem("Copy  Ctrl+C");
 		else
+			//EU_HOU MISSING Bundle
 			item = new MenuItem("Copy", new MenuShortcut(KeyEvent.VK_C));
 		m.add(item);
 		if (IJ.isWindows())
+			//EU_HOU MISSING Bundle
 			item = new MenuItem("Paste  Ctrl+V");
 		else
+			//EU_HOU MISSING Bundle
 			item = new MenuItem("Paste",new MenuShortcut(KeyEvent.VK_V));
 		m.add(item);
 		m.addSeparator();
+		//EU_HOU MISSING Bundle =7
 		m.add(new MenuItem("Find...", new MenuShortcut(KeyEvent.VK_F)));
 		m.add(new MenuItem("Find Next", new MenuShortcut(KeyEvent.VK_G)));
 		m.add(new MenuItem("Go to Line...", new MenuShortcut(KeyEvent.VK_L)));
@@ -188,6 +200,7 @@ public class Editor extends PlugInFrame implements ActionListener, ItemListener,
 		insertSpacesItem.addItemListener(this);
 		insertSpacesItem.setState(insertSpaces);
 		m.add(insertSpacesItem);
+		//EU_HOU MISSING Bundle =2
 		m.add(new MenuItem("Zap Gremlins"));
 		m.add(new MenuItem("Copy to Image Info"));
 		m.addActionListener(this);
@@ -196,6 +209,7 @@ public class Editor extends PlugInFrame implements ActionListener, ItemListener,
 		if ((options&MENU_BAR)!=0)
 			setMenuBar(mb);
 		
+		//EU_HOU MISSING Bundle =4
 		m = new Menu("Font");
 		m.add(new MenuItem("Make Text Smaller"));
 		m.add(new MenuItem("Make Text Larger"));
@@ -204,12 +218,14 @@ public class Editor extends PlugInFrame implements ActionListener, ItemListener,
 		if ((options&MONOSPACED)!=0) monospaced.setState(true);
 		monospaced.addItemListener(this);
 		m.add(monospaced);
+		//EU_HOU MISSING Bundle
 		m.add(new MenuItem("Save Settings"));
 		m.addActionListener(this);
 		mb.add(m);
 		
-		m = Menus.getExamplesMenu(this);
-		mb.add(m);
+		//EU_HOU CHANGES : deleted examplesMenu
+		//m = Menus.getExamplesMenu(this);
+		//mb.add(m);
 	}			
 			
 	public void positionWindow() {
@@ -241,6 +257,7 @@ public class Editor extends PlugInFrame implements ActionListener, ItemListener,
 		setWindowTitle(name);
 		boolean macroExtension = name.endsWith(".txt") || name.endsWith(".ijm");
 		if (macroExtension || name.endsWith(".js") || name.endsWith(".bsh") || name.endsWith(".py") || name.indexOf(".")==-1) {
+			//EU_HOU MISSING Bundle =14
 			macrosMenu = new Menu("Macros");			
 			macrosMenu.add(new MenuItem("Run Macro", new MenuShortcut(KeyEvent.VK_R)));
 			macrosMenu.add(new MenuItem("Evaluate Line", new MenuShortcut(KeyEvent.VK_Y)));
@@ -261,6 +278,7 @@ public class Editor extends PlugInFrame implements ActionListener, ItemListener,
 			macrosMenu.addActionListener(this);
 			mb.add(macrosMenu);
 			if (!(name.endsWith(".js")||name.endsWith(".bsh")||name.endsWith(".py"))) {
+				//EU_HOU MISSING Bundle =8
 				Menu debugMenu = new Menu("Debug");			
 				debugMenu.add(new MenuItem("Debug Macro", new MenuShortcut(KeyEvent.VK_D)));
 				debugMenu.add(new MenuItem("Step", new MenuShortcut(KeyEvent.VK_E)));
@@ -274,6 +292,7 @@ public class Editor extends PlugInFrame implements ActionListener, ItemListener,
 			}
 		} else {
 			fileMenu.addSeparator();
+			//EU_HOU MISSING Bundle
 			fileMenu.add(new MenuItem("Compile and Run", new MenuShortcut(KeyEvent.VK_R)));
 		}
 		if (text.startsWith("//@AutoInstall") && (name.endsWith(".ijm")||name.endsWith(".txt"))) {
@@ -391,6 +410,7 @@ public class Editor extends PlugInFrame implements ActionListener, ItemListener,
 		}
 		File f = new File(path);
 		if (f.exists() && !f.canWrite()) {
+			//EU_HOU MISSING Bundle
 			IJ.showMessage("Editor", "Unable to save because file is write-protected. \n \n" + path);
 			return;
 		}
@@ -407,6 +427,7 @@ public class Editor extends PlugInFrame implements ActionListener, ItemListener,
 				bw.newLine();
 			}
 			bw.close();
+			//EU_HOU MISSING Bundle
 			IJ.showStatus(text.length()+" chars saved to " + path);
 			changes = false;
 		} catch
@@ -586,6 +607,7 @@ public class Editor extends PlugInFrame implements ActionListener, ItemListener,
 		int bottomMargin = 30;
 		
 		if (!(pg instanceof PrintGraphics))
+			//EU_HOU MISSING Bundle
 			throw new IllegalArgumentException ("Graphics contextt not PrintGraphics");
 		if (IJ.isMacintosh()) {
 			topMargin = 0;
@@ -1137,7 +1159,8 @@ public class Editor extends PlugInFrame implements ActionListener, ItemListener,
 		boolean okayToClose = true;
 		ImageJ ij = IJ.getInstance();
 		if (!getTitle().equals("Errors") && changes && !IJ.isMacro() && ij!=null && !ij.quittingViaMacro()) {
-			String msg = "Save changes to \"" + getTitle() + "\"?";
+			//EU_HOU Bundle
+			String msg = IJ.getBundle().getString("SaveChanges") + " \"" + getTitle() + "\"?";
 			YesNoCancelDialog d = new YesNoCancelDialog(this, "Editor", msg);
 			if (d.cancelPressed())
 				okayToClose = false;
@@ -1168,6 +1191,7 @@ public class Editor extends PlugInFrame implements ActionListener, ItemListener,
 			else
 				defaultDir = Menus.getPlugInsPath();
 		}
+		//EU_HOU MISSING Bundle
 		SaveDialog sd = new SaveDialog("Save As...", defaultDir, name1, null);
 		String name2 = sd.getFileName();
 		String dir = sd.getDirectory();
@@ -1191,9 +1215,11 @@ public class Editor extends PlugInFrame implements ActionListener, ItemListener,
 			return;
 		String title = getTitle();
 		if (path==null || !(new File(path).exists()) || !path.endsWith(title)) {
+			//EU_HOU MISSING Bundle
 			IJ.showStatus("Cannot revert, no file "+getTitle());
 			return;
 		}
+		//EU_HOU MISSING Bundle
 		if (!IJ.showMessageWithCancel("Revert?", "Revert to saved version of\n\""+getTitle()+"\"?"))
 			return;
 		String directory = path.substring(0, path.length()-title.length());
@@ -1204,6 +1230,7 @@ public class Editor extends PlugInFrame implements ActionListener, ItemListener,
 	/** Changes a plugins class name to reflect a new file name. */
 	public void updateClassName(String oldName, String newName) {
 		if (newName.indexOf("_")<0)
+			//EU_HOU MISSING Bundle
 			IJ.showMessage("Plugin Editor", "Plugins without an underscore in their name will not\n"
 				+"be automatically installed when ImageJ is restarted.");
 		if (oldName.equals(newName) || !oldName.endsWith(".java") || !newName.endsWith(".java"))
@@ -1270,6 +1297,7 @@ public class Editor extends PlugInFrame implements ActionListener, ItemListener,
 	}
 	
 	void gotoLine() {
+		//EU_HOU MISSING Bundle =2
 		GenericDialog gd = new GenericDialog("Go to Line", this);
 		gd.addNumericField("Go to line number: ", lineNumber, 0);
 		gd.showDialog();
@@ -1299,6 +1327,7 @@ public class Editor extends PlugInFrame implements ActionListener, ItemListener,
 		maskQuotes(chars);
 		int position = ta.getCaretPosition();
 		if (position == 0) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Balance", "This command locates the pair of brackets, curly braces or\nparentheses that surround the insertion point.");
 			return;
 		}
@@ -1438,6 +1467,7 @@ public class Editor extends PlugInFrame implements ActionListener, ItemListener,
 			ta.setText(text);
 		}
 		if (count>0)
+			//EU_HOU MISSING Bundle =2
 			IJ.showMessage("Zap Gremlins", count+" invalid characters converted to spaces");
 		else
 			IJ.showMessage("Zap Gremlins", "No invalid characters found");
@@ -1445,6 +1475,7 @@ public class Editor extends PlugInFrame implements ActionListener, ItemListener,
 	
 	
 	private void detab() {
+		//EU_HOU MISSING Bundle =3
 		GenericDialog gd = new GenericDialog("Detab", this);
 		gd.addNumericField("Spaces per tab: ", tabInc, 0);
 		gd.addCheckbox("Tab key inserts spaces: ", insertSpaces);

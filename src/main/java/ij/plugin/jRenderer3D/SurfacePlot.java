@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin.jRenderer3D;
 
 import ij.IJ;
@@ -107,7 +108,7 @@ class SurfacePlot {
 		try {
 			pg.grabPixels();
 		} catch (InterruptedException ex) {
-			//EU_HOU Bundle
+			//EU_HOU MISSING Bundle
 			IJ.error("error grabbing pixels");
 		}
 
@@ -287,7 +288,7 @@ class SurfacePlot {
 		try {
 			pg.grabPixels();
 		} catch (InterruptedException ex) {
-			//EU_HOU Bundle
+			//EU_HOU MISSING Bundle
 			IJ.error("error grabbing pixels");
 		}
 
@@ -476,7 +477,7 @@ class SurfacePlot {
 		try {
 			pg.grabPixels();
 		} catch (InterruptedException ex) {
-			//EU_HOU Bundle
+			//EU_HOU MISSING Bundle
 			IJ.error("error grabbing pixels");
 			pixelsTexColor = null;
 		}

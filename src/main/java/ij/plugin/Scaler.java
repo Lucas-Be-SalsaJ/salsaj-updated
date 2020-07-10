@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.gui.*;
@@ -64,6 +65,7 @@ public class Scaler implements PlugIn, TextListener, FocusListener {
 				scale(imp);
 		}
 		catch(OutOfMemoryError o) {
+			//EU_HOU MISSING Bundle
 			IJ.outOfMemory("Scale");
 		}
 		IJ.showProgress(1.0);
@@ -110,6 +112,7 @@ public class Scaler implements PlugIn, TextListener, FocusListener {
 		if (w==1 || h==1)
 			method = ImageProcessor.NONE;
 		for (int i=1; i<=nSlices; i++) {
+			//EU_HOU MISSING Bundle
 			IJ.showStatus("Scale: " + i + "/" + nSlices);
 			ip1 = stack1.getProcessor(i);
 			String label = stack1.getSliceLabel(i);
@@ -241,23 +244,29 @@ public class Scaler implements PlugIn, TextListener, FocusListener {
 			xstr = "-";
 			ystr = "-";
 		}
-		GenericDialog gd = new GenericDialog("Scale");
-		gd.addStringField("X Scale:", xstr);
-		gd.addStringField("Y Scale:", ystr);
+		//EU_HOU Bundle =3
+		GenericDialog gd = new GenericDialog(IJ.getPluginBundle().getString("ScalerTitle"));
+		gd.addStringField(IJ.getPluginBundle().getString("ScalerX") + " (0.05-25):", xstr);
+		gd.addStringField(IJ.getPluginBundle().getString("ScalerY") + " (0.05-25):", ystr);
 		if (isStack)
+			//EU_HOU MISSING Bundle
 			gd.addStringField("Z Scale:", zstr);
 		gd.setInsets(5, 0, 5);
-		gd.addStringField("Width (pixels):", ""+width);
-		gd.addStringField("Height (pixels):", ""+height);
+		//EU_HOU Bundle =2
+		gd.addStringField(IJ.getPluginBundle().getString("Width") + " (" + IJ.getPluginBundle().getString("Pixels") + "):", ""+width);
+		gd.addStringField(IJ.getPluginBundle().getString("Height") + " (" + IJ.getPluginBundle().getString("Pixels") + "):", ""+height);
 		if (isStack) {
+			//EU_HOU MISSING Bundle
 			String label = "Depth (images):";
 			if (imp.isHyperStack()) {
 				int slices = imp.getNSlices();
 				int frames = imp.getNFrames();
 				if (slices==1&&frames>1) {
+					//EU_HOU MISSING Bundle
 					label = "Depth (frames):";
 					oldDepth = frames;
 				} else {
+					//EU_HOU MISSING Bundle
 					label = "Depth (slices):";
 					oldDepth = slices;
 				}
@@ -283,17 +292,23 @@ public class Scaler implements PlugIn, TextListener, FocusListener {
 			}
 		}
 		fieldWithFocus = xField;
-		gd.addChoice("Interpolation:", methods, methods[interpolationMethod]);
+		//EU_HOU Bundle
+		gd.addChoice(IJ.getPluginBundle().getString("Interpolate"), methods, methods[interpolationMethod]);
 		if (bitDepth==8 || bitDepth==24)
-			gd.addCheckbox("Fill with background color", fillWithBackground);
+			//EU_HOU Bundle
+			gd.addCheckbox(IJ.getPluginBundle().getString("ScalerBackground"), fillWithBackground);
+		//EU_HOU MISSING Bundle
 		gd.addCheckbox("Average when downsizing", averageWhenDownsizing);
 		boolean hyperstack = imp.isHyperStack() || imp.isComposite();
 		if (isStack && !hyperstack)
+			//EU_HOU MISSING Bundle
 			gd.addCheckbox("Process entire stack", processStack);
-		gd.addCheckbox("Create new window", newWindow);
+		//EU_HOU Bundle
+		gd.addCheckbox(IJ.getPluginBundle().getString("NewWin"), newWindow);
 		title = WindowManager.getUniqueName(imp.getTitle());
 		gd.setInsets(10, 0, 0);
-		gd.addStringField("Title:", title, 12);
+		//EU_HOU Bundle
+		gd.addStringField(IJ.getPluginBundle().getString("Title"), title, 12);
 		gd.showDialog();
 		if (gd.wasCanceled())
 			return false;
@@ -315,6 +330,7 @@ public class Scaler implements PlugIn, TextListener, FocusListener {
 		else if (newHeight!=0 && newWidth==0)
 			newWidth = (int)Math.round(newHeight * (double)r.width/r.height);
 		if (newWidth==0 || newHeight==0) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Scaler", "Width or height is 0");
 			return false;
 		}

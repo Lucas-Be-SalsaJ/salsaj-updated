@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.gui.*;
@@ -57,6 +58,7 @@ public class StackEditor implements PlugIn {
 	
 	void deleteSlice() {
 		if (nSlices<2)
+			//EU_HOU MISSING Bundle
 			{IJ.error("\"Delete Slice\" requires a stack"); return;}
 		if (imp.isHyperStack() || (imp.isComposite() && nSlices==imp.getNChannels())) {
 			deleteHyperstackChannelSliceOrFrame();
@@ -193,6 +195,7 @@ public class StackEditor implements PlugIn {
     	}
 		if (IJ.isMacro() && options==null && (imp.isComposite() && imp.getStackSize()==imp.getNChannels()))
 			Macro.setOptions("delete=channel");
+		//EU_HOU MISSING Bundle =2
 		GenericDialog gd = new GenericDialog("Delete");
 		gd.addChoice("Delete current", choices, choice);
 		gd.showDialog();
@@ -251,6 +254,7 @@ public class StackEditor implements PlugIn {
 			nSlices = imp.getStackSize();
 		}
 		if (nSlices<2) {
+			//EU_HOU MISSING Bundle =2
 			IJ.error("\"Convert Stack to Images\" requires a stack\n"+imp);
 			return;
 		}
@@ -259,6 +263,7 @@ public class StackEditor implements PlugIn {
 		ImageStack stack = imp.getStack();
 		int size = stack.size();
 		if (size>30 && !IJ.isMacro()) {
+			//EU_HOU MISSING Bundle =2
 			boolean ok = IJ.showMessageWithCancel("Convert to Images?",
 			"Are you sure you want to convert this\nstack to "
 			+size+" separate windows?");

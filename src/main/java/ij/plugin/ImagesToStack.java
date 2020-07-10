@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.plugin.frame.Recorder;
 import ij.*;
@@ -30,7 +31,8 @@ public class ImagesToStack implements PlugIn {
 	private Calibration cal2;
 	private int stackType;
 	private ImagePlus[] images;
-	private String name = "Stack";
+	//EU_HOU Bundle
+	private String name = IJ.getPluginBundle().getString("StackTitle");
 	
 	/** Converts the images in 'images' to a stack, using the 
 		default settings ("copy center" and "titles as labels"). */
@@ -48,6 +50,7 @@ public class ImagesToStack implements PlugIn {
 		boolean scale = false;
 		int[] wList = WindowManager.getIDList();
 		if (wList==null) {
+			//EU_HOU Bundle
 			IJ.error("No images are open.");
 			return;
 		}
@@ -65,6 +68,7 @@ public class ImagesToStack implements PlugIn {
 		if (count<2) {
 			String msg = "";
 			if (stackCount>1)
+				//EU_HOU MISSING Bundle
 				msg = "\n \nUse the Image>Stacks>Tools>Concatenate\ncommand to combine stacks.";
 			IJ.error("Images to Stack", "There must be at least two open 2D images."+msg);
 			return;
@@ -77,20 +81,24 @@ public class ImagesToStack implements PlugIn {
 		String macroOptions = Macro.getOptions();
 		if (IJ.macroRunning() && macroOptions==null) {
 			if (sizesDiffer) {
-				IJ.error("Images are not all the same size");
+				IJ.error(IJ.getPluginBundle().getString("ImgSizeErr"));
 				return;
 			} 
 			showDialog = false;
 		}
 		if (showDialog) {
+			//EU_HOU MISSING Bundle
 			GenericDialog gd = new GenericDialog("Images to Stack");
 			if (sizesDiffer) {
+				//EU_HOU MISSING Bundle
 				String msg = "The "+count+" images differ in size (smallest="+minWidth+"x"+minHeight
 				+",\nlargest="+maxWidth+"x"+maxHeight+"). They will be converted\nto a stack using the specified method.";
 				gd.setInsets(0,0,5);
 				gd.addMessage(msg);
+				//EU_HOU MISSING Bundle
 				gd.addChoice("Method:", methods, methods[staticMethod]);
 			}
+			//EU_HOU MISSING Bundle =5
 			gd.addStringField("Name:", name, 12);
 			gd.addStringField("Title Contains:", "", 12);
 			if (sizesDiffer)
@@ -112,6 +120,7 @@ public class ImagesToStack implements PlugIn {
 			if (filter!=null) {
 				count = findMinMaxSize(images, count);
 				if (count==0) {
+					//EU_HOU MISSING Bundle
 					IJ.error("Images to Stack", "None of the images have a title containing \""+filter+"\"");
 				}
 			}
@@ -122,6 +131,7 @@ public class ImagesToStack implements PlugIn {
 				staticTitlesAsLabels = titlesAsLabels;
 			}
 			if (Recorder.record)
+				//EU_HOU MISSING Bundle
    				Recorder.recordCall("imp = ImagesToStack.run(arrayOfImages);");
 		} else
 			keep = false;

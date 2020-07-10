@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin.filter;
 import ij.*;
 import ij.gui.*;
@@ -43,10 +44,12 @@ public class Translator implements ExtendedPlugInFilter, DialogListener {
 		int digits = xOffset==(int)xOffset&&yOffset==(int)yOffset?1:3;
 		if (IJ.isMacro())
 			interpolationMethod = ImageProcessor.NONE;
-		gd = new GenericDialog("Translate");
-		gd.addSlider("X offset:", -100, 100, xOffset, 0.1);
-		gd.addSlider("Y offset:", -100, 100, xOffset, 0.1);
-		gd.addChoice("Interpolation:", methods, methods[interpolationMethod]);
+		//EU_HOU Bundle =4
+		gd = new GenericDialog(IJ.getPluginBundle().getString("Translate"));
+		gd.addSlider(IJ.getPluginBundle().getString("TX") + ":", -100, 100, xOffset, 0.1);
+		gd.addSlider(IJ.getPluginBundle().getString("TY") + ":", -100, 100, xOffset, 0.1);
+		gd.addChoice(IJ.getPluginBundle().getString("Interpolate"), methods, methods[interpolationMethod]);
+		//EU_HOU MISSING Bundle
 		gd.addCheckbox("Overlay only", false);
 		gd.addPreviewCheckbox(pfr);
 		gd.addDialogListener(this);
@@ -66,6 +69,7 @@ public class Translator implements ExtendedPlugInFilter, DialogListener {
 		interpolationMethod = gd.getNextChoiceIndex();
 		overlayOnly = gd.getNextBoolean();
 		if (gd.invalidNumber()) {
+			//EU_HOU MISSING Bundle
 			if (gd.wasOKed()) IJ.error("Offset is invalid.");
 			return false;
 		}

@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.process.*;
@@ -33,6 +34,7 @@ public class RGBStackMerge implements PlugIn {
 	public void mergeStacks() {
 		int[] wList = WindowManager.getIDList();
 		if (wList==null) {
+			//EU_HOU MISSING Bundle
 			error("No images are open.");
 			return;
 		}
@@ -52,6 +54,7 @@ public class RGBStackMerge implements PlugIn {
 		boolean macro = IJ.macroRunning() && options!=null;
 		if (macro) {
 			createComposite = keep = ignoreLuts = false;
+			//EU_HOU MISSING Bundle =4
 			options = options.replaceAll("red=", "c1=");
 			options = options.replaceAll("green=", "c2=");
 			options = options.replaceAll("blue=", "c3=");
@@ -59,6 +62,7 @@ public class RGBStackMerge implements PlugIn {
 			Macro.setOptions(options);
 		}
 
+		//EU_HOU MISSING Bundle =11
 		GenericDialog gd = new GenericDialog("Merge Channels");
 		gd.addChoice("C1 (red):", titles, macro?none:names[0]);
 		gd.addChoice("C2 (green):", titles, macro?none:names[1]);
@@ -109,6 +113,7 @@ public class RGBStackMerge implements PlugIn {
 			}
 		}
 		if (width==0) {
+			//EU_HOU MISSING Bundle
 			error("There must be at least one source image or stack.");
 			return;
 		}
@@ -118,6 +123,7 @@ public class RGBStackMerge implements PlugIn {
 			ImagePlus img = images[i];
 			if (img==null) continue;
 			if (img.getStackSize()!=stackSize) {
+				//EU_HOU MISSING Bundle
 				error("The source stacks must have the same number of images.");
 				return;
 			}
@@ -132,24 +138,29 @@ public class RGBStackMerge implements PlugIn {
 					}
 				}
 				if (bitDepth==24) {
+					//EU_HOU MISSING Bundle
 					error("Source hyperstacks cannot be RGB.");
 					return;
 				}
 				if (img.getNChannels()>1) {
+					//EU_HOU MISSING Bundle
 					error("Source hyperstacks cannot have more than 1 channel.");
 					return;
 				}
 				if (img.getNSlices()!=slices || img.getNFrames()!=frames) {
+					//EU_HOU MISSING Bundle
 					error("Source hyperstacks must have the same dimensions.");
 					return;
 				}
 				mergeHyperstacks = true;
 			} // isHyperStack
 			if (img.getWidth()!=width || images[i].getHeight()!=height) {
+				//EU_HOU MISSING Bundle
 				error("The source images or stacks must have the same width and height.");
 				return;
 			}
 			if (createComposite && img.getBitDepth()!=bitDepth) {
+				//EU_HOU MISSING Bundle
 				error("The source images must have the same bit depth.");
 				return;
 			}
@@ -186,9 +197,11 @@ public class RGBStackMerge implements PlugIn {
 			if (imp2==null) return;
 		} else {
 			ImageStack rgb = mergeStacks(width, height, stackSize, stacks[0], stacks[1], stacks[2], keep);
+			//EU_HOU MISSING Bundle
 			imp2 = new ImagePlus("RGB", rgb);
 			if (createComposite) {
 				imp2 = CompositeConverter.makeComposite(imp2);
+				//EU_HOU MISSING Bundle
 				imp2.setTitle("Composite");
 			}
 		}
@@ -201,6 +214,7 @@ public class RGBStackMerge implements PlugIn {
 		if (fourOrMoreChannelRGB) {
 			if (imp2.getNSlices()==1&&imp2.getNFrames()==1) {
 				imp2 = imp2.flatten();
+				//EU_HOU MISSING Bundle
 				imp2.setTitle("RGB");
 			}
 		}
@@ -312,6 +326,7 @@ public class RGBStackMerge implements PlugIn {
 		if (title.startsWith("C1-"))
 			title = title.substring(3);
 		else
+			//EU_HOU MISSING Bundle
 			title = frames>1?"Merged":"Composite";
 		ImagePlus imp2 = new ImagePlus(title, stack2);
 		imp2.setDimensions(channels, slices, frames);
@@ -394,6 +409,7 @@ public class RGBStackMerge implements PlugIn {
 			}
 		IJ.showProgress(1.0);
 		} catch(OutOfMemoryError o) {
+			//EU_HOU MISSING Bundle
 			IJ.outOfMemory("Merge Stacks");
 			IJ.showProgress(1.0);
 		}
@@ -413,8 +429,10 @@ public class RGBStackMerge implements PlugIn {
 		imp2 = zp.getProjection();
 		if (createComposite) {
 			imp2 = CompositeConverter.makeComposite(imp2);
+			//EU_HOU MISSING Bundle
 			imp2.setTitle("Composite");
 		} else
+			//EU_HOU MISSING Bundle
 			imp2.setTitle("RGB");
 		return imp2;
 	}
@@ -446,6 +464,7 @@ public class RGBStackMerge implements PlugIn {
 	}
 	
 	void error(String msg) {
+		//EU_HOU MISSING Bundle
 		IJ.error("Merge Channels", msg);
 	}
 

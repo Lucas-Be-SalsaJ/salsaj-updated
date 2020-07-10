@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin.frame;
 import java.awt.*;
 import java.awt.event.*;
@@ -39,6 +40,7 @@ public class Fitter extends PlugInFrame implements PlugIn, ItemListener, ActionL
 	static final int USER_DEFINED = -1;
 
 	public Fitter() {
+		//EU_HOU MISSING Bundle
 		super("Curve Fitter");
 		WindowManager.addWindow(this);
 		addKeyListener(this);
@@ -46,19 +48,24 @@ public class Fitter extends PlugInFrame implements PlugIn, ItemListener, ActionL
 		fit = new Choice();
 		for (int i=0; i<CurveFitter.fitList.length; i++)
 			fit.addItem(CurveFitter.fitList[CurveFitter.sortedTypes[i]]);
+		//EU_HOU MISSING Bundle
 		fit.addItem("*User-defined*");
 		fit.addItemListener(this);
 		panel.add(fit);
+		//EU_HOU MISSING Bundle
 		doIt = new Button(" Fit ");
 		doIt.addActionListener(this);
 		doIt.addKeyListener(this);
 		panel.add(doIt);
+		//EU_HOU MISSING Bundle
 		open = new Button("Open");
 		open.addActionListener(this);
 		panel.add(open);
+		//EU_HOU MISSING Bundle
 		apply = new Button("Apply");
 		apply.addActionListener(this);
 		panel.add(apply);
+		//EU_HOU MISSING Bundle
 		settings = new Checkbox("Show settings", false);
 		panel.add(settings);
 		add("North", panel);
@@ -87,6 +94,7 @@ public class Fitter extends PlugInFrame implements PlugIn, ItemListener, ActionL
 			return false;
 		}
 		cf = new CurveFitter(x, y);
+		//EU_HOU MISSING Bundle
 		cf.setStatusAndEsc("Optimization: Iteration ", true);
 		try {
             if (fitType==USER_DEFINED) {
@@ -95,6 +103,7 @@ public class Fitter extends PlugInFrame implements PlugIn, ItemListener, ActionL
                 int params = cf.doCustomFit(eqn, null, settings.getState());
                 if (params==0) {
                     IJ.beep();
+            		//EU_HOU MISSING Bundle
                     IJ.log("Bad formula; should be:\n   y = function(x, a, ...)");
                     return false;
                 }
@@ -103,11 +112,13 @@ public class Fitter extends PlugInFrame implements PlugIn, ItemListener, ActionL
             if (cf.getStatus() == Minimizer.INITIALIZATION_FAILURE) {
                 IJ.beep();
                 IJ.showStatus(cf.getStatusString());
+        		//EU_HOU MISSING Bundle
                 IJ.log("Curve Fitting Error:\n"+cf.getStatusString());
                 return false;
             }
             if (Double.isNaN(cf.getSumResidualsSqr())) {
                 IJ.beep();
+        		//EU_HOU MISSING Bundle
                 IJ.showStatus("Error: fit yields Not-a-Number");
                 return false;
             }
@@ -123,6 +134,7 @@ public class Fitter extends PlugInFrame implements PlugIn, ItemListener, ActionL
 	}
 	
 	String getEquation() {
+		//EU_HOU MISSING Bundle =2
 		GenericDialog gd = new GenericDialog("Formula");
 		gd.addStringField("Formula:", equation, 38);
 		gd.showDialog();
@@ -151,6 +163,7 @@ public class Fitter extends PlugInFrame implements PlugIn, ItemListener, ActionL
 		StringTokenizer st = new StringTokenizer(text, " \t\n\r,");
 		int nTokens = st.countTokens();
 		if (nTokens<4 || (nTokens%2)!=0) {
+			//EU_HOU MISSING Bundle
 		    IJ.showStatus("Data error: min. two (x,y) pairs needed");
 			return false;
 		}
@@ -163,6 +176,7 @@ public class Fitter extends PlugInFrame implements PlugIn, ItemListener, ActionL
 			x[i] = Tools.parseDouble(xString);
 			y[i] = Tools.parseDouble(yString);
 			if (Double.isNaN(x[i]) || Double.isNaN(y[i])) {
+				//EU_HOU MISSING Bundle
 				IJ.showStatus("Data error:  Bad number at "+i+": "+xString+" "+yString);
 				return false;
 			}
@@ -173,6 +187,7 @@ public class Fitter extends PlugInFrame implements PlugIn, ItemListener, ActionL
 	/** create a duplicate of an image where the fit function is applied to the pixel values */
 	void applyFunction() {
 		if (cf==null || fitType < 0) {
+			//EU_HOU MISSING Bundle
 			IJ.error("No function available");
 			return;
 		}
@@ -182,6 +197,7 @@ public class Fitter extends PlugInFrame implements PlugIn, ItemListener, ActionL
 			return;
 		}
 		if (img.getTitle().matches("y\\s=.*")) { //title looks like a fit function
+			//EU_HOU MISSING Bundle
 			IJ.error("First select the image to be transformed");
 			return;
 		}
@@ -203,6 +219,7 @@ public class Fitter extends PlugInFrame implements PlugIn, ItemListener, ActionL
 	}
 
 	void open() {
+		//EU_HOU MISSING Bundle
 		OpenDialog od = new OpenDialog("Open Text File...", "");
 		String directory = od.getDirectory();
 		String name = od.getFileName();

@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 
 import java.awt.*;
@@ -41,11 +42,13 @@ public class XYCoordinates implements PlugIn {
 			int g = (c&0xff00)>>8;
 			int b = c&0xff;
 			bg = r+","+g+","+b;
+			//EU_HOU MISSING Bundle
 		    bg = " \n    Background value: " + bg + "\n";
 		}
 		imp.deleteRoi();
 		
 		int slices = imp.getStackSize();
+		//EU_HOU MISSING Bundle
 		String msg =
 			"This plugin writes to a text file the XY coordinates and\n"
 			+ "pixel value of all non-background pixels. Backround\n"
@@ -60,14 +63,18 @@ public class XYCoordinates implements PlugIn {
 		int digits = (int)background==background?0:4;
 		if (!rgb) {
 			gd.setInsets(5, 35, 3);
+			//EU_HOU MISSING Bundle
 			gd.addNumericField("Background value:", background, digits);
 		}
 		gd.setInsets(10, 35, 0);
+		//EU_HOU MISSING Bundle
 		gd.addCheckbox("Invert y coordinates off (0 at top of image)", invertY);
 		gd.setInsets(0, 35, 0);
+		//EU_HOU MISSING Bundle
 		gd.addCheckbox("Suppress Log output", suppress);
 		if (slices>1) {
 			gd.setInsets(0, 35, 0);
+			//EU_HOU MISSING Bundle
 			gd.addCheckbox("Process all "+slices+" images", processStack);
 		}
 		gd.showDialog();
@@ -83,6 +90,7 @@ public class XYCoordinates implements PlugIn {
 			processStack = false;
 		if (!processStack) slices = 1;
 
+		//EU_HOU MISSING Bundle
 		SaveDialog sd = new SaveDialog("Save Coordinates as Text...", imp.getTitle(), ".txt");
 		String name = sd.getFileName();
 		if (name == null)
@@ -95,10 +103,12 @@ public class XYCoordinates implements PlugIn {
 			pw = new PrintWriter(bos);
 		}
 		catch (IOException e) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Save XY Coordinates", "Error saving coordinates:\n   "+e.getMessage());
 			return;
 		}
 
+		//EU_HOU MISSING Bundle
 		IJ.showStatus("Saving coordinates...");
 		int count = 0;
 		float v;
@@ -132,6 +142,7 @@ public class XYCoordinates implements PlugIn {
 			if (slices>1) IJ.showProgress(z+1, slices);
 			String img = slices>1?"-"+(z+1):"";
 			if (!suppress)
+				//EU_HOU MISSING Bundle
 				IJ.log(imp.getTitle() + img+": " + count + " pixels (" + IJ.d2s(count*100.0/(width*height)) + "%)\n");
 			count = 0;
 		} // z
@@ -141,6 +152,7 @@ public class XYCoordinates implements PlugIn {
 	}
 	
 	private void saveSelectionCoordinates(ImagePlus imp) {
+		//EU_HOU MISSING Bundle
 		SaveDialog sd = new SaveDialog("Save Coordinates as Text...", imp.getTitle(), ".csv");
 		String name = sd.getFileName();
 		if (name == null)
@@ -160,6 +172,7 @@ public class XYCoordinates implements PlugIn {
 					rt.addValue("Y", r.y+y);
 					if (rgb) {
 						int c = ip.getPixel(r.x+x,r.y+y);
+						//EU_HOU MISSING Bundle =4
 						rt.addValue("Red", (c&0xff0000)>>16);
 						rt.addValue("Green", (c&0xff00)>>8);
 						rt.addValue("Blue", c&0xff);

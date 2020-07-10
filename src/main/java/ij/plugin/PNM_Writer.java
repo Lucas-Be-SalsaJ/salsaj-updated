@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.process.*;
@@ -44,6 +45,7 @@ public class PNM_Writer implements PlugIn {
 				break;
 			}
 		if (path==null || path.equals("")) {
+			//EU_HOU MISSING Bundle
 			SaveDialog od = new SaveDialog("PNM Writer", title, extension);
 			String dir=od.getDirectory();
 			String name=od.getFileName();
@@ -60,6 +62,7 @@ public class PNM_Writer implements PlugIn {
 			OutputStream fileOutput = new FileOutputStream(path);
 			DataOutputStream output = new DataOutputStream(fileOutput);
 			int w = img.getWidth(), h = img.getHeight();
+			//EU_HOU MISSING Bundle
 			output.writeBytes((isGray ? "P5" : "P6")
 					+ "\n# Written by ImageJ PNM Writer\n"
 					+ w + " " + h + "\n255\n");
@@ -94,6 +97,7 @@ public class PNM_Writer implements PlugIn {
 		if (max<256) max=256;
 		try {
 			DataOutputStream output = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(path)));
+			//EU_HOU MISSING Bundle
 			output.writeBytes("P5\n# Written by ImageJ PNM Writer\n" + ip.getWidth() + " " + ip.getHeight() + "\n"+max+"\n");
 			for (int i=0; i<ip.getPixelCount(); i++)
 				output.writeShort(ip.get(i));

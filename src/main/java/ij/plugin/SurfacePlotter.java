@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.plugin.filter.*;
@@ -44,6 +45,7 @@ public class SurfacePlotter implements PlugIn {
 		if (img==null)
 			{IJ.noImage(); return;}
 		if (img.getType()==ImagePlus.COLOR_RGB)
+			//EU_HOU MISSING Bundle
 			{IJ.error("Surface Plotter", "Grayscale or pseudo-color image required"); return;}
 		invertedLut = img.getProcessor().isInvertedLut();
 		if (firstTime) {
@@ -69,9 +71,11 @@ public class SurfacePlotter implements PlugIn {
 			for (int i=1;i<=stackSource.getSize();i++)
 				stack.addSlice(null, plot.duplicate().getPixels());
 			stack.setPixels(plot.getPixels(), 1);
+			//EU_HOU MISSING Bundle
 			ImagePlus plots = new ImagePlus("Surface Plot", stack);
 			plots.show();
 			for (int i=2;i<=stackSource.getSize();i++) {
+				//EU_HOU MISSING Bundle
 				IJ.showStatus("Drawing slice " + i + "..." + " (" + (100*(i-1)/stackSource.getSize()) + "% done)");
 				ip = stackSource.getProcessor(i);
 				plot = makeSurfacePlot(ip);
@@ -82,6 +86,7 @@ public class SurfacePlotter implements PlugIn {
 			}
 		} else {
 			ImageProcessor plot = makeSurfacePlot(img.getProcessor());
+			//EU_HOU MISSING Bundle
 			new ImagePlus("Surface Plot", plot).show();
 		}
 		
@@ -90,10 +95,12 @@ public class SurfacePlotter implements PlugIn {
       		long lend = end.getTime();
       		long difference = lend - lstart;
 		IJ.register(SurfacePlotter.class);
+		//EU_HOU MISSING Bundle
 		IJ.showStatus("Done in "+difference+" msec." );
 	}
 	
 	boolean showDialog() {
+		//EU_HOU MISSING Bundle =8
 		GenericDialog gd = new GenericDialog("Surface Plotter");
 		//gd.addNumericField("Plot Width (pixels):", plotWidth, 0);
 		//gd.addNumericField("Angle (-90-90 degrees):", angleInDegrees, 0);

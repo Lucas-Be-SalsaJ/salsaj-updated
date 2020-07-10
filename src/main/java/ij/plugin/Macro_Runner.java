@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.io.*;
@@ -31,6 +32,7 @@ public class Macro_Runner implements PlugIn {
 		}
 		String path = null;
 		if (name.equals("")) {
+			//EU_HOU MISSING Bundle
 			OpenDialog od = new OpenDialog("Run Macro or Script...", path);
 			String directory = od.getDirectory();
 			name = od.getFileName();
@@ -122,6 +124,7 @@ public class Macro_Runner implements PlugIn {
 		}
 		if (IJ.debugMode) IJ.log("runMacro: "+path+" ("+name+")");
 		if (!exists || f==null) {
+			//EU_HOU MISSING Bundle
             IJ.error("RunMacro", "Macro or script not found:\n \n"+path);
 			return null;
 		}
@@ -186,6 +189,7 @@ public class Macro_Runner implements PlugIn {
 			ClassLoader pcl = IJ.getClassLoader();
 			InputStream is = pcl.getResourceAsStream(name);
 			if (is==null) {
+				//EU_HOU MISSING Bundle
 				IJ.error("Macro Runner", "Unable to load \""+name+"\" from jar file");
 				return null;
 			}
@@ -198,6 +202,7 @@ public class Macro_Runner implements PlugIn {
 			macro = sb.toString();
 			is.close();
 		} catch (IOException e) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Macro Runner", ""+e);
 		}
 		if (macro!=null)
@@ -228,7 +233,8 @@ public class Macro_Runner implements PlugIn {
         catch (IOException e) {
             String msg = e.getMessage();
             if (msg==null || msg.equals(""))
-                msg = "" + e;	
+                msg = "" + e;
+			//EU_HOU MISSING Bundle
             IJ.showMessage("Macro Runner", msg);
         }
 		if (macro!=null)
@@ -328,6 +334,7 @@ public class Macro_Runner implements PlugIn {
 	public static boolean downloadJar(String url) {
 		String name = url.substring(url.lastIndexOf("/")+1);
 		boolean ok = false;
+		//EU_HOU MISSING Bundle =2
 		String msg = name+" was not found in the plugins\nfolder or it is outdated. Click \"OK\" to download\nit from the ImageJ website.";
 		GenericDialog gd = new GenericDialog("Download "+name+"?");
 		gd.addMessage(msg);
@@ -335,6 +342,7 @@ public class Macro_Runner implements PlugIn {
 		if (!gd.wasCanceled()) {
 			ok = (new PluginInstaller()).install(IJ.URL+url);
 			if (!ok)
+				//EU_HOU MISSING Bundle
 				IJ.error("Unable to download "+name+" from "+IJ.URL+url);
 		}
 		return ok;

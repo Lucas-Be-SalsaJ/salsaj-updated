@@ -36,7 +36,7 @@ public class Prefs {
 	 */
 	/*public static final String PROPS_NAME = "IJ_Props.txt";
 	public static final String PREFS_NAME = "IJ_Prefs.txt";*/
-	public static final String PROPS_NAME = "EUHOUProps.txt";
+	public static final String PROPS_NAME = "EUHOUProps";
 	public static final String PREFS_NAME = "EUHOUPrefs.txt";
 	/*
 	 * EU_HOU CHANGES END

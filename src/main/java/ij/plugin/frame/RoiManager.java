@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin.frame;
 import java.awt.*;
 import java.awt.event.*;
@@ -39,6 +40,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 	private static int rows = 15;
 	private static int lastNonShiftClick = -1;
 	private static boolean allowMultipleSelections = true;
+    //EU_HOU MISSING Bundle
 	private static String moreButtonLabel = "More "+'\u00bb';
 	private Panel panel;
 	private static Frame instance;
@@ -74,12 +76,15 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 	private double translateY = 10.0;
 	private static String errorMessage;
 
-
+	//EU_HOU CHANGES
+    ResourceBundle bundle=IJ.getToolBundle();
+	
 	/** Opens the "ROI Manager" window, or activates it if it is already open.
 	 * @see #RoiManager(boolean)
 	 * @see #getRoiManager
 	*/
 	public RoiManager() {
+        //EU_HOU MISSING Bundle
 		super("ROI Manager");
 		if (instance!=null) {
 			WindowManager.toFront(instance);
@@ -99,6 +104,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 
 	/** Constructs an ROIManager without displaying it. The boolean argument is ignored. */
 	public RoiManager(boolean b) {
+        //EU_HOU MISSING Bundle
 		super("ROI Manager");
 		list = new JList();
 		listModel = new DefaultListModel();
@@ -128,14 +134,29 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 		panel = new Panel();
 		int nButtons = BUTTONS;
 		panel.setLayout(new GridLayout(nButtons, 1, 5, 0));
-		addButton("Add [t]");
+		/*
+		 * EU_HOU CHANGES
+		 */
+		/*addButton("Add [t]");
 		addButton("Update");
 		addButton("Delete");
 		addButton("Rename...");
 		addButton("Measure");
 		addButton("Deselect");
 		addButton("Properties...");
-		addButton("Flatten [F]");
+		addButton("Flatten [F]");*/
+        addButton("RM_Add");
+        addButton("RM_Update");
+        addButton("RM_Delete");
+        addButton("RM_Rename");
+        addButton("RM_Open");
+        addButton("RM_Save");
+        addButton("RM_Measure");
+        addButton("RM_Deselect");
+        addButton("RM_Show_All");
+		/*
+		 * EU_HOU CHANGES END
+		 */
 		addButton(moreButtonLabel);
 		showAllCheckbox.addItemListener(this);
 		panel.add(showAllCheckbox);
@@ -158,7 +179,8 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 	}
 
 	void addButton(String label) {
-		Button b = new Button(label);
+		//EU_HOU Bundle
+		Button b = new Button(bundle.getString(label));
 		b.addActionListener(this);
 		b.addKeyListener(IJ.getInstance());
 		b.addMouseListener(this);
@@ -169,7 +191,10 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 	void addPopupMenu() {
 		pm = new PopupMenu();
 		GUI.scalePopupMenu(pm);
-		addPopupItem("Open...");
+		/*
+		 * EU_HOU CHANGES
+		 */
+		/*addPopupItem("Open...");
 		addPopupItem("Save...");
 		addPopupItem("Fill");
 		addPopupItem("Draw");
@@ -188,11 +213,40 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 		addPopupItem("Interpolate ROIs");
 		addPopupItem("Translate...");
 		addPopupItem("Help");
-		addPopupItem("Options...");
+		addPopupItem("Options...");*/
+        //EU_HOU Bundle
+        addPopupItem("RM_Draw");
+        //EU_HOU Bundle
+        addPopupItem("RM_Fill");
+        //EU_HOU Bundle
+        addPopupItem("RM_Label");
+        pm.addSeparator();
+        //EU_HOU Bundle
+        addPopupItem("RM_Combine");
+        //EU_HOU Bundle
+        addPopupItem("RM_Split");
+        //EU_HOU Bundle
+        addPopupItem("RM_Add_Particles");
+        //EU_HOU Bundle
+        addPopupItem("RM_Multi_Measure");
+        //EU_HOU Bundle
+        addPopupItem("Sort");
+        //EU_HOU Bundle
+        addPopupItem("Specify...");
+        //EU_HOU Bundle
+        addPopupItem("RM_Remove_Slice_Info");
+        //EU_HOU Bundle
+        addPopupItem("RM_Help");
+        //EU_HOU Bundle
+        addPopupItem("RM_Options...");
+		/*
+		 * EU_HOU CHANGES END
+		 */
 		add(pm);
 	}
 
 	void addPopupItem(String s) {
+		//EU_HOU CHANGES : NOT IMPLEMENTED
 		MenuItem mi=new MenuItem(s);
 		mi.addActionListener(this);
 		pm.add(mi);
@@ -346,6 +400,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 
 	boolean addRoi(Roi roi, boolean promptForName, Color color, int lineWidth) {
 		if (listModel==null)
+            //EU_HOU MISSING Bundle
 			IJ.log("<<Error: Uninitialized RoiManager>>");
 		ImagePlus imp = roi==null?getImage():WindowManager.getCurrentImage();
 		if (roi==null) {
@@ -353,6 +408,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 				return false;
 			roi = imp.getRoi();
 			if (roi==null) {
+	            //EU_HOU MISSING Bundle
 				error("The active image does not have a selection.");
 				return false;
 			}
@@ -493,6 +549,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 	/** Replaces the ROI at the specified index. */
 	public void setRoi(Roi roi, int index) {
     	if (index<0 || index>=rois.size())
+            //EU_HOU MISSING Bundle
     		throw new IllegalArgumentException("setRoi: Index out of range");
 		rois.set(index, (Roi)roi.clone());
 		updateShowAll();
@@ -559,11 +616,14 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 	boolean delete(boolean replacing) {
 		int count = getCount();
 		if (count==0)
+            //EU_HOU MISSING Bundle
 			return error("The ROI Manager is empty.");
 		int index[] = getSelectedIndexes();
 		if (index.length==0 || (replacing&&count>1)) {
+            //EU_HOU MISSING Bundle
 			String msg = "Delete all items on the list?";
 			if (replacing)
+	            //EU_HOU MISSING Bundle
 				msg = "Replace items on the list?";
 			canceled = false;
 			if (!IJ.isMacro() && !macro) {
@@ -624,11 +684,13 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 		boolean showingAll = ic!=null &&  ic.getShowAllROIs();
 		Roi roi = imp.getRoi();
 		if (roi==null) {
+            //EU_HOU MISSING Bundle
 			error("The active image does not have a selection.");
 			return false;
 		}
 		int index = list.getSelectedIndex();
 		if (index<0 && !showingAll)
+            //EU_HOU MISSING Bundle
 			return error("Exactly one item in the list must be selected.");
 		if (index>=0) {
 			if (clone) {
@@ -649,6 +711,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 	boolean rename(String name2) {
 		int index = list.getSelectedIndex();
 		if (index<0)
+            //EU_HOU MISSING Bundle
 			return error("Exactly one item in the list must be selected.");
 		String name = (String)listModel.getElementAt(index);
 		if (name2==null)
@@ -683,6 +746,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 	}
 
 	String promptForName(String name) {
+        //EU_HOU MISSING Bundle =2
 		GenericDialog gd = new GenericDialog("ROI Manager");
 		gd.addStringField("Rename As:", name, 20);
 		gd.showDialog();
@@ -784,6 +848,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 		Macro.setOptions(null);
 		String name = null;
 		if (path==null || path.equals("")) {
+            //EU_HOU MISSING Bundle
 			OpenDialog od = new OpenDialog("Open Selection(s)...", "");
 			String directory = od.getDirectory();
 			name = od.getFileName();
@@ -812,6 +877,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 			rois.add(roi);
 			errorMessage = null;
 		} else
+            //EU_HOU MISSING Bundle
 			errorMessage = "Unable to 	open ROI at "+path;
 		updateShowAll();
 	}
@@ -857,6 +923,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 				try {out.close();} catch (IOException e) {}
 		}
 		if (nRois==0 && errorMessage==null) {
+            //EU_HOU MISSING Bundle
 			errorMessage = "This ZIP archive does not contain \".roi\" files: " + path;
 			error(errorMessage);
 		}
@@ -865,6 +932,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 
 	boolean save() {
 		if (getCount()==0)
+            //EU_HOU MISSING Bundle
 			return error("The selection list is empty.");
 		int[] indexes = getIndexes();
 		if (indexes.length>1)
@@ -875,11 +943,13 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 
 	boolean saveOne(int[] indexes, String path) {
 		if (indexes.length==0)
+            //EU_HOU MISSING Bundle
 			return error("The list is empty");
 		Roi roi = (Roi)rois.get(indexes[0]);
 		if (path==null) {
 			Macro.setOptions(null);
 			String name = (String) listModel.getElementAt(indexes[0]);
+            //EU_HOU MISSING Bundle
 			SaveDialog sd = new SaveDialog("Save Selection...", name, ".roi");
 			String name2 = sd.getFileName();
 			if (name2 == null)
@@ -898,6 +968,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 			re.write(roi);
 		} catch (IOException e) {
 			errorMessage = e.getMessage();
+            //EU_HOU MISSING Bundle
 			IJ.error("ROI Manager", errorMessage);
 		}
 		if (Recorder.record && !IJ.isMacro())
@@ -908,6 +979,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 	boolean saveMultiple(int[] indexes, String path) {
 		Macro.setOptions(null);
 		if (path==null) {
+            //EU_HOU MISSING Bundle
 			SaveDialog sd = new SaveDialog("Save ROIs...", "RoiSet", ".zip");
 			String name = sd.getFileName();
 			if (name == null)
@@ -918,6 +990,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 			path = dir+name;
 		}
 		DataOutputStream out = null;
+        //EU_HOU MISSING Bundle
 		IJ.showStatus("Saving "+indexes.length+" ROIs "+" to "+path);
 		long t0 = System.currentTimeMillis();
 		String[] names = new String[listModel.size()];
@@ -950,6 +1023,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 		}
 		double time = (System.currentTimeMillis()-t0)/1000.0;
 		IJ.showProgress(1.0);
+        //EU_HOU MISSING Bundle
 		IJ.showStatus(IJ.d2s(time,3)+" seconds, "+indexes.length+" ROIs, "+path);
 		if (Recorder.record && !IJ.isMacro())
 			Recorder.record("roiManager", "Save", path);
@@ -1078,10 +1152,12 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 		} else {
 			GenericDialog gd = new GenericDialog("Multi Measure");
 			if (nSlices>1)
+	            //EU_HOU MISSING Bundle =3
 				gd.addCheckbox("Measure all "+nSlices+" slices", measureAll);
 			gd.addCheckbox("One row per slice", onePerSlice);
 			gd.addCheckbox("Append results", appendResults);
 			int columns = getColumnCount(imp, measurements)*indexes.length;
+            //EU_HOU MISSING Bundle =2
 			String str = nSlices==1?"this option":"both options";
 			gd.setInsets(10, 25, 0);
 			gd.addMessage(
@@ -1412,6 +1488,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 		}
 		ImagePlus imp = WindowManager.getCurrentImage();
 		if (n==getCount() && n>1 && !IJ.isMacro()) {
+            //EU_HOU MISSING Bundle =2
 			GenericDialog gd = new GenericDialog("ROI Manager");
 			gd.addMessage("Apply changes to all "+n+" selections?");
 			gd.showDialog();
@@ -1495,6 +1572,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 			{IJ.noImage(); return;}
 		ImageCanvas ic = imp.getCanvas();
 		if ((ic!=null && ic.getShowAllList()==null) && imp.getOverlay()==null && imp.getRoi()==null)
+            //EU_HOU MISSING Bundle
 			error("Image does not have an overlay or ROI");
 		else
 			IJ.doCommand("Flatten"); // run Image>Flatten in separate thread
@@ -1510,6 +1588,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 			return;
 		Roi[] rois = getSelectedRoisAsArray();
 		if (rois.length==1) {
+            //EU_HOU MISSING Bundle
 			error("More than one item must be selected, or none");
 			return;
 		}
@@ -1578,6 +1657,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 		if (imp==null) return;
 		Roi[] rois = getSelectedRoisAsArray();
 		if (rois.length==1) {
+            //EU_HOU MISSING Bundle
 			error("More than one item must be selected, or none");
 			return;
 		}
@@ -1625,6 +1705,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 		if (imp==null) return;
 		int[] indexes = getSelectedIndexes();
 		if (indexes.length==1) {
+            //EU_HOU MISSING Bundle
 			error("More than one item must be selected, or none");
 			return;
 		}
@@ -1778,6 +1859,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 
 	private void options() {
 		Color c = ImageCanvas.getShowAllColor();
+        //EU_HOU MISSING Bundle =4
 		GenericDialog gd = new GenericDialog("Options");
 		//gd.addPanel(makeButtonPanel(gd), GridBagConstraints.CENTER, new Insets(5, 0, 0, 0));
 		gd.addCheckbox("Associate \"Show All\" ROIs with slices", Prefs.showAllSliceOnly);
@@ -1832,6 +1914,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 		if (imp==null) return;
 		Roi roi = imp.getRoi();
 		if (roi==null || roi.getType()!=Roi.COMPOSITE) {
+            //EU_HOU MISSING Bundle
 			error("Image with composite selection required");
 			return;
 		}
@@ -1896,7 +1979,8 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 	ImagePlus getImage() {
 		ImagePlus imp = WindowManager.getCurrentImage();
 		if (imp==null) {
-			error("There are no images open.");
+            //EU_HOU Bundle
+			error(IJ.getBundle().getString("NoImgErr"));
 			return null;
 		} else
 			return imp;
@@ -2238,6 +2322,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 	}
 
 	private void translate() {
+        //EU_HOU MISSING Bundle =3
 		GenericDialog gd = new GenericDialog("Translate");
 		gd.addNumericField("X offset (pixels): ", translateX, 0);
 		gd.addNumericField("Y offset (pixels): ", translateY, 0);
@@ -2271,10 +2356,12 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 	private boolean save(String name, boolean saveSelected) {
 		errorMessage = null;
 		if (!name.endsWith(".zip") && !name.equals("")) {
+			//EU_HOU MISSING Bundle
 			errorMessage = "Name must end with '.zip'";
 			return error(errorMessage);
 		}
 		if (getCount()==0)
+			//EU_HOU MISSING Bundle
 			return error("The list is empty");
 		int[] indexes = null;
 		if (saveSelected)
@@ -2418,6 +2505,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 		if (imp==null || (imp.getCanvas()!=null && imp.getCanvas().getShowAllList()==null))
 			return;
 		if (n>0) {
+			//EU_HOU MISSING Bundle =4
 			GenericDialog gd = new GenericDialog("ROI Manager");
 			gd.addMessage("Save the "+n+" displayed ROIs as an overlay?");
 			gd.setOKLabel("Discard");
@@ -2724,6 +2812,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 			int currentSlice = imp.getCurrentSlice();
 			ResultsTable rtMulti = RoiManager.multiMeasure(imp, rois, appendResults);
 			mmResults = (ResultsTable)rtMulti.clone();
+			//EU_HOU MISSING Bundle
 			rtMulti.show("Results");
 			imp.setSlice(currentSlice);
 			if (rois.length>1)

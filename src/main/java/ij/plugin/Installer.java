@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.gui.*;
@@ -41,11 +42,11 @@ public class Installer implements PlugIn {
 	void installPlugin() {
 	String[] plugins = getPlugins();
 		if (plugins == null || plugins.length == 0) {
-			//EU_HOU Bundle
+			//EU_HOU MISSING Bundle
 			IJ.error("No plugins found");
 			return;
 		}
-	//EU_HOU Bundle
+	//EU_HOU MISSING Bundle
 	GenericDialog gd = new GenericDialog("Install Plugin", IJ.getInstance());
 		gd.addChoice("Plugin:", plugins, defaultPlugin);
 		gd.addChoice("Menu:", menus, menuStr);
@@ -64,7 +65,7 @@ public class Installer implements PlugIn {
 		IJ.register(Installer.class);
 		defaultPlugin = plugin;
 		if (command.equals("")) {
-			//EU_HOU Bundle
+			//EU_HOU MISSING Bundle
 			IJ.showMessage(TITLE, "Command required");
 			return;
 		}
@@ -93,15 +94,15 @@ public class Installer implements PlugIn {
 	int err = Menus.installPlugin(plugin, menu, command, shortcut, IJ.getInstance());
 		switch (err) {
 						case Menus.COMMAND_IN_USE:
-							//EU_HOU Bundle
+							//EU_HOU MISSING Bundle
 							IJ.showMessage(TITLE, "The command \"" + command + "\" \nis already being used.");
 							return;
 						case Menus.INVALID_SHORTCUT:
-							//EU_HOU Bundle
+							//EU_HOU MISSING Bundle
 							IJ.showMessage(TITLE, "The shortcut must be a single character or \"F1\"-\"F12\".");
 							return;
 						case Menus.SHORTCUT_IN_USE:
-							//EU_HOU Bundle
+							//EU_HOU MISSING Bundle
 							IJ.showMessage("The \"" + shortcut + "\" shortcut is already being used.");
 							return;
 						default:
@@ -125,7 +126,7 @@ public class Installer implements PlugIn {
 	PluginClassLoader loader = new PluginClassLoader(Menus.getPlugInsPath());
 		try {
 		Class c = loader.loadClass(plugin);
-		//EU_HOU Bundle
+		//EU_HOU MISSING Bundle
 		Method m = c.getDeclaredMethod("showAbout", new Class[0]);
 			if (m != null) {
 				hasShowAboutMethod = true;
@@ -133,7 +134,7 @@ public class Installer implements PlugIn {
 		} catch (Exception e) {}
 		//IJ.write("installAbout: "+plugin+" "+hasShowAboutMethod);
 		if (hasShowAboutMethod) {
-			//EU_HOU Bundle
+			//EU_HOU MISSING Bundle
 			Menus.installPlugin(plugin + "(\"about\")", Menus.ABOUT_MENU, plugin + "...", "", IJ.getInstance());
 		}
 	}

@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin.filter;
 import ij.*;
 import ij.gui.*;
@@ -88,10 +89,12 @@ public class Rotator implements ExtendedPlugInFilter, DialogListener {
 		Rectangle r = roi.getBounds();
 		if (r.width<imp.getWidth()) r.width = imp.getWidth();
 		if (r.height<imp.getHeight()) r.height = imp.getHeight();
+		//EU_HOU MISSING Bundle
 		IJ.showStatus("Rotate: Enlarging...");
 		if (imp.getStackSize()==1)
 			Undo.setup(Undo.COMPOUND_FILTER, imp);
 		IJ.run("Canvas Size...", "width="+r.width+" height="+r.height+" position=Center "+(fillWithBackground?"":"zero"));
+		//EU_HOU MISSING Bundle
 		IJ.showStatus("Rotating...");
 	}
 
@@ -130,14 +133,15 @@ public class Rotator implements ExtendedPlugInFilter, DialogListener {
 				macroOptions = macroOptions+" interpolation=None";
 			Macro.setOptions(macroOptions);
 		}
-		gd = new GenericDialog("Rotate");
-		gd.addSlider("Angle:", -90, 90, angle, 0.1);
-		gd.addNumericField("Grid lines:", gridLines, 0);
-		gd.addChoice("Interpolation:", methods, methods[interpolationMethod]);
+		//EU_HOU Bundle =6
+		gd = new GenericDialog(IJ.getPluginBundle().getString("Rotate"));
+		gd.addSlider(IJ.getPluginBundle().getString("AngleUnity"), -90, 90, angle, 0.1);
+		gd.addNumericField(IJ.getPluginBundle().getString("GridLines"), gridLines, 0);
+		gd.addChoice(IJ.getPluginBundle().getString("Interpolate"), methods, methods[interpolationMethod]);
 		if (bitDepth==8 || bitDepth==24)
-			gd.addCheckbox("Fill with background color", fillWithBackground);
+			gd.addCheckbox(IJ.getPluginBundle().getString("FillwithBg"), fillWithBackground);
 		if (canEnlarge)
-			gd.addCheckbox("Enlarge image", enlarge);
+			gd.addCheckbox(IJ.getPluginBundle().getString("EnlargetoFit"), enlarge);
 		else
 			enlarge = false;
 		gd.addPreviewCheckbox(pfr);
@@ -163,7 +167,8 @@ public class Rotator implements ExtendedPlugInFilter, DialogListener {
 		angle = gd.getNextNumber();
 		//only check for invalid input to "angle", don't care about gridLines
 		if (gd.invalidNumber()) {
-			if (gd.wasOKed()) IJ.error("Angle is invalid.");
+			//EU_HOU Bundle
+			if (gd.wasOKed()) IJ.error(IJ.getPluginBundle().getString("AngleErr"));
 			return false;
 		}
 		gridLines = (int)gd.getNextNumber();

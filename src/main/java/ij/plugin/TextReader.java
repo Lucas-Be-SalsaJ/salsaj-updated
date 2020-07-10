@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import java.awt.*;
 import java.awt.image.*;
@@ -20,6 +21,7 @@ public class TextReader implements PlugIn {
     
 	public void run(String arg) {
 		if (showDialog()) {
+			//EU_HOU MISSING Bundle
 			IJ.showStatus("Opening: " + path);
 			ImageProcessor ip = open(path);
 			if (ip!=null)
@@ -30,6 +32,7 @@ public class TextReader implements PlugIn {
 	}
     
     boolean showDialog() {
+		//EU_HOU MISSING Bundle
         OpenDialog od = new OpenDialog("Open Text Image...", null);
         directory = od.getDirectory();
         name = od.getFileName();
@@ -78,7 +81,8 @@ public class TextReader implements PlugIn {
             if (msg==null || msg.equals(""))
                 msg = ""+e;
 			IJ.showProgress(1.0);
-            if (!hideErrorMessages) 
+            if (!hideErrorMessages)
+    			//EU_HOU MISSING Bundle
             	IJ.error("Text Reader", msg);
             ip = null;
         }
@@ -116,7 +120,8 @@ public class TextReader implements PlugIn {
                     if (lines==1 && wordsPerLine>0)
                         width = wordsPerLine;
                     if (lines>1 && wordsPerLine!=0 && wordsPerLine!=wordsInPreviousLine)
-                        throw new IOException("Line "+lines+ " is not the same length as the first line.");
+            			//EU_HOU MISSING Bundle
+                    	throw new IOException("Line "+lines+ " is not the same length as the first line.");
                     if (wordsPerLine!=0)
                         wordsInPreviousLine = wordsPerLine;
                     wordsPerLine = 0;

@@ -1,3 +1,4 @@
+//EU_HOU
 /**
 This plugin, written by Jon Harmon, implements the File/Open Next command.
 It opens the "next" image in a directory, where "next" can be the
@@ -37,8 +38,10 @@ public class NextImageOpener implements PlugIn {
  		imp0 = IJ.getImage();
  		// get current image directory
  		String currentPath = getDirectory(imp0);
+ 		//EU_HOU MISSING Bundle
 		if (IJ.debugMode) IJ.log("OpenNext.currentPath:" + currentPath);
 		if (currentPath==null) {
+	 		//EU_HOU MISSING Bundle
 			IJ.error("Next Image", "Directory information for \""+imp0.getTitle()+"\" not found.");
 			return;
 		}
@@ -83,15 +86,20 @@ public class NextImageOpener implements PlugIn {
 			String msg;
 			String name = imp0.getTitle();
 			if (name.length()>22)
-				msg = "Save changes to\n" + "\"" + name + "\"?";
+		 		//EU_HOU Bundle
+				msg = IJ.getBundle().getString("SaveChanges") + "\n" + "\"" + name + "\"?";
 			else
-				msg = "Save changes to \"" + name + "\"?";
-			YesNoCancelDialog d = new YesNoCancelDialog(imp0.getWindow(), "ImageJ", msg);
+		 		//EU_HOU Bundle
+				msg = IJ.getBundle().getString("SaveChanges") + " \"" + name + "\"?";
+			//EU_HOU Bundle
+			YesNoCancelDialog d = new YesNoCancelDialog(imp0.getWindow(), "SalsaJ", msg);
 			if (d.cancelPressed())
+				//EU_HOU MISSING Bundle
 				return "Canceled";
 			else if (d.yesPressed()) {
 				FileSaver fs = new FileSaver(imp0);
 				if (!fs.save())
+					//EU_HOU MISSING Bundle
 					return "Canceled";
 			}
 			imp0.changes = false;
@@ -119,6 +127,7 @@ public class NextImageOpener implements PlugIn {
 				break;
 			}
 		}
+ 		//EU_HOU MISSING Bundle
 		if (IJ.debugMode) IJ.log("OpenNext.thisfile:" + thisfile);
 		if(thisfile == -1) return null;// can't find current image
 		
@@ -130,6 +139,7 @@ public class NextImageOpener implements PlugIn {
 		// keep on going until an image file is found or we get back to beginning
 		while (candidate!=thisfile) {
 			String nextPath = path + names[candidate];
+	 		//EU_HOU MISSING Bundle
 			if (IJ.debugMode) IJ.log("OpenNext: "+ candidate + "  " + names[candidate]);
 			File nextFile = new File(nextPath);
 			boolean canOpen = true;
@@ -154,6 +164,7 @@ public class NextImageOpener implements PlugIn {
 			}
 			
 		}
+ 		//EU_HOU MISSING Bundle
 		if (IJ.debugMode) IJ.log("OpenNext: Search failed");
 		return null;
 	}

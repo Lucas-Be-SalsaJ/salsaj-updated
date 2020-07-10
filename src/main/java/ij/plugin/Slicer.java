@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.process.*;
@@ -59,11 +60,13 @@ public class Slicer implements PlugIn, TextListener, ItemListener {
 		int roiType = roi!=null?roi.getType():0;
 		// stack required except for ROI = none or RECT
 		if (stackSize<2 && roi!=null && roiType!=Roi.RECTANGLE) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Reslice...", "Stack required");
 			return;
 		}
 		// permissible ROI types: none,RECT,*LINE
 		if (roi!=null && roiType!=Roi.RECTANGLE && roiType!=Roi.LINE && roiType!=Roi.POLYLINE && roiType!=Roi.FREELINE) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Reslice...", "Line or rectangular selection required");
 			return;
 		}
@@ -88,6 +91,7 @@ public class Slicer implements PlugIn, TextListener, ItemListener {
 			imp.deleteRoi();
 		else
 			imp.draw();
+		//EU_HOU MISSING Bundle
 		IJ.showStatus(IJ.d2s(((System.currentTimeMillis()-startTime)/1000.0),2)+" seconds");
 	}
 
@@ -114,8 +118,10 @@ public class Slicer implements PlugIn, TextListener, ItemListener {
 				imp2 = resliceRectOrLine(imp);
 		 } else {// we assert roiType==Roi.POLYLINE || roiType==Roi.FREELINE
 				String status = imp.getStack().isVirtual()?"":null;
+				//EU_HOU MISSING Bundle
 				IJ.showStatus("Reslice...");
 				ImageProcessor ip2 = getSlice(imp, 0.0, 0.0, 0.0, 0.0, status);
+				//EU_HOU MISSING Bundle
 				imp2 = new ImagePlus("Reslice of "+imp.getShortTitle(), ip2);
 		 }
 		 if (nointerpolate) { // restore calibration
@@ -197,6 +203,7 @@ public class Slicer implements PlugIn, TextListener, ItemListener {
 				ImagePlus tmp2 = reslice(tmp1);
 				int slices2 = tmp2.getStackSize();
 				if (imp2==null) {
+					//EU_HOU MISSING Bundle
 					imp2 = tmp2.createHyperStack("Reslice of "+imp.getTitle(), channels, slices2, frames, tmp2.getBitDepth());
 					stack2 = imp2.getStack();
 				}
@@ -239,6 +246,7 @@ public class Slicer implements PlugIn, TextListener, ItemListener {
 			ImagePlus tmp2 = reslice(tmp1);
 			int frames2 = tmp2.getStackSize();
 			if (imp2==null) {
+				//EU_HOU MISSING Bundle
 				imp2 = tmp2.createHyperStack("Reslice of "+imp.getTitle(), channels, 1, frames2, tmp2.getBitDepth());
 				stack2 = imp2.getStack();
 			}
@@ -283,12 +291,15 @@ public class Slicer implements PlugIn, TextListener, ItemListener {
 			flip = flipS;
 			sliceCount = sliceCountS;
 		}
+		//EU_HOU MISSING Bundle =2
 		GenericDialog gd = new GenericDialog("Reslice");
 		gd.addNumericField("Output spacing ("+units+"):", outputSpacing, 3);
 		if (line) {
 			if (!IJ.isMacro()) outputSlices=sliceCount;
+			//EU_HOU MISSING Bundle
 			gd.addNumericField("Slice_count:", outputSlices, 0);
 		} else
+			//EU_HOU MISSING Bundle =7
 			gd.addChoice("Start at:", starts, startAt);
 		gd.addCheckbox("Flip vertically", flip);
 		gd.addCheckbox("Rotate 90 degrees", rotate);
@@ -418,6 +429,7 @@ public class Slicer implements PlugIn, TextListener, ItemListener {
 				return null;
 
 		 if (outputSlices==0) {
+				//EU_HOU MISSING Bundle
 				IJ.error("Reslicer", "Output Z spacing ("+IJ.d2s(outputZSpacing,0)+" pixels) is too large.\n"
 					+"Is the voxel size in Image>Properties correct?.");
 				return null;
@@ -443,6 +455,7 @@ public class Slicer implements PlugIn, TextListener, ItemListener {
 				if (IJ.escapePressed())
 					{IJ.beep(); imp.draw(); return null;}
 		 }
+			//EU_HOU MISSING Bundle
 		 return new ImagePlus("Reslice of "+imp.getShortTitle(), stack2);
 	}
 
@@ -452,6 +465,7 @@ public class Slicer implements PlugIn, TextListener, ItemListener {
 		 int flags = NewImage.FILL_BLACK + NewImage.CHECK_AVAILABLE_MEMORY;
 		 ImagePlus imp2 = NewImage.createImage("temp", w2, h2, d2, bitDepth, flags);
 		 if (imp2!=null && imp2.getStackSize()==d2)
+				//EU_HOU MISSING Bundle
 				IJ.showStatus("Reslice... (press 'Esc' to abort)");
 		 if (imp2==null)
 				return null;
@@ -487,6 +501,7 @@ public class Slicer implements PlugIn, TextListener, ItemListener {
 					if (i==0) ip2 = ip.createProcessor(line.length, stackSize);
 					putRow(ip2, 0, i, line, line.length);
 				}
+				//EU_HOU MISSING Bundle
 				if (status!=null) IJ.showStatus("Slicing: "+status +i+"/"+stackSize);
 		 }
 		 Calibration cal = imp.getCalibration();
@@ -681,12 +696,15 @@ public class Slicer implements PlugIn, TextListener, ItemListener {
 	String getSize(double inSpacing, double outSpacing, int count) {
 		 int size = getOutputStackSize(inSpacing, outSpacing, count);
 		 int mem = getAvailableMemory();
+		 //EU_HOU MISSING Bundle
 		 String available = mem!=-1?" ("+mem+"MB free)":"";
 		 if (message!=null)
 				message.setForeground(mem!=-1&&size>mem?Color.red:Color.black);
 		 if (size>0)
+				//EU_HOU MISSING Bundle
 				return size+"MB"+available;
 		 else
+				//EU_HOU MISSING Bundle
 				return "<1MB"+available;
 	}
 

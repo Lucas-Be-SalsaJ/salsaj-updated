@@ -1,3 +1,4 @@
+//EU_HOU
 package ij;
 import ij.gui.*;
 import ij.process.*;
@@ -17,6 +18,10 @@ import java.net.*;
 import java.awt.image.*;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+//EU_HOU CHANGES : import Level and Logger
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 /**
 This frame is the main ImageJ class.
@@ -77,9 +82,19 @@ public class ImageJ extends Frame implements ActionListener,
 	MouseListener, KeyListener, WindowListener, ItemListener, Runnable {
 
 	/** Plugins should call IJ.getVersion() or IJ.getFullVersion() to get the version string. */
-	public static final String VERSION = "1.53c";
+    //EU_HOU CHANGES : EU_HOU Version for SalsaJ (to be modified)
+	public static final String VERSION = "3.0";
 	public static final String BUILD = "";
-	public static Color backgroundColor = new Color(237,237,237);
+	
+    /*
+     * EU_HOU CHANGES : EU_HOU Couleur
+     */
+	//public static Color backgroundColor = new Color(237,237,237);
+    public static Color backgroundColor = new Color(249, 209, 94);
+    public static Color foregroundColor = new Color(28, 87, 165);
+    /*
+     * EU_HOU END CHANGES
+     */
 	/** SansSerif, 12-point, plain font. */
 	public static final Font SansSerif12 = new Font("SansSerif", Font.PLAIN, 12);
 	/** Address of socket where Image accepts commands */
@@ -120,6 +135,18 @@ public class ImageJ extends Frame implements ActionListener,
 		
 	boolean hotkey;
 	
+	/*
+	 * EU_HOU CHANGES
+	 */
+    private Locale lang;
+    private ResourceBundle menubun, plgbun, colorbun, blitbun, toolbun;
+    //private static History hist;
+    private Panel euHouExtra;
+    private EuHouToolbar euHouTool;
+	/*
+	 * EU_HOU CHANGES END
+	 */
+	
 	/** Creates a new ImageJ frame that runs as an application. */
 	public ImageJ() {
 		this(null, STANDALONE);
@@ -135,33 +162,96 @@ public class ImageJ extends Frame implements ActionListener,
 		this(applet, STANDALONE);
 	}
 
+	/*
+	 * EU_HOU ADD
+	 */
+    private static String readLocale() {
+        String is = null;
+        try {
+            BufferedReader bf = new BufferedReader(new FileReader(IJ.getDirectory("home") + ".salsaj_lang"));
+            is = bf.readLine();
+            bf.close();
+        } catch (IOException ex) {
+            Logger.getLogger(ImageJ.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return is;
+    }
+	/*
+	 * EU_HOU ADD END
+	 */
+	
 	/** If 'applet' is not null, creates a new ImageJ frame that runs as an applet.
 		If  'mode' is ImageJ.EMBEDDED and 'applet is null, creates an embedded 
 		(non-standalone) version of ImageJ. */
 	public ImageJ(java.applet.Applet applet, int mode) {
-		super("ImageJ");
+		//EU_HOU Bundle : ImageJ to SalsaJ
+		super("SalsaJ");
 		if ((mode&DEBUG)!=0)
 			IJ.setDebugMode(true);
 		mode = mode & 255;
+		//EU_HOU MISSING Bundle
 		if (IJ.debugMode) IJ.log("ImageJ starting in debug mode: "+mode);
 		embedded = applet==null && (mode==EMBEDDED||mode==NO_SHOW);
 		this.applet = applet;
+		/*
+         *  EU_HOU ADD
+         */
+        // TB 02/10/09 reads lang 
+        lang = Locale.getDefault();
+        String is = ImageJ.readLocale();
+        if (is != null) {
+            lang = new Locale(is);
+        }
+
+        menubun = ResourceBundle.getBundle("ij/i18n/MenusBundle", lang);
+        plgbun = ResourceBundle.getBundle("ij/i18n/PluginBundle", lang);
+        colorbun = ResourceBundle.getBundle("ij/i18n/ColorBundle", lang);
+        blitbun = ResourceBundle.getBundle("ij/i18n/BlitterBundle", lang);
+        toolbun = ResourceBundle.getBundle("ij/i18n/ToolBundle", lang);
+
+        IJ.setLocale(lang);
+        IJ.setBundle(menubun);
+        IJ.setPluginBundle(plgbun);
+        IJ.setColorBundle(colorbun);
+        IJ.setOpBundle(blitbun);
+        IJ.setToolBundle(toolbun);
+        /*
+         *  EU_HOU ADD END
+         */
 		String err1 = Prefs.load(this, applet);
 		setBackground(backgroundColor);
+		//EU_HOU CHANGES : added setForeground
+		setForeground(foregroundColor);
 		Menus m = new Menus(this, applet);
 		String err2 = m.addMenuBar();
 		m.installPopupMenu(this);
-		setLayout(new BorderLayout());
 		
+		/*
+		 * EU_HOU CHANGES
+		 */
+		/*setLayout(new BorderLayout());
 		// Tool bar
 		toolbar = new Toolbar();
 		toolbar.addKeyListener(this);
-		add("Center", toolbar);
+		add("Center", toolbar);*/
+        //EU_HOU ToolBar position
+        setLayout(new GridLayout(3, 1));
+        //EU_HOU Tool bar & euHou bar
+        euHouTool = new EuHouToolbar();
+        euHouTool.addKeyListener(this);
+        add(euHouTool);
+        toolbar = new Toolbar();
+        toolbar.addKeyListener(this);
+        add(toolbar);
+		/*
+		 * EU_HOU CHANGES END
+		 */
 
 		// Status bar
 		statusBar = new Panel();
 		statusBar.setLayout(new BorderLayout());
-		statusBar.setForeground(Color.black);
+		//EU_HOU CHANGES : default: setForeground(Color.black)
+		statusBar.setForeground(foregroundColor);
 		statusBar.setBackground(backgroundColor);
 		statusLine = new JLabel();
 		double scale = Prefs.getGuiScale();
@@ -173,6 +263,8 @@ public class ImageJ extends Frame implements ActionListener,
 		progressBar.addKeyListener(this);
 		progressBar.addMouseListener(this);
 		statusBar.add("East", progressBar);
+		//EU_HOU CHANGES : added .setSize()
+        statusBar.setSize((int) toolbar.getSize().getWidth(), toolbar.getSize().height);
 		add("South", statusBar);
 
 		IJ.init(this, applet);
@@ -201,6 +293,13 @@ public class ImageJ extends Frame implements ActionListener,
 					if (IJ.debugMode) IJ.log("pack()");
 					if (!Prefs.jFileChooserSettingChanged)
 						Prefs.useJFileChooser = true;
+						/*
+						 * EU_HOU CHANGES
+						 */
+						Prefs.set("options.ext", ".xls");
+						/*
+						 * EU_HOU CHANGES END
+						 */
 				} else if (IJ.isMacOSX()) {
 					Rectangle maxBounds = GUI.getMaxWindowBounds(this);
 					if (loc.x+size.width>maxBounds.x+maxBounds.width)
@@ -230,7 +329,17 @@ public class ImageJ extends Frame implements ActionListener,
 			loadCursors();
 		(new ij.macro.StartupRunner()).run(batchMode); // run RunAtStartup and AutoRun macros
 		IJ.showStatus(version()+ m.getPluginCount() + " commands; " + m.getMacroCount() + str);
- 	}
+ 	
+	/*
+	 * EU_HOU CHANGES
+	 */
+       //splash screen
+       AboutSalsaJ about=new AboutSalsaJ("SalsaJ",getLocale().getLanguage());
+       about.drawAbout();
+	/*
+	 * EU_HOU CHANGES END
+	 */
+	}
  	
  	private void loadCursors() {
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -272,7 +381,8 @@ public class ImageJ extends Frame implements ActionListener,
 	}
 	
     void setIcon() throws Exception {
-		URL url = this.getClass().getResource("/microscope.gif");
+    	//EU_HOU CHANGES : EU_HOU Icon (default:microscope.gif)
+		URL url = this.getClass().getResource("/images/salsaj.png");
 		if (url==null) return;
 		Image img = createImage((ImageProducer)url.getContent());
 		if (img!=null) setIconImage(img);
@@ -363,6 +473,7 @@ public class ImageJ extends Frame implements ActionListener,
 				new Executer(cmd, imp);
 			}
 			lastKeyCommand = null;
+			//EU_HOU MISSING Bundle
 			if (IJ.debugMode) IJ.log("actionPerformed: time="+ellapsedTime+", "+e);
 		}
 	}
@@ -386,6 +497,7 @@ public class ImageJ extends Frame implements ActionListener,
 			System.gc();
 		IJ.showStatus(version()+IJ.freeMemory());
 		if (IJ.debugMode)
+			//EU_HOU MISSING Bundle
 			IJ.log("Windows: "+WindowManager.getWindowCount());
 	}
 	
@@ -394,7 +506,8 @@ public class ImageJ extends Frame implements ActionListener,
 	}
 
 	private String version() {
-		return "ImageJ "+VERSION+BUILD + "; "+"Java "+System.getProperty("java.version")+(IJ.is64Bit()?" [64-bit]; ":" [32-bit]; ");
+		//EU_HOU Bundle
+		return "SalsaJ "+VERSION+BUILD + "; "+"Java "+System.getProperty("java.version")+(IJ.is64Bit()?" [64-bit]; ":" [32-bit]; ");
 	}
 	
 	public void mouseReleased(MouseEvent e) {}
@@ -410,6 +523,7 @@ public class ImageJ extends Frame implements ActionListener,
 			return;
 		char keyChar = e.getKeyChar();
 		int flags = e.getModifiers();
+		//EU_HOU MISSING Bundle
 		if (IJ.debugMode) IJ.log("keyPressed: code=" + keyCode + " (" + KeyEvent.getKeyText(keyCode)
 			+ "), char=\"" + keyChar + "\" (" + (int)keyChar + "), flags="
 			+ KeyEvent.getKeyModifiersText(flags));
@@ -600,6 +714,7 @@ public class ImageJ extends Frame implements ActionListener,
 	public void keyTyped(KeyEvent e) {
 		char keyChar = e.getKeyChar();
 		int flags = e.getModifiers();
+		//EU_HOU MISSING Bundle
 		if (IJ.debugMode) IJ.log("keyTyped: char=\"" + keyChar + "\" (" + (int)keyChar 
 			+ "), flags= "+Integer.toHexString(flags)+ " ("+KeyEvent.getKeyModifiersText(flags)+")");
 		if (keyChar=='\\' || keyChar==171 || keyChar==223) {
@@ -818,8 +933,9 @@ public class ImageJ extends Frame implements ActionListener,
 			}
 		}
 		if (windowClosed && !changes && Menus.window.getItemCount()>Menus.WINDOW_MENU_ITEMS && !(IJ.macroRunning()&&WindowManager.getImageCount()==0)) {
-			GenericDialog gd = new GenericDialog("ImageJ", this);
-			gd.addMessage("Are you sure you want to quit ImageJ?");
+			//EU_HOU Bundle =2
+			GenericDialog gd = new GenericDialog("SalsaJ", this);
+			gd.addMessage(IJ.getBundle().getString("QuitMessage"));
 			gd.showDialog();
 			quitting = !gd.wasCanceled();
 			windowClosed = false;
@@ -882,5 +998,21 @@ public class ImageJ extends Frame implements ActionListener,
 		progressBar.init((int)(ProgressBar.WIDTH*scale), (int)(ProgressBar.HEIGHT*scale));
 		pack();
 	}
+	
+    /*
+     *  EU_HOU ADD
+     */
+    /**
+     * Gets the locale attribute of the ImageJ object
+     *
+     * @return The locale value
+     */
+    public Locale getLocale() {
+        return lang;
+    }
+
+    /*
+     *  EU_HOU ADD END
+     */
 
 }

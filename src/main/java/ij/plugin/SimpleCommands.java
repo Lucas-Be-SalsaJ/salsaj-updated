@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.process.*;
@@ -67,6 +68,7 @@ public class SimpleCommands implements PlugIn {
 
 	private void reset() {
 		GenericDialog gd = new GenericDialog("");
+		//EU_HOU MISSING Bundle
 		gd.addChoice("Reset:", choices, choices[choiceIndex]);
 		gd.showDialog();
 		if (gd.wasCanceled()) return;
@@ -82,8 +84,10 @@ public class SimpleCommands implements PlugIn {
 		ImagePlus imp = IJ.getImage();
 		boolean wasUnlocked = imp.lockSilently();
 		if (wasUnlocked)
+			//EU_HOU MISSING Bundle
 			IJ.showStatus("\""+imp.getTitle()+"\" is not locked");
 		else {
+			//EU_HOU MISSING Bundle
 			IJ.showStatus("\""+imp.getTitle()+"\" is now unlocked");
 			IJ.beep();
 		}
@@ -92,18 +96,21 @@ public class SimpleCommands implements PlugIn {
 
 	private void resetClipboard() {
 		ImagePlus.resetClipboard();
+		//EU_HOU MISSING Bundle
 		IJ.showStatus("Clipboard reset");
 	}
 	
 	private void resetUndo() {
 		Undo.setup(Undo.NOTHING, null);
+		//EU_HOU MISSING Bundle
 		IJ.showStatus("Undo reset");
 	}
 	
 	private void rename() {
 		ImagePlus imp = IJ.getImage();
-		GenericDialog gd = new GenericDialog("Rename");
-		gd.addStringField("Title:", imp.getTitle(), 30);
+		//EU_HOU Bundle =2
+		GenericDialog gd = new GenericDialog(IJ.getBundle().getString("Rename"));
+		gd.addStringField(IJ.getPluginBundle().getString("Title") + ":", imp.getTitle(), 30);
 		gd.showDialog();
 		if (!gd.wasCanceled())
 			imp.setTitle(gd.getNextString());
@@ -125,6 +132,7 @@ public class SimpleCommands implements PlugIn {
 	}
 	
 	private void aboutPluginsHelp() {
+		//EU_HOU MISSING Bundle
 		IJ.showMessage("\"About Plugins\" Submenu", 
 			"Plugins packaged as JAR files can add entries\n"+
 			"to this submenu. There is an example at\n \n"+
@@ -139,6 +147,7 @@ public class SimpleCommands implements PlugIn {
 		String label2 = label;
 		if (label2==null)
 			label2 = "";
+		//EU_HOU MISSING Bundle
 		GenericDialog gd = new GenericDialog("Set Slice Label ("+n+")");
 		gd.addStringField("Label:", label2, 30);
 		gd.showDialog();
@@ -175,11 +184,13 @@ public class SimpleCommands implements PlugIn {
 	private void resultsToImage() {
 		ResultsTable rt = ResultsTable.getResultsTable();
 		if (rt==null || rt.size()==0) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Results to Image", "The Results table is empty");
 			return;
 		}
 		ImageProcessor ip = rt.getTableAsImage();
 		if (ip==null) return;
+		//EU_HOU MISSING Bundle
 		new ImagePlus("Results Table", ip).show();
 	}
 	
@@ -190,6 +201,7 @@ public class SimpleCommands implements PlugIn {
 	}
 
 	private void showMissingPluginsMessage() {
+		//EU_HOU MISSING Bundle
 		IJ.showMessage("Path Randomization", 
 			"Plugins were not loaded due to macOS Path Randomization.\n"+
 			"To work around this problem, move ImageJ.app out of the\n"+
@@ -223,19 +235,23 @@ public class SimpleCommands implements PlugIn {
 				if (WindowManager.getCurrentImage()==null)
 					IJ.noImage();
 				else
+					//EU_HOU MISSING Bundle
 					IJ.error("No file is associated with front image");
 			} else
+				//EU_HOU MISSING Bundle
 				IJ.error("Folder not found: " + arg);
 			return;
 		}		
 		File dir = new File(path);
 		if (!dir.exists()) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Folder not found: " + arg);
 			return;
 		}
 		if (arg.equals("image")&& IJ.getImage() != null) {
 			File imgPath = new File(dir + File.separator + IJ.getImage().getTitle());
 			if (!imgPath.exists()) {
+				//EU_HOU MISSING Bundle
 				IJ.error("Image not found");
 				return;
 			}
@@ -245,6 +261,7 @@ public class SimpleCommands implements PlugIn {
 		try {
 			desktop.open(dir);
 		} catch (Exception e) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Failed to Show Folder: " + e.toString());
 			return;
 		}
@@ -253,6 +270,7 @@ public class SimpleCommands implements PlugIn {
 	private void measureStack() {
 		ImagePlus imp = IJ.getImage();
 		if (imp.isLocked()) {
+			//EU_HOU MISSING Bundle
 			IJ.showStatus("Image is locked: \""+imp.getTitle()+"\"");
 			IJ.beep();
 		} else

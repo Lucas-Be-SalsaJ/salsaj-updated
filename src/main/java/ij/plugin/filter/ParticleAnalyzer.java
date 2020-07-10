@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin.filter;
 import java.awt.*;
 import java.awt.image.IndexColorModel;
@@ -223,6 +224,7 @@ public class ParticleAnalyzer implements PlugInFilter, Measurements {
 			return DONE;
 		}
 		if (imp.getBitDepth()==24 && !isThresholdedRGB(imp)) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Particle Analyzer",
 			"RGB images must be thresholded using\n"
 			+"Image>Adjust>Color Threshold.");
@@ -278,6 +280,7 @@ public class ParticleAnalyzer implements PlugInFilter, Measurements {
 			staticMinCircularity=0.0; staticMaxCircularity=1.0;
 			staticShowChoice = NOTHING;
 		}
+		//EU_HOU MISSING Bundle
 		GenericDialog gd = new GenericDialog("Analyze Particles");
 		minSize = staticMinSize;
 		maxSize = staticMaxSize;
@@ -311,15 +314,19 @@ public class ParticleAnalyzer implements PlugInFilter, Measurements {
 		}
 		if (scaled)
 			gd.setInsets(5, 0, 0);
+		//EU_HOU MISSING Bundle
 		gd.addStringField("Size ("+units+"):", minStr+"-"+maxStr, 12);
 		if (scaled) {
 			gd.setInsets(0, 40, 5);
+			//EU_HOU MISSING Bundle
 			gd.addCheckbox("Pixel units", pixelUnits);
 		}
+		//EU_HOU MISSING Bundle =2
 		gd.addStringField("Circularity:", IJ.d2s(minCircularity)+"-"+IJ.d2s(maxCircularity), 12);
 		gd.addChoice("Show:", showStrings, showStrings[showChoice]);
 		String[] labels = new String[8];
 		boolean[] states = new boolean[8];
+		//EU_HOU MISSING Bundle =8
 		labels[0]="Display results"; states[0] = (options&SHOW_RESULTS)!=0;
 		labels[1]="Exclude on edges"; states[1]=(options&EXCLUDE_EDGE_PARTICLES)!=0;
 		labels[2]="Clear results"; states[2]=(options&CLEAR_WORKSHEET)!=0;
@@ -525,10 +532,12 @@ public class ParticleAnalyzer implements PlugInFilter, Measurements {
 			measurements = Analyzer.getMeasurements();
 		measurements &= ~LIMIT;	 // ignore "Limit to Threshold"
 		if (rt==null) {
+			//EU_HOU MISSING Bundle
 			Frame table = WindowManager.getFrame("Results");
 			if (!showResults && table!=null) {
 				rt = new ResultsTable();
 				if (resetCounter && table instanceof TextWindow) {
+					//EU_HOU MISSING Bundle
 					IJ.run("Clear Results");
 					((TextWindow)table).close();
 					rt = Analyzer.getResultsTable();
@@ -665,6 +674,7 @@ public class ParticleAnalyzer implements PlugInFilter, Measurements {
 			sum += areas[i];
 		int places = Analyzer.getPrecision();
 		Calibration cal = imp.getCalibration();
+		//EU_HOU MISSING Bundle =4
 		summaryTable.addValue("Count", particleCount);
 		summaryTable.addValue("Total Area", sum);
 		summaryTable.addValue("Average Size", sum/particleCount);
@@ -736,6 +746,7 @@ public class ParticleAnalyzer implements PlugInFilter, Measurements {
 					replaceColor = level2+1.0;
 					int maxColor = imageType==BYTE?255:65535;
 					if (replaceColor>maxColor || replaceColor==fillColor) {
+						//EU_HOU MISSING Bundle
 						IJ.error("Particle Analyzer", "Unable to remove edge particles");
 						return false;
 					}
@@ -781,6 +792,7 @@ public class ParticleAnalyzer implements PlugInFilter, Measurements {
 			noThreshold = true;
 			ImageStatistics stats = imp.getStatistics();
 			if (imageType!=BYTE || (stats.histogram[0]+stats.histogram[255]!=stats.pixelCount)) {
+				//EU_HOU MISSING Bundle
 				IJ.error("Particle Analyzer",
 					"A thresholded image or 8-bit binary image is\n"
 					+"required. Threshold levels can be set using\n"
@@ -838,6 +850,7 @@ public class ParticleAnalyzer implements PlugInFilter, Measurements {
 		ImageProcessor ip2 = redirectIP!=null?redirectIP:ip;
 		wand.autoOutline(x, y, level1, level2, wandMode);
 		if (wand.npoints==0)
+			//EU_HOU MISSING Bundle
 			{IJ.log("wand error: "+x+" "+y); return;}
 		Roi roi = new PolygonRoi(wand.xpoints, wand.ypoints, wand.npoints, roiType);
 		Rectangle r = roi.getBounds();
@@ -915,9 +928,11 @@ public class ParticleAnalyzer implements PlugInFilter, Measurements {
 		if (maxCircularity>1.0 && rt.columnExists("Circ.") && rt.getValue("Circ.", rt.size()-1)==1.0) {
 			double perimeter = roi.getLength();
 			double circularity = perimeter==0.0?0.0:4.0*Math.PI*(stats.pixelCount/(perimeter*perimeter));
+			//EU_HOU MISSING Bundle
 			rt.addValue("Circ.", circularity);
 		}
 		if (recordStarts) {
+			//EU_HOU MISSING Bundle =2
 			rt.addValue("XStart", stats.xstart);
 			rt.addValue("YStart", stats.ystart);
 		}
@@ -931,8 +946,10 @@ public class ParticleAnalyzer implements PlugInFilter, Measurements {
 			if (Macro.getOptions()!=null && Interpreter.isBatchMode())
 				roiManager = Interpreter.getBatchModeRoiManager();
 			if (roiManager==null) {
+				//EU_HOU MISSING Bundle
 				Frame frame = WindowManager.getFrame("ROI Manager");
 				if (frame==null)
+					//EU_HOU MISSING Bundle =2
 					IJ.run("ROI Manager...");
 				frame = WindowManager.getFrame("ROI Manager");
 				if (frame==null || !(frame instanceof RoiManager))
@@ -1050,9 +1067,11 @@ public class ParticleAnalyzer implements PlugInFilter, Measurements {
 				}
 			}
 		} else if (outlines!=null && lastSlice) {
+			//EU_HOU MISSING Bundle
 			String title = imp!=null?imp.getTitle():"Outlines";
 			String prefix;
 			if (showChoice == MASKS)
+				//EU_HOU MISSING Bundle =3
 				prefix = "Mask of ";
 			else if (showChoice == ROI_MASKS)
 				prefix = "Count Masks of ";
@@ -1085,6 +1104,7 @@ public class ParticleAnalyzer implements PlugInFilter, Measurements {
 		if (showResults && rt.size()==0 && !(IJ.isMacro()||calledByPlugin) && (!processStack||slice==imp.getStackSize())) {
 			int digits = (int)level1==level1&&(int)level2==level2?0:2;
 			String range = IJ.d2s(level1,digits)+"-"+IJ.d2s(level2,digits);
+			//EU_HOU MISSING Bundle =2
 			String assummed = noThreshold?"assumed":"";
 			IJ.showMessage("Particle Analyzer", "No particles were detected. The "+assummed+"\nthreshold ("+range+") may not be correct.");
 		}

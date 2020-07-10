@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin.filter;
 import ij.*;
 import ij.process.*;
@@ -58,28 +59,44 @@ public class ImageProperties implements PlugInFilter, TextListener {
 		String yunit = cal.getYUnit();
 		String zunit = cal.getZUnit();
 		GenericDialog gd = new GenericDialog(imp.getTitle());
-		gd.addNumericField("Channels (c):", channels, 0);
-		gd.addNumericField("Slices (z):", slices, 0);
-		gd.addNumericField("Frames (t):", frames, 0);
+		/*
+		 * EU_HOU CHANGES
+		 */
+		//EU_HOU Bundle =2
+		gd.addNumericField(IJ.getBundle().getString("Width") + ":", imp.getWidth(), 0);
+		gd.addNumericField(IJ.getBundle().getString("Height") + ":", imp.getHeight(), 0);
+		/*
+		 * EU_HOU CHANGES END
+		 */
+		//EU_HOU Bundle =2
+		gd.addNumericField(IJ.getPluginBundle().getString("Channels") + ":", channels, 0);
+		gd.addNumericField(IJ.getBundle().getString("Slices") + ":", slices, 0);
+		gd.addNumericField(IJ.getPluginBundle().getString("Frames") + ":", frames, 0);
 		gd.setInsets(0, 5, 0);
+		//EU_HOU MISSING Bundle
 		gd.addMessage("Note: c*z*t must equal "+stackSize, null, Color.darkGray);
 		gd.setInsets(15, 0, 0);
 		if (legacyMacro)
-			gd.addStringField("Unit of length:", cal.getUnit());
+			//EU_HOU Bundle
+			gd.addStringField(IJ.getPluginBundle().getString("ScDiagUnit") + ":", cal.getUnit());
 		int fieldWidth = 9;
-		gd.addNumericField("Pixel_width:", cal.pixelWidth, digits, fieldWidth, null);		
+		//EU_HOU Bundle
+		gd.addNumericField(IJ.getPluginBundle().getString("Pixel_Width") + ":", cal.pixelWidth, digits, fieldWidth, null);		
 		gd.addToSameRow();
-		gd.addStringField("_", xunit, 5);				
-		gd.addNumericField("Pixel_height:", cal.pixelHeight, digits, fieldWidth, null);	
+		gd.addStringField("_", xunit, 5);
+		//EU_HOU Bundle
+		gd.addNumericField(IJ.getPluginBundle().getString("Pixel_Height") + ":", cal.pixelHeight, digits, fieldWidth, null);	
 		gd.addToSameRow();
-		gd.addStringField("_", yunit.equals(xunit)?SAME:yunit, 5);			
-		gd.addNumericField("Voxel_depth:", cal.pixelDepth, digits, fieldWidth, null);
+		gd.addStringField("_", yunit.equals(xunit)?SAME:yunit, 5);
+		//EU_HOU Bundle
+		gd.addNumericField(IJ.getPluginBundle().getString("Voxel_Depth") + ":", cal.pixelDepth, digits, fieldWidth, null);
 		gd.addToSameRow();
 		gd.addStringField("_", zunit.equals(xunit)?SAME:zunit, 5);			
 		gd.setInsets(10, 0, 5);
 		double interval = cal.frameInterval;
 		String intervalStr = IJ.d2s(interval, (int)interval==interval?0:2) + " " + cal.getTimeUnit();
-		gd.addStringField("Frame interval:", intervalStr);
+		//EU_HOU Bundle
+		gd.addStringField(IJ.getPluginBundle().getString("FrameInterval") + ":", intervalStr);
 		String xo = cal.xOrigin==(int)cal.xOrigin?IJ.d2s(cal.xOrigin,0):IJ.d2s(cal.xOrigin,2);
 		String yo = cal.yOrigin==(int)cal.yOrigin?IJ.d2s(cal.yOrigin,0):IJ.d2s(cal.yOrigin,2);
 		String zo = "";
@@ -87,9 +104,11 @@ public class ImageProperties implements PlugInFilter, TextListener {
 			zo = cal.zOrigin==(int)cal.zOrigin?IJ.d2s(cal.zOrigin,0):IJ.d2s(cal.zOrigin,2);
 			zo = "," + zo;
 		}
-		gd.addStringField("Origin (pixels):", xo+","+yo+zo);
+		//EU_HOU Bundle
+		gd.addStringField(IJ.getPluginBundle().getString("Origin") + ":", xo+","+yo+zo);
 		gd.setInsets(5, 20, 0);
-		gd.addCheckbox("Global", global1);
+		//EU_HOU Bundle
+		gd.addCheckbox(IJ.getPluginBundle().getString("Global"), global1);
 		nfields = gd.getNumericFields();
 		if (nfields!=null) {
 			pixelWidthField  = (TextField)nfields.elementAt(3);
@@ -119,6 +138,7 @@ public class ImageProperties implements PlugInFilter, TextListener {
  		if (channels*slices*frames==stackSize)
  			imp.setDimensions(channels, slices, frames);
  		else
+ 			//EU_HOU MISSING Bundle
  			IJ.error("Properties", "The product of channels ("+channels+"), slices ("+slices
  				+")\n and frames ("+frames+") must equal the stack size ("+stackSize+").");
 		String unit = "";

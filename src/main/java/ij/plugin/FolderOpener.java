@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import java.awt.*;
 import java.io.*;
@@ -80,6 +81,7 @@ public class FolderOpener implements PlugIn {
 				openAsVirtualStack = staticOpenAsVirtualStack;
 			}
 			arg = null;
+			//EU_HOU MISSING Bundle
 			String title = "Open Image Sequence...";
 			String macroOptions = Macro.getOptions();
 			if (macroOptions!=null) {
@@ -111,6 +113,7 @@ public class FolderOpener implements PlugIn {
 			directory = directory + "/";
 		String[] list = (new File(directory)).list();
 		if (list==null) {
+			//EU_HOU MISSING Bundle
 			IJ.error("File>Import>Image Sequence", "Directory not found: "+directory);
 			return;
 		}
@@ -142,6 +145,7 @@ public class FolderOpener implements PlugIn {
 		IJ.register(FolderOpener.class);
 		list = trimFileList(list);
 		if (list==null) return;
+		//EU_HOU MISSING Bundle
 		if (IJ.debugMode) IJ.log("FolderOpener: "+directory+" ("+list.length+" files)");
 		int width=0, height=0, stackSize=1, bitDepth=0;
 		ImageStack stack = null;
@@ -177,6 +181,7 @@ public class FolderOpener implements PlugIn {
 				}
 			}
 			if (width==0) {
+				//EU_HOU MISSING Bundle
 				IJ.error("Sequence Reader", "This folder does not appear to contain\n"
 				+ "any TIFF, JPEG, BMP, DICOM, GIF, FITS or PGM files.\n \n"
 				+ "   \""+directory+"\"");
@@ -247,6 +252,7 @@ public class FolderOpener implements PlugIn {
 				if (imp==null)
 					continue;
 				if (imp.getWidth()!=width || imp.getHeight()!=height) {
+					//EU_HOU MISSING Bundle
 					IJ.log(list[i] + ": wrong size; "+width+"x"+height+" expected, "+imp.getWidth()+"x"+imp.getHeight()+" found");
 					continue;
 				}
@@ -325,6 +331,7 @@ public class FolderOpener implements PlugIn {
 								}
 								stack = stack2;
 							} else {
+								//EU_HOU MISSING Bundle
 								IJ.log(list[i] + ": wrong bit depth; "+bitDepth+" expected, "+bitDepth2+" found");
 								break;
 							}
@@ -346,6 +353,7 @@ public class FolderOpener implements PlugIn {
 			}  // open images as stack
 			
 		} catch(OutOfMemoryError e) {
+			//EU_HOU MISSING Bundle
 			IJ.outOfMemory("FolderOpener");
 			if (stack!=null) stack.trim();
 		}
@@ -381,6 +389,7 @@ public class FolderOpener implements PlugIn {
 				imp2.setStack(stack);
 				double voxelDepth = DicomTools.getVoxelDepth(stack);
 				if (voxelDepth>0.0) {
+					//EU_HOU MISSING Bundle
 					if (IJ.debugMode) IJ.log("DICOM voxel depth set to "+voxelDepth+" ("+cal.pixelDepth+")");
 					cal.pixelDepth = voxelDepth;
 					imp2.setCalibration(cal);
@@ -453,6 +462,7 @@ public class FolderOpener implements PlugIn {
 	
 	boolean showDialog(ImagePlus imp, String[] list) {
 		int fileCount = list.length;
+		//EU_HOU MISSING Bundle =11
 		FolderOpenerDialog gd = new FolderOpenerDialog("Sequence Options", imp, list);
 		gd.addNumericField("Number of images:", fileCount, 0);
 		gd.addNumericField("Starting image:", 1, 0);
@@ -523,8 +533,10 @@ public class FolderOpener implements PlugIn {
 		if (filteredImages==0) {
 			if (title!=null) {
 				if (isRegex)
+					//EU_HOU MISSING Bundle
 					IJ.error(title, "None of the file names contain the regular expression '"+filter+"'.");
 				else
+					//EU_HOU MISSING Bundle
 					IJ.error(title, "None of the "+list.length+" files contain '"+filter+"' in the name.");
 			}
 			return null;

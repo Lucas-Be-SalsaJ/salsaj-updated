@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.io.*;
@@ -15,6 +16,7 @@ public class RoiReader implements PlugIn {
 	final int polygon=0, rect=1, oval=2, line=3,freeLine=4, segLine=5, noRoi=6,freehand=7, traced=8;
 
 	public void run(String arg) {
+		//EU_HOU MISSING Bundle
 		OpenDialog od = new OpenDialog("Open ROI...", arg);
 		String dir = od.getDirectory();
 		String name = od.getFileName();
@@ -26,6 +28,7 @@ public class RoiReader implements PlugIn {
 			String msg = e.getMessage();
 			if (msg==null || msg.equals(""))
 				msg = ""+e;
+			//EU_HOU MISSING Bundle
 			IJ.error("ROI Reader", msg);
 		}
 	}

@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.gui.*;
@@ -6,6 +7,9 @@ import ij.plugin.filter.*;
 import ij.measure.Calibration;
 import ij.plugin.frame.Recorder;
 import ij.macro.Interpreter;
+//EU_HOU CHANGES : added ResourceBundle
+import java.util.ResourceBundle;
+
 
 /** This plugin implements the Process/Image Calculator command.
 <pre>
@@ -27,7 +31,9 @@ public class ImageCalculator implements PlugIn {
 	private static boolean createWindow = true;
 	private static boolean floatResult;
 	private boolean processStack;
-	
+	//EU_HOU CHANGES
+    ResourceBundle bundle=IJ.getPluginBundle();
+
 	public void run(String arg) {
 		int[] wList = WindowManager.getIDList();
 		if (wList==null) {
@@ -43,20 +49,24 @@ public class ImageCalculator implements PlugIn {
 			else
 				titles[i] = "";
 		}
-		GenericDialog gd = new GenericDialog("Image Calculator");
+		//EU_HOU Bundle
+		GenericDialog gd = new GenericDialog(bundle.getString("TitleStr"));
 		String defaultItem;
 		if (title1.equals(""))
 			defaultItem = titles[0];
 		else
 			defaultItem = title1;
-		gd.addChoice("Image1:", titles, defaultItem);
-		gd.addChoice("Operation:", operators, operators[operator]);
+		//EU_HOU Bundle =2
+		gd.addChoice(bundle.getString("Image1"), titles, defaultItem);
+		gd.addChoice(bundle.getString("Operation"), operators, operators[operator]);
 		if (title2.equals(""))
 			defaultItem = titles[0];
 		else
 			defaultItem = title2;
-		gd.addChoice("Image2:", titles, defaultItem);
+		//EU_HOU Bundle
+		gd.addChoice(bundle.getString("Image2"), titles, defaultItem);
 		//gd.addStringField("Result:", "Result", 10);
+		//EU_HOU MISSING Bundle =2
 		gd.addCheckbox("Create new window", createWindow);
 		gd.addCheckbox("32-bit (float) result", floatResult);
 		gd.addHelp(IJ.URL+"/docs/menus/process.html#calculator");
@@ -92,6 +102,7 @@ public class ImageCalculator implements PlugIn {
 		if (img1==null || img2==null || params==null) return null;
 		operator = getOperator(params);
 		if (operator==-1)
+			//EU_HOU MISSING Bundle
 			throw new IllegalArgumentException("No valid operator");
 		createWindow = params.indexOf("create")!=-1;
 		floatResult= params.indexOf("32")!=-1 || params.indexOf("float")!=-1;
@@ -107,6 +118,7 @@ public class ImageCalculator implements PlugIn {
 		if (img1==null || img2==null || params==null) return;
 		operator = getOperator(params);
 		if (operator==-1)
+			//EU_HOU MISSING Bundle
 			{IJ.error("Image Calculator", "No valid operator"); return;}
 		createWindow = params.indexOf("create")!=-1;
 		floatResult= params.indexOf("32")!=-1 || params.indexOf("float")!=-1;
@@ -182,12 +194,14 @@ public class ImageCalculator implements PlugIn {
 		int size1 = img1.getStackSize();
 		int size2 = img2.getStackSize();
 		if (size1>1 && size2>1 && size1!=size2) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Image Calculator", "'Image1' and 'image2' must be stacks with the same\nnumber of slices, or 'image2' must be a single image.");
 			return null;
 		}
 		if (createWindow) {
 			img1 = duplicateStack(img1);
 			if (img1==null) {
+				//EU_HOU MISSING Bundle
 				IJ.error("Calculator", "Out of memory");
 				return null;
 			}
@@ -254,6 +268,7 @@ public class ImageCalculator implements PlugIn {
 		if (!(ip1 instanceof ByteProcessor))
 			ip1.resetMinAndMax();
 		if (createWindow) {
+			//EU_HOU MISSING Bundle
 			img3 = new ImagePlus("Result of "+img1.getTitle(), ip1);
 			img3.setCalibration(cal1);
 		} else
@@ -317,6 +332,7 @@ public class ImageCalculator implements PlugIn {
 			stack2 = null;
 			return null;
 		}
+		//EU_HOU MISSING Bundle
 		ImagePlus img3 = new ImagePlus("Result of "+img1.getTitle(), stack2);
 		img3.setCalibration(cal);
 		if (img3.getStackSize()==n) {

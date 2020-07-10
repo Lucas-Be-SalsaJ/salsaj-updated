@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin.filter;
 import ij.*;
 import ij.gui.*;
@@ -31,6 +32,7 @@ public class ScaleDialog implements PlugInFilter {
 		boolean isCalibrated = cal.scaled();
 		String length = "0.00";
 		
+		//EU_HOU MISSING Bundle
 		String scale = "<no scale>";
 		int digits = 2;
 		Roi roi = imp.getRoi();
@@ -54,16 +56,17 @@ public class ScaleDialog implements PlugInFilter {
 		
 		digits = Tools.getDecimalPlaces(measured);
 		int asDigits = aspectRatio==1.0?1:3;
-		SetScaleDialog gd = new SetScaleDialog("Set Scale", scale, length);
-		gd.addNumericField("Distance in pixels:", measured, digits, 8, null);
-		gd.addNumericField("Known distance:", known, 2, 8, null);
-		gd.addNumericField("Pixel aspect ratio:", aspectRatio, asDigits, 8, null);
-		gd.addStringField("Unit of length:", unit);
+		//EU_HOU Bundle =7
+		SetScaleDialog gd = new SetScaleDialog(IJ.getPluginBundle().getString("ScDiagTitle"), scale, length);
+		gd.addNumericField(IJ.getPluginBundle().getString("ScDiagDistPix") + ":", measured, digits, 8, null);
+		gd.addNumericField(IJ.getPluginBundle().getString("ScDiagDist") + ":", known, 2, 8, null);
+		gd.addNumericField(IJ.getPluginBundle().getString("ScDiagRatio") + ":", aspectRatio, asDigits, 8, null);
+		gd.addStringField(IJ.getPluginBundle().getString("ScDiagUnit") + ":", unit);
 		gd.addPanel(makeButtonPanel(gd), GridBagConstraints.EAST, new Insets(5, 0, 0, 0));
 		gd.setInsets(0, 30, 0);
-		gd.addCheckbox("Global", global1);
+		gd.addCheckbox(IJ.getPluginBundle().getString("ScDiagGlobal"), global1);
 		gd.setInsets(10, 0, 0);
-		gd.addMessage("Scale: "+"12345.789 pixels per centimeter");
+		gd.addMessage(IJ.getPluginBundle().getString("ScDiagScale") + ":" +"12345.789 pixels per centimeter");
 		gd.addHelp(IJ.URL+"/docs/menus/analyze.html#scale");
 		gd.showDialog();
 		if (gd.wasCanceled())
@@ -114,6 +117,7 @@ public class ScaleDialog implements PlugInFilter {
 	Panel makeButtonPanel(SetScaleDialog gd) {
 		Panel panel = new Panel();
     	panel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+    	//EU_HOU MISSIN Bundle
 		gd.unscaleButton = new Button("Click to Remove Scale");
 		gd.unscaleButton.addActionListener(gd);
 		panel.add(gd.unscaleButton);
@@ -185,6 +189,7 @@ class SetScaleDialog extends GenericDialog {
 	}
 
 	void setScale(String theScale) {
+		//EU_HOU MISSING Bundle
  		((Label)theLabel).setText("Scale: "+theScale);
 	}
 

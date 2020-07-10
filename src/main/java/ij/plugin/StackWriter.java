@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import java.awt.*;
 import java.io.*;
@@ -30,6 +31,7 @@ public class StackWriter implements PlugIn {
 	public void run(String arg) {
 		ImagePlus imp = WindowManager.getCurrentImage();
 		if (imp==null || (imp!=null && imp.getStackSize()<2&&!IJ.isMacro())) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Stack Writer", "This command requires a stack.");
 			return;
 		}
@@ -52,9 +54,11 @@ public class StackWriter implements PlugIn {
 			}
 		}
 		
+		//EU_HOU MISSING Bundle
 		GenericDialog gd = new GenericDialog("Save Image Sequence");
 		if (!IJ.isMacro())
 			fileType = staticFileType;
+		//EU_HOU MISSING Bundle =5
 		gd.addChoice("Format:", choices, fileType);
 		gd.addStringField("Name:", name, 12);
 		if (!hyperstack)
@@ -83,6 +87,7 @@ public class StackWriter implements PlugIn {
 		if (ndigits>8) ndigits = 8;
 		int maxImages = (int)Math.pow(10,ndigits);
 		if (stackSize>maxImages && !useLabels && !hyperstack) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Stack Writer", "More than " + ndigits
 				+" digits are required to generate \nunique file names for "+stackSize+" images.");
 			return;			
@@ -98,7 +103,8 @@ public class StackWriter implements PlugIn {
 			extension = ".tif";
 		else if (format.equals("text image"))
 			extension = ".txt";
-			
+		
+		//EU_HOU MISSING Bundle
 		String title = "Save Image Sequence";
 		String macroOptions = Macro.getOptions();
 		String directory = null;
@@ -145,6 +151,7 @@ public class StackWriter implements PlugIn {
 		String path,label=null;
 		imp.lock();
 		for (int i=1; i<=nSlices; i++) {
+			//EU_HOU MISSING Bundle
 			IJ.showStatus("writing: "+i+"/"+nSlices);
 			IJ.showProgress(i, nSlices);
 			ImageProcessor ip = stack.getProcessor(i);
@@ -181,6 +188,7 @@ public class StackWriter implements PlugIn {
 			if (i==1) {
 				File f = new File(path);
 				if (f.exists()) {
+					//EU_HOU MISSING Bundle
 					if (!IJ.isMacro() && !IJ.showMessageWithCancel("Overwrite files?",
 						"One or more files will be overwritten if you click \"OK\".\n \n"+path)) {
 						imp.unlock();

@@ -179,6 +179,7 @@ public class IJ {
      * @return The bundle value
      */
     public static ResourceBundle getBundle() {
+    	System.out.println("get");
         return menubun;
     }
 
@@ -188,6 +189,7 @@ public class IJ {
      * @param table The new bundle value
      */
     public static void setBundle(ResourceBundle table) {
+    	System.out.println("set");
         menubun = table;
     }
 
@@ -2333,6 +2335,7 @@ public class IJ {
 
 	private static String write(String string, String path, boolean append) {
 		if (path==null || path.equals("")) {
+			//EU_HOU MISSING Bundle
 			String msg = append?"Append String...":"Save String...";
 			SaveDialog sd = new SaveDialog(msg, "Untitled", ".txt");
 			String name = sd.getFileName();
@@ -2694,4 +2697,17 @@ public class IJ {
 			statusBarThread = null;
 	}
 
+	/*
+	 * EU_HOU ADD
+	 */
+    public static void setToolBundle(ResourceBundle bun) {
+        toolbun = bun;
+    }
+
+    public static ResourceBundle getToolBundle() {
+        return toolbun;
+    }
+    /*
+     * EU_HOU ADD END
+     */
 }

@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import java.awt.*;
 import ij.*;
@@ -22,11 +23,13 @@ public class RGBStackConverter implements PlugIn, DialogListener {
 		CompositeImage cimg = imp.isComposite()?(CompositeImage)imp:null;
 		int size = imp.getStackSize();
 		if ((size<2||size>3) && cimg==null) {
-			IJ.error("A 2 or 3 image stack, or a HyperStack, required");
+			//EU_HOU Bundle
+			IJ.error(IJ.getPluginBundle().getString("StackorColorStackReqErr"));
 			return;
 		}
 		int type = imp.getType();
 		if (cimg==null && !(type==ImagePlus.GRAY8 || type==ImagePlus.GRAY16)) {
+			//EU_HOU MISSING Bundle
 			IJ.error("8-bit or 16-bit grayscale stack required");
 			return;
 		}
@@ -51,6 +54,7 @@ public class RGBStackConverter implements PlugIn, DialogListener {
 	/** Converts the specified multi-channel (composite) image to RGB. */
 	public static void convertToRGB(ImagePlus imp) {
 		if (!imp.isComposite())
+			//EU_HOU MISSING Bundle
 			throw new IllegalArgumentException("Multi-channel image required");
 		RGBStackConverter converter = new RGBStackConverter();
 		ImageWindow win = imp.getWindow();
@@ -240,14 +244,18 @@ public class RGBStackConverter implements PlugIn, DialogListener {
 	boolean showDialog() {
 		GenericDialog gd = new GenericDialog("Convert to RGB");
 		gd.setInsets(10, 20, 5);
+		//EU_HOU MISSING Bundle
 		gd.addMessage("Create RGB image with:");
 		gd.setInsets(0, 35, 0);
+		//EU_HOU MISSING Bundle
 		if (slices1!=1) gd.addCheckbox("Slices ("+slices1+")", true);
 		gd.setInsets(0, 35, 0);
+		//EU_HOU MISSING Bundle
 		if (frames1!=1) gd.addCheckbox("Frames ("+frames1+")", true);
 		gd.setInsets(5, 20, 0);
 		gd.addMessage(getNewDimensions()+"      ");
 		gd.setInsets(15, 20, 0);
+		//EU_HOU MISSING Bundle
 		gd.addCheckbox("Keep source", keep);
 		gd.addDialogListener(this);
 		gd.showDialog();

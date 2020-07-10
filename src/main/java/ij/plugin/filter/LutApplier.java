@@ -34,6 +34,7 @@ public class LutApplier implements PlugInFilter {
 		max = (int)imp.getDisplayRangeMax();
 		int depth = imp.getBitDepth();
 		if (!IJ.isMacro() && (depth==8||depth==24) && min==0 && max==255) {
+			//EU_HOU MISSING Bundle
 				IJ.error("Apply LUT", "The display range must first be updated\n"
                 +"using Image>Adjust>Brightness/Contrast\n"
                 +"or threshold levels defined using\n"
@@ -109,6 +110,7 @@ public class LutApplier implements PlugInFilter {
 	void applyRGBStack(ImagePlus imp) {
 		int current = imp.getCurrentSlice();
 		int n = imp.getStackSize();
+		//EU_HOU MISSING Bundle
 		if (!IJ.showMessageWithCancel("Update Entire Stack?",
 		"Apply brightness and contrast settings\n"+
 		"to all "+n+" slices in the stack?\n \n"+

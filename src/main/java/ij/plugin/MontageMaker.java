@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.gui.*;
@@ -23,11 +24,13 @@ public class MontageMaker implements PlugIn {
 	public void run(String arg) {
 		ImagePlus imp = WindowManager.getCurrentImage();
 		if (imp==null || imp.getStackSize()==1) {
+			//EU_HOU MISSING Bundle
 			error("Stack required");
 			return;
 		}
 		hyperstack = imp.isHyperStack();
 		if (hyperstack && imp.getNSlices()>1 && imp.getNFrames()>1) {
+			//EU_HOU MISSING Bundle
 			error("5D hyperstacks are not supported");
 			return;
 		}
@@ -87,19 +90,22 @@ public class MontageMaker implements PlugIn {
 			}
 			saveStackSize = nSlices;
 			
-			GenericDialog gd = new GenericDialog("Make Montage");
-			gd.addNumericField("Columns:", columns, 0);
-			gd.addNumericField("Rows:", rows, 0);
-			gd.addNumericField("Scale factor:", scale, 2);
+			//EU_HOU Bundle =8
+			GenericDialog gd = new GenericDialog(IJ.getPluginBundle().getString("MakeMontage"));
+			gd.addNumericField(IJ.getPluginBundle().getString("Columns") + ":", columns, 0);
+			gd.addNumericField(IJ.getPluginBundle().getString("Rows") + ":", rows, 0);
+			gd.addNumericField(IJ.getPluginBundle().getString("ScaleFactor") + ":", scale, 2);
 			if (!hyperstack) {
-				gd.addNumericField("First slice:", first, 0);
-				gd.addNumericField("Last slice:", last, 0);
+				gd.addNumericField(IJ.getPluginBundle().getString("FirstSlice") + ":", first, 0);
+				gd.addNumericField(IJ.getPluginBundle().getString("LastSlice") + ":", last, 0);
 			}
-			gd.addNumericField("Increment:", inc, 0);
-			gd.addNumericField("Border width:", borderWidth, 0);
+			gd.addNumericField(IJ.getPluginBundle().getString("Increment") + ":", inc, 0);
+			gd.addNumericField(IJ.getPluginBundle().getString("BorderWidth") + ":", borderWidth, 0);
+			//EU_HOU MISSING Bundle
 			gd.addNumericField("Font size:", fontSize, 0);
-			gd.addCheckbox("Label slices", label);
-			gd.addCheckbox("Use foreground color", useForegroundColor);
+			//EU_HOU Bundle =2
+			gd.addCheckbox(IJ.getPluginBundle().getString("LabelSlices"), label);
+			gd.addCheckbox(IJ.getPluginBundle().getString("UseForegroundColor"), useForegroundColor);
 			gd.showDialog();
 			if (gd.wasCanceled())
 				return;
@@ -121,6 +127,7 @@ public class MontageMaker implements PlugIn {
 				{first=1; last=nSlices;}
 			if (inc<1) inc = 1;
 			if (gd.invalidNumber()) {
+				//EU_HOU MISSING Bundle
 				error("Invalid number");
 				return;
 			}
@@ -249,6 +256,7 @@ public class MontageMaker implements PlugIn {
 	}
 	
 	private void error(String msg) {
+		//EU_HOU MISSING Bundle
 		IJ.error("Make Montage", msg);
 	}
 	

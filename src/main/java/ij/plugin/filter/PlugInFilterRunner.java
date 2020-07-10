@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin.filter;
 import ij.*;
 import ij.process.*;
@@ -95,6 +96,7 @@ public class PlugInFilterRunner implements Runnable, DialogListener {
 		doStack = slices>1 && (flags&PlugInFilter.DOES_STACKS)!=0;
 		imp.startTiming();
 		if (doStack || processedAsPreview==0) {				// if processing during preview was not enough
+			//EU_HOU MISSING Bundle
 			//IJ.showStatus(command + (doStack ? " (Stack)..." : "..."));
 			ImageProcessor ip = imp.getProcessor();
 			pass = 0;
@@ -161,9 +163,11 @@ public class PlugInFilterRunner implements Runnable, DialogListener {
 		if ((flags&PlugInFilter.FINAL_PROCESSING)!=0 && !IJ.escapePressed())
 			((PlugInFilter)theFilter).setup("final", imp);
 		if (IJ.escapePressed()) {
+			//EU_HOU MISSING Bundle
 			IJ.showStatus(command + " INTERRUPTED");
 			IJ.showProgress(1,1);
 		} else
+			//EU_HOU MISSING Bundle
 			IJ.showTime(imp, imp.getStartTime()-previewTime, command + ": ", doStack?slices:1);
 		IJ.showProgress(1.0);
 		if (ipChanged) {
@@ -406,8 +410,10 @@ public class PlugInFilterRunner implements Runnable, DialogListener {
 					break;
 			}
 			if ((flags&PlugInFilter.ROI_REQUIRED)!=0 && imp.getRoi()==null)
-			{IJ.error(cmd, "This command requires a selection"); return false;}
+			//EU_HOU Bundle
+			{IJ.error(cmd, ": " +IJ.getBundle().getString("SelReqErr")); return false;}
 			if ((flags&PlugInFilter.STACK_REQUIRED)!=0 && imp.getStackSize()==1)
+			//EU_HOU MISSING Bundle	
 			{IJ.error(cmd, "This command requires a stack"); return false;}
 		} // if imageRequired
 		return true;
@@ -416,6 +422,7 @@ public class PlugInFilterRunner implements Runnable, DialogListener {
 	/** Display an error message, telling the allowed image types
 	 */
 	static void wrongType(int flags, String cmd) {
+		//EU_HOU MISSING Bundle
 		String s = "\""+cmd+"\" requires an image of type:\n \n";
 		if ((flags&PlugInFilter.DOES_8G)!=0) s +=  "	8-bit grayscale\n";
 		if ((flags&PlugInFilter.DOES_8C)!=0) s +=  "	8-bit color\n";
@@ -461,6 +468,7 @@ public class PlugInFilterRunner implements Runnable, DialogListener {
 				int[] range = (int[])slicesForThread.get(thread);
 				processStack(range[0], range[1]);
 			} else
+				//EU_HOU MISSING Bundle
 				IJ.error("PlugInFilterRunner internal error:\nunsolicited background thread");
 		} catch (Exception err) {
 			if (thread==previewThread) {
@@ -473,6 +481,7 @@ public class PlugInFilterRunner implements Runnable, DialogListener {
 			String msg = ""+err;
 			if (msg.indexOf(Macro.MACRO_CANCELED)==-1) {
 				IJ.beep();
+				//EU_HOU MISSING Bundle
 				IJ.log("ERROR: "+msg+"\nin "+thread.getName()+
 					"\nat "+(err.getStackTrace()[0])+"\nfrom "+(err.getStackTrace()[1]));
 			}
@@ -482,6 +491,7 @@ public class PlugInFilterRunner implements Runnable, DialogListener {
 	/** The background thread for preview */
 	private void runPreview() {
 		if (IJ.debugMode)
+			//EU_HOU MISSING Bundle
 			IJ.log("preview thread started; imp="+imp.getTitle());
 		Thread thread = Thread.currentThread();
 		ImageProcessor ip = imp.getProcessor();
@@ -526,6 +536,7 @@ public class PlugInFilterRunner implements Runnable, DialogListener {
 				previewTime = System.currentTimeMillis() - startTime;
 				imp.updateAndDraw();
 				if (IJ.debugMode)
+					//EU_HOU MISSING Bundle
 					IJ.log("preview processing done");
 			}
 			gd.previewRunning(false);				// optical feedback
@@ -617,6 +628,7 @@ public class PlugInFilterRunner implements Runnable, DialogListener {
 			previewThread.setPriority(priority);	//preview on lower priority than dialog
 			previewThread.start();
 			if (IJ.debugMode)
+				//EU_HOU MISSING Bundle
 				IJ.log(command+" Preview thread was started");
 			return true;
 		}

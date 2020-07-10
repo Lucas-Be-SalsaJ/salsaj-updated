@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin.filter;
 
 import java.awt.*;
@@ -28,6 +29,7 @@ public class XYWriter implements PlugInFilter {
 	public void saveXYCoordinates(ImagePlus imp) {
 		Roi roi = imp.getRoi();
 		if (roi==null)
+			//EU_HOU MISSING Bundle =2
 			throw new IllegalArgumentException("ROI required");
 		SaveDialog sd = new SaveDialog("Save Coordinates as Text...", imp.getTitle(), ".txt");
 		String name = sd.getFileName();
@@ -39,6 +41,7 @@ public class XYWriter implements PlugInFilter {
 			pw = new PrintWriter(new BufferedOutputStream(new FileOutputStream(directory+name)));
 		}
 		catch (IOException e) {
+			//EU_HOU MISSING Bundle
 			IJ.error("XYWriter", "Unable to save coordinates:\n   "+e.getMessage());
 			return;
 		}

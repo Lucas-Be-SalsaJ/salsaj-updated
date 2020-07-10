@@ -1,3 +1,4 @@
+//EU_HOU 
 package ij.plugin;
 import ij.*;
 import ij.process.*;
@@ -70,12 +71,15 @@ public class Histogram implements PlugIn, TextListener {
  		if (stackHistogram || customHistogram) {
  			ImagePlus imp2 = imp;
  			if (customHistogram && !stackHistogram && imp.getStackSize()>1)
+ 				//EU_HOU MISSING Bundle
  				imp2 = new ImagePlus("Temp", imp.getProcessor());
 			stats = new StackStatistics(imp2, nBins, xMin, xMax);
 			stats.histYMax = iyMax;
-			new HistogramWindow("Histogram of "+imp.getShortTitle(), imp, stats);
+			//EU_HOU Bundle
+			new HistogramWindow(IJ.getBundle().getString("HistoTitle") + " " +imp.getShortTitle(), imp, stats);
 		} else
-			new HistogramWindow("Histogram of "+imp.getShortTitle(), imp, nBins, xMin, xMax, iyMax);
+			//EU_HOU Bundle
+			new HistogramWindow(IJ.getBundle().getString("HistoTitle") + " " +imp.getShortTitle(), imp, nBins, xMin, xMax, iyMax);
 	}
 	
 	boolean showDialog(ImagePlus imp) {
@@ -102,9 +106,10 @@ public class Histogram implements PlugIn, TextListener {
 		defaultMax = IJ.d2s(xMax,2);
 		imageID = imp.getID();
 		int stackSize = imp.getStackSize();
-		GenericDialog gd = new GenericDialog("Histogram");
-		gd.addNumericField("Bins:", nBins, 0);
-		gd.addCheckbox("Use pixel value range", useImageMinAndMax);
+		//EU_HOU Bundle =3
+		GenericDialog gd = new GenericDialog(IJ.getBundle().getString("Histogram"));
+		gd.addNumericField(IJ.getBundle().getString("Bins") + ":", nBins, 0);
+		gd.addCheckbox(IJ.getBundle().getString("HistoMinMax") + ":", useImageMinAndMax);
 		gd.setInsets(5, 40, 10);
 		gd.addMessage("or use:");
 		int fwidth = 6;
@@ -113,11 +118,13 @@ public class Histogram implements PlugIn, TextListener {
 		int digits = 2;
 		if (xMin==(int)xMin && xMax==(int)xMax)
 			digits = 0;
-		gd.addNumericField("X_min:", xMin, digits, fwidth, null);
-		gd.addNumericField("X_max:", xMax, digits, fwidth, null);
+		//EU_HOU Bundle =3
+		gd.addNumericField(IJ.getBundle().getString("HistoXmin") + ":", xMin, digits, fwidth, null);
+		gd.addNumericField(IJ.getBundle().getString("HistoXmax") + ":", xMax, digits, fwidth, null);
 		gd.setInsets(15, 0, 10);
-		gd.addStringField("Y_max:", yMax, 6);
+		gd.addStringField(IJ.getBundle().getString("HistoYmax") + ":", yMax, 6);
 		if (stackSize>1)
+			//EU_HOU MISSING Bundle
 			gd.addCheckbox("Stack histogram", stackHistogram);
 		
 		Vector numbers = gd.getNumericFields();
@@ -166,8 +173,9 @@ public class Histogram implements PlugIn, TextListener {
 				else
 					return flags;
 			}
+			//EU_HOU Bundle //EU_HOU MISSING Bundle
 			YesNoCancelDialog d = new YesNoCancelDialog(IJ.getInstance(),
-				"Histogram", "Include all "+stackSize+" images?");
+					IJ.getBundle().getString("Histogram"), "Include all "+stackSize+" images?");
 			if (d.cancelPressed())
 				return PlugInFilter.DONE;
 			else if (d.yesPressed()) {

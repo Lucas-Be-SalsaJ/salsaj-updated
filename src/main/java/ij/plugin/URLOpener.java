@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import java.awt.*;
 import java.io.*;
@@ -59,6 +60,7 @@ public class URLOpener implements PlugIn {
 			return;
 		}
 		
+		//EU_HOU MISSING Bundle =3
 		GenericDialog gd = new GenericDialog("Enter a URL");
 		gd.setInsets(10, 32, 0);
 		gd.addMessage("Enter URL of an image, macro or web page", null, Color.darkGray);
@@ -79,6 +81,7 @@ public class URLOpener implements PlugIn {
 		else if (url.endsWith(".jar")||url.endsWith(".class"))
 			IJ.open(url);
 		else {
+			//EU_HOU MISSING Bundle
 			IJ.showStatus("Opening: " + url);
 			double startTime = System.currentTimeMillis();
 			ImagePlus imp = new ImagePlus(url);
@@ -126,6 +129,7 @@ public class URLOpener implements PlugIn {
 			in.close ();
 		} catch (IOException e) {
 			if  (!(install&&urlString.endsWith("StartupMacros.txt")))
+				//EU_HOU MISSING Bundle
 				IJ.error("URL Opener", ""+e);
 			sb = null;
 		}
@@ -150,6 +154,7 @@ public class URLOpener implements PlugIn {
 		if (!f.exists()) {
 			boolean ok = f.mkdir();
 			if (!ok) {
+				//EU_HOU MISSING Bundle
 				IJ.error("Unable to create directory:\n \n"+dir);
 				return;
 			}

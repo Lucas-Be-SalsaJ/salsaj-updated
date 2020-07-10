@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.gui.*;
@@ -141,6 +142,7 @@ public class Selection implements PlugIn, Measurements {
 		int[] x = poly.xpoints;
 		int[] y = poly.ypoints;
 		if (n<3) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Fit Circle", "At least 3 points are required to fit a circle.");
 			return;
 		}
@@ -196,6 +198,7 @@ public class Selection implements PlugIn, Measurements {
 			double yold = ynew;
 			ynew = A0 + xnew*(A1 + xnew*(A2 + 4.*xnew*xnew));
 			if (Math.abs(ynew)>Math.abs(yold)) {
+				//EU_HOU MISSING Bundle
 				if (IJ.debugMode) IJ.log("Fit Circle: wrong direction: |ynew| > |yold|");
 				xnew = 0;
 				break;
@@ -206,14 +209,17 @@ public class Selection implements PlugIn, Measurements {
 			if (Math.abs((xnew-xold)/xnew) < epsilon)
 				break;
 			if (iter >= IterMax) {
+				//EU_HOU MISSING Bundle
 				if (IJ.debugMode) IJ.log("Fit Circle: will not converge");
 				xnew = 0;
 			}
 			if (xnew<0) {
+				//EU_HOU MISSING Bundle
 				if (IJ.debugMode) IJ.log("Fit Circle: negative root:  x = "+xnew);
 				xnew = 0;
 			}
 		}
+		//EU_HOU MISSING Bundle
 		if (IJ.debugMode) IJ.log("Fit Circle: n="+n+", xnew="+IJ.d2s(xnew,2)+", iterations="+iterations);
 		
 		// calculate the circle parameters
@@ -222,6 +228,7 @@ public class Selection implements PlugIn, Measurements {
 		double CenterY = (Myz*(Mxx-xnew)-Mxz*Mxy)/(2*DET);
 		double radius = Math.sqrt(CenterX*CenterX + CenterY*CenterY + Mz + 2*xnew);
 		if (Double.isNaN(radius)) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Fit Circle", "Points are collinear.");
 			return;
 		}
@@ -238,6 +245,7 @@ public class Selection implements PlugIn, Measurements {
 			{noRoi("Spline"); return;}
 		int type = roi.getType();
 		boolean segmentedSelection = type==Roi.POLYGON||type==Roi.POLYLINE;
+		//EU_HOU MISSING Bundle
 		if (!(segmentedSelection||type==Roi.FREEROI||type==Roi.TRACED_ROI||type==Roi.FREELINE))
 			{IJ.error("Spline Fit", "Polygon or polyline selection required"); return;}
 		if (roi instanceof EllipseRoi)
@@ -269,6 +277,7 @@ public class Selection implements PlugIn, Measurements {
 			return;
 		if (IJ.isMacro()&&Macro.getOptions()==null)
 			Macro.setOptions("interval=1");
+		//EU_HOU MISSING Bundle =4
 		GenericDialog gd = new GenericDialog("Interpolate");
 		gd.addNumericField("Interval:", 1.0, 1, 4, "pixel");
 		gd.addCheckbox("Smooth", IJ.isMacro()?false:smooth);
@@ -471,11 +480,13 @@ public class Selection implements PlugIn, Measurements {
 
 	void createEllipse(ImagePlus imp) {
 		if (!imp.okToDeleteRoi()) return;
+		//EU_HOU MISSING Bundle
 		IJ.showStatus("Fitting ellipse");
 		Roi roi = imp.getRoi();
 		if (roi==null)
 			{noRoi("Fit Ellipse"); return;}
 		if (roi.isLine())
+			//EU_HOU MISSING Bundle
 			{IJ.error("Fit Ellipse", "\"Fit Ellipse\" does not work with line selections"); return;}
 		ImageProcessor ip = imp.getProcessor();
 		ip.setRoi(roi);
@@ -499,6 +510,7 @@ public class Selection implements PlugIn, Measurements {
 		if (!imp.okToDeleteRoi()) return;
 		long startTime = System.currentTimeMillis();
 		Roi roi = imp.getRoi();
+		//EU_HOU MISSING Bundle =2
 		if (roi == null) { IJ.error("Convex Hull", "Selection required"); return; }
 		if (roi instanceof Line) { IJ.error("Convex Hull", "Area selection, point selection, or segmented or free line required"); return; }
 		FloatPolygon p = roi.getFloatConvexHull();
@@ -508,6 +520,7 @@ public class Selection implements PlugIn, Measurements {
 			Roi roi2 = new PolygonRoi(p, roi.POLYGON);
 			transferProperties(roi, roi2);
 			imp.setRoi(roi2);
+			//EU_HOU MISSING Bundle
 			IJ.showTime(imp, startTime, "Convex Hull ", 1);
 		}
 	}
@@ -547,6 +560,7 @@ public class Selection implements PlugIn, Measurements {
 			return;
 		}
 		if (roi==null && imp.getOverlay()==null) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Create Mask", "Selection, overlay or threshold required");
 			return;
 		}
@@ -555,6 +569,7 @@ public class Selection implements PlugIn, Measurements {
 			mask.invertLut();
 		mask.setThreshold(255, 255, ImageProcessor.NO_LUT_UPDATE);
 		ImagePlus maskImp = null;
+		//EU_HOU MISSING Bundle
 		Frame frame = WindowManager.getFrame("Mask");
 		if (frame!=null && (frame instanceof ImageWindow))
 			maskImp = ((ImageWindow)frame).getImagePlus();
@@ -563,6 +578,7 @@ public class Selection implements PlugIn, Measurements {
 			ip.copyBits(mask, 0, 0, Blitter.OR);
 			maskImp.setProcessor(ip);
 		} else {
+			//EU_HOU MISSING Bundle
 			maskImp = new ImagePlus("Mask", mask);
 			maskImp.show();
 		}
@@ -581,6 +597,7 @@ public class Selection implements PlugIn, Measurements {
 	void createMaskFromThreshold(ImagePlus imp) {
 		ImageProcessor ip = imp.getProcessor();
 		if (ip.getMinThreshold()==ImageProcessor.NO_THRESHOLD) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Create Mask", "Area selection, overlay or thresholded image required");
 			return;
 		}
@@ -607,6 +624,7 @@ public class Selection implements PlugIn, Measurements {
 			return;
 		}
 		if (!ip.isBinary()) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Create Selection",
 				"This command creates a composite selection from\n"+
 				"a mask (8-bit binary image) or from an image\n"+
@@ -626,6 +644,7 @@ public class Selection implements PlugIn, Measurements {
 		Roi roi = imp.getRoi();
 		if (roi == null)
 			{run("all"); return;}
+		//EU_HOU MISSING Bundle
 		if (!roi.isArea())
 			{IJ.error("Inverse", "Area selection required"); return;}
 		Roi inverse = roi.getInverse(imp);
@@ -635,6 +654,7 @@ public class Selection implements PlugIn, Measurements {
 	
 	private void lineToArea(ImagePlus imp) {
 		Roi roi = imp.getRoi();
+		//EU_HOU MISSING Bundle
 		if (roi==null || !roi.isLine())
 			{IJ.error("Line to Area", "Line selection required"); return;}
 		Undo.setup(Undo.ROI, imp);
@@ -651,6 +671,7 @@ public class Selection implements PlugIn, Measurements {
 	void areaToLine(ImagePlus imp) {
 		Roi roi = imp.getRoi();
 		if (roi==null || !roi.isArea()) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Area to Line", "Area selection required");
 			return;
 		}
@@ -661,6 +682,7 @@ public class Selection implements PlugIn, Measurements {
 			return;
 		int type1 = roi.getType();
 		if (type1==Roi.COMPOSITE) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Area to Line", "Composite selections cannot be converted to lines.");
 			return;
 		}
@@ -699,15 +721,19 @@ public class Selection implements PlugIn, Measurements {
 
 	void addToRoiManager(ImagePlus imp) {
 		if (IJ.macroRunning() &&  Interpreter.isBatchModeRoiManager())
+			//EU_HOU MISSING Bundle
 			IJ.error("run(\"Add to Manager\") may not work in batch mode macros");
+		//EU_HOU MISSING Bundle
 		Frame frame = WindowManager.getFrame("ROI Manager");
 		if (frame==null)
 			IJ.run("ROI Manager...");
 		if (imp==null) return;
 		Roi roi = imp.getRoi();
 		if (roi==null) return;
+		//EU_HOU MISSING Bundle
 		frame = WindowManager.getFrame("ROI Manager");
 		if (frame==null || !(frame instanceof RoiManager))
+			//EU_HOU MISSING Bundle
 			IJ.error("ROI Manager not found");
 		RoiManager rm = (RoiManager)frame;
 		boolean altDown= IJ.altKeyDown();
@@ -722,6 +748,7 @@ public class Selection implements PlugIn, Measurements {
 					break;
 				if ((System.currentTimeMillis()-start)>2000) {
 					IJ.beep();
+					//EU_HOU MISSING Bundle
 					IJ.error("Add to Manager", "Selection is not complete");
 					return;
 				}
@@ -742,6 +769,7 @@ public class Selection implements PlugIn, Measurements {
 		if (f!=null && f.getTitle().indexOf("3D Viewer")!=-1)
 			return false;
 		if (roi==null) {
+			//EU_HOU MISSING Bundle
 			IJ.error("This command requires a selection.");
 			return false;
 		}
@@ -760,6 +788,7 @@ public class Selection implements PlugIn, Measurements {
 		}
 		Roi roiOrig = roi;
 		if (!roi.isArea()) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Make Band", "Area selection required");
 			return;
 		}
@@ -776,11 +805,13 @@ public class Selection implements PlugIn, Measurements {
 			return;
 		size = gd.getNextNumber();
 		if (Double.isNaN(size)) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Make Band", "invalid number");
 			return;
 		}
 		int n = (int)Math.round(size/cal.pixelWidth); 
 		if (n >255) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Make Band", "Cannot make bands wider that 255 pixels");
 			return;
 		}
@@ -817,6 +848,7 @@ public class Selection implements PlugIn, Measurements {
 		}
 		int count = IJ.doWand(edm, xx, yy, 0, null);
 		if (count<=0) {
+			//EU_HOU MISSING Bundle
 			IJ.error("Make Band", "Unable to make band");
 			return;
 		}
@@ -844,12 +876,14 @@ public class Selection implements PlugIn, Measurements {
 		Roi roi = imp.getRoi();
 		if (roi == null)
 			{noRoi("Fit Rectangle"); return;}
+		//EU_HOU MISSING Bundle
 		if (roi instanceof Line || roi.isDrawingTool()) 
 			{IJ.error("Fit Rectangle", "Area selection, point selection, or segmented or free line required"); return;}
 		if (!roi.isArea()) {
 			// check number of points and colinearity before proceeding
 			FloatPolygon poly = roi.getFloatPolygon();
 			int n = poly.npoints;
+			//EU_HOU MISSING Bundle
 			if (n < 3)
 				{IJ.error("Fit Rectangle", "At least three points are required"); return;}
 			float[] x = poly.xpoints;
@@ -859,6 +893,7 @@ public class Selection implements PlugIn, Measurements {
 				float prod = (x[i] - x[0]) * (y[i] - y[0]) - (x[i] - x[1]) * (y[i] - y[1]);
 				if (prod != 0)	colinear = false;	
 			}
+			//EU_HOU MISSING Bundle
 			if (colinear)
 				{IJ.error("Fit Rectangle", "Points are colinear"); return;}
 		}
@@ -929,6 +964,7 @@ public class Selection implements PlugIn, Measurements {
 	}
 	
 	void noRoi(String command) {
+		//EU_HOU MISSING Bundle
 		IJ.error(command, "This command requires a selection");
 	}
 

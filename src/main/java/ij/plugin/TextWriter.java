@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.process.*;
@@ -23,6 +24,7 @@ public class TextWriter implements PlugIn {
 			Editor ed = (Editor)frame;
 			ed.saveAs();
 		} else {
+			//EU_HOU MISSING Bundle
 			IJ.error("Save As Text",
 				"This command requires a TextWindow, such\n"
 				+ "as the \"Log\" window, or an Editor window. Use\n"

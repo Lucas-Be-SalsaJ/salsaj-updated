@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.io.*;
@@ -62,6 +63,7 @@ public class LutLoader extends ImagePlus implements PlugIn {
 			Menus.updateMenus();			
 			return;
 		}
+		//EU_HOU MISSING Bundle
 		OpenDialog od = new OpenDialog("Open LUT...", arg);
 		fi.directory = od.getDirectory();
 		fi.fileName = od.getFileName();
@@ -76,7 +78,8 @@ public class LutLoader extends ImagePlus implements PlugIn {
 		ImagePlus imp = WindowManager.getCurrentImage();
 		if (imp!=null) {
 			if (imp.getType()==ImagePlus.COLOR_RGB)
-				IJ.error("LUTs cannot be assiged to RGB Images.");
+				//EU_HOU Bundle
+				IJ.error(IJ.getPluginBundle().getString("ColorTablesErr"));
 			else if (imp.isComposite() && ((CompositeImage)imp).getMode()==IJ.GRAYSCALE) {
 				CompositeImage cimp = (CompositeImage)imp;
 				cimp.setMode(IJ.COLOR);
@@ -127,7 +130,8 @@ public class LutLoader extends ImagePlus implements PlugIn {
 		if (imp==null)
 			{IJ.noImage(); return;}
 		if (imp.getType()==ImagePlus.COLOR_RGB)
-			{IJ.error("RGB images do not use LUTs"); return;}
+			//EU_HOU Bundle
+			{IJ.error(IJ.getPluginBundle().getString("LutRGBErr")); return;}
 		if (imp.isComposite()) {
 			CompositeImage ci = (CompositeImage)imp;
 			LUT lut = ci.getChannelLut();
@@ -298,12 +302,14 @@ public class LutLoader extends ImagePlus implements PlugIn {
 				error(path);
 		} catch (IOException e) {
 			if (!suppressErrors)
+				//EU_HOU MISSING Bundle
 				IJ.error("LUT Loader", ""+e);
 		}
 		return size==256;
 	}
 	
 	private void error(String path) {
+		//EU_HOU MISSING Bundle
 		IJ.error("LUT Reader", "This is not an ImageJ or NIH Image LUT, a 768 byte \nraw LUT, or a LUT in text format.\n \n"+path);
 	}
 

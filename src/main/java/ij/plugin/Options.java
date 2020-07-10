@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 import ij.*;
 import ij.gui.*;
@@ -29,6 +30,7 @@ public class Options implements PlugIn {
 	// Miscellaneous Options
 	void miscOptions() {
 		String key = IJ.isMacintosh()?"command":"control";
+		//EU_HOU MISSING Bundle =14
 		GenericDialog gd = new GenericDialog("Miscellaneous Options");
 		gd.addStringField("Divide by zero value:", ""+FloatBlitter.divideByZeroValue, 10);
 		gd.addCheckbox("Use pointer cursor", Prefs.usePointerCursor);
@@ -98,6 +100,7 @@ public class Options implements PlugIn {
 
 	// Input/Output options
 	void io() {
+		//EU_HOU MISSING Bundle =8
 		GenericDialog gd = new GenericDialog("I/O Options");
 		gd.addNumericField("JPEG quality (0-100):", FileSaver.getJpegQuality(), 0, 3, "");
 		gd.addNumericField("GIF and PNG transparent index:", Prefs.getTransparentIndex(), 0, 3, "");
@@ -109,14 +112,19 @@ public class Options implements PlugIn {
 		gd.addCheckbox("Skip dialog when opening .raw files", Prefs.skipRawDialog);
 		
 		gd.setInsets(15, 20, 0);
+		//EU_HOU MISSING Bundle
 		gd.addMessage("Results Table Options");
 		gd.setInsets(3, 40, 0);
+		//EU_HOU MISSING Bundle
 		gd.addCheckbox("Copy_column headers", Prefs.copyColumnHeaders);
 		gd.setInsets(0, 40, 0);
+		//EU_HOU MISSING Bundle
 		gd.addCheckbox("Copy_row numbers", !Prefs.noRowNumbers);
 		gd.setInsets(0, 40, 0);
+		//EU_HOU MISSING Bundle
 		gd.addCheckbox("Save_column headers", !Prefs.dontSaveHeaders);
 		gd.setInsets(0, 40, 0);
+		//EU_HOU MISSING Bundle
 		gd.addCheckbox("Save_row numbers", !Prefs.dontSaveRowNumbers);
 		
 		gd.showDialog();
@@ -152,6 +160,7 @@ public class Options implements PlugIn {
 		double[] weights = ColorProcessor.getWeightingFactors();
 		boolean weighted = !(weights[0]==1d/3d && weights[1]==1d/3d && weights[2]==1d/3d);
 		//boolean weighted = !(Math.abs(weights[0]-1d/3d)<0.0001 && Math.abs(weights[1]-1d/3d)<0.0001 && Math.abs(weights[2]-1d/3d)<0.0001);
+		//EU_HOU MISSING Bundle =3
 		GenericDialog gd = new GenericDialog("Conversion Options");
 		gd.addCheckbox("Scale when converting", ImageConverter.getDoScaling());
 		String prompt = "Weighted RGB conversions";
@@ -176,13 +185,16 @@ public class Options implements PlugIn {
 
 	// DICOM options
 	void dicom() {
+		//EU_HOU MISSING Bundle =4
 		GenericDialog gd = new GenericDialog("DICOM Options");
 		gd.addCheckbox("Open as 32-bit float", Prefs.openDicomsAsFloat);
 		gd.addCheckbox("Ignore Rescale Slope", Prefs.ignoreRescaleSlope);
 		gd.addMessage("Orthogonal Views");
 		gd.setInsets(5, 40, 0);
+		//EU_HOU MISSING Bundle
 		gd.addCheckbox("Rotate YZ", Prefs.rotateYZ);
 		gd.setInsets(0, 40, 0);
+		//EU_HOU MISSING Bundle
 		gd.addCheckbox("Flip XZ", Prefs.flipXZ);
 		gd.showDialog();
 		if (gd.wasCanceled())
@@ -195,6 +207,7 @@ public class Options implements PlugIn {
 		
 	// Delete preferences file when ImageJ quits
 	private void reset() {
+		//EU_HOU MISSING Bundle
 		if (IJ.showMessageWithCancel("Reset Preferences", "Preferences will be reset when ImageJ restarts."))
 			Prefs.resetPreferences();
 	}
