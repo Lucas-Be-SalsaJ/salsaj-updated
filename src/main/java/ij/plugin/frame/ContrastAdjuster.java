@@ -186,7 +186,7 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 			maxSlider.addKeyListener(ij);
 			maxSlider.setUnitIncrement(1);
 			//EU_HOU CHANGES : setBackground (default: no background)
-			minSlider.setBackground(Color.blue);
+			maxSlider.setBackground(Color.blue);
 			maxSlider.setFocusable(false);
 			//EU_HOU Bundle
 			addLabel(bun.getString("Maximum"), null);
@@ -242,9 +242,9 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 			/*
 			 * EU_HOU CHANGES
 			 */
-			for (int i = 0; i < channelLabels.length; i++) {
+			/*for (int i = 0; i < channelLabels.length; i++) {
 				choice.addItem(channelLabels[i]);
-			}
+			}*/
 			/*
 			 * EU_HOU CHANGES END
 			 */
@@ -293,14 +293,15 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 		/*applyB = new TrimmedButton(bun.getString("MyApply2"), trim);
 		applyB.addActionListener(this);
 		applyB.addKeyListener(ij);
-		panel.add(applyB);
-		c.gridy = y++;
-		c.insets = new Insets(8, 5, 10, 5);
-		gridbag.setConstraints(panel, c);
-		add(panel);*/
+		panel.add(applyB);*/
 		/*
 		 * EU_HOU CHANGES END
 		 */
+		c.gridy = y++;
+		c.insets = new Insets(8, 5, 10, 5);
+		gridbag.setConstraints(panel, c);
+
+		add(panel);
 
  		addKeyListener(ij);  // ImageJ handles keyboard shortcuts
 		pack();
@@ -461,7 +462,8 @@ public class ContrastAdjuster extends PlugInDialog implements Runnable,
 					choice.select(channel-1);
 					channels = channelConstants[channel-1];
 				}
-				if (choice.getItem(0).equals("Red")) {
+				//EU_HOU CHANGES : "Red" to "RedColor"
+				if (choice.getItem(0).equals("RedColor")) {
 					choice.removeAll();
 					addBalanceChoices();
 				}

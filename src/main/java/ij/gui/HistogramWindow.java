@@ -183,7 +183,7 @@ public class HistogramWindow extends ImageWindow implements Measurements, Action
 		copy.addActionListener(this);
 		buttons.add(copy);
 		//EU_HOU Bundle
-		log = new TrimmedButton(IJ.getBundle().getString("Log"), trim);
+		log = new TrimmedButton(IJ.getBundle().getString("HistoLog"), trim);
 		log.addActionListener(this);
 		buttons.add(log);
 		if (!stackHistogram) {

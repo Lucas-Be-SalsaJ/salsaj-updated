@@ -52,11 +52,19 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 	public static final int RECT_ROI=0, ROUNDED_RECT_ROI=1, ROTATED_RECT_ROI=2;
 	public static final int OVAL_ROI=0, ELLIPSE_ROI=1, BRUSH_ROI=2;
 	
-	public static final String[] builtInTools = {"Arrow","Brush","Command Finder", "Developer Menu","Flood Filler",
+	/*
+	 * EU_HOU CHANGES
+	 */
+	/*public static final String[] builtInTools = {"Arrow","Brush","Command Finder", "Developer Menu","Flood Filler",
 		"Label Maker","LUT Menu","Overlay Brush","Pencil","Pixel Inspector","Selection Rotator",
-		"Spray Can","Stacks Menu","ROI Menu"};
-	private static final String[] builtInTools2 = {"Pixel Inspection Tool","Paintbrush Tool","Flood Fill Tool"};
-
+		"Spray Can","Stacks Menu","ROI Menu"};*/
+	public static final String[] builtInTools = {};
+	//private static final String[] builtInTools2 = {"Pixel Inspection Tool","Paintbrush Tool","Flood Fill Tool"};
+	private static final String[] builtInTools2 = {};
+	/*
+	 * EU_HOU CHANGES END
+	 */
+	
 	private static final int NUM_TOOLS = 17; //23
 	private static final int MAX_EXTRA_TOOLS = 8;
 	private static final int MAX_TOOLS = 17; //NUM_TOOLS+MAX_EXTRA_TOOLS;
@@ -65,7 +73,7 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 	private static final int BUTTON_HEIGHT = 31;
 	private static final int SIZE = 42; //28 // no longer used
 	private static final int GAP_SIZE = 150; //9
-	private static final int OFFSET = 7;
+	private static final int OFFSET = 5; //7
 	private static final String BRUSH_SIZE = "toolbar.brush.size";
 	public static final String CORNER_DIAMETER = "toolbar.arc.size";
 	public static String TOOL_KEY = "toolbar.tool";
@@ -116,7 +124,6 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 	 * EU_HOU CHANGES END
 	 */
 	private String currentSet = "Startup Macros";
-
 	
 	private static Color foregroundColor = Prefs.getColor(Prefs.FCOLOR,Color.white);
 	private static Color backgroundColor = Prefs.getColor(Prefs.BCOLOR,Color.black);
@@ -208,7 +215,7 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 		//names[getNumTools()-1] = "\"More Tools\" menu (switch toolsets or add tools)";
 		//icons[getNumTools()-1] = "C900T0d18>T6d18>"; // ">>"
 		table = ResourceBundle.getBundle("ij/i18n/ToolBundle", IJ.getLocale());
-		//EU_HOU Bundle
+		//EU_HOU MISSING Bundle
 		names[NUM_TOOLS - 1] = "Switch to alternate macro tool sets";
 		//icons[NUM_TOOLS - 1] = "C900T1c12>T7c12>";// ">>"
 		icons[NUM_TOOLS - 1] = "Cf60T5c15>Tcc15>";// ">>"
@@ -1655,6 +1662,9 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 			Arrays.sort(list);
 		} else
 			list = new String[0];
+		
+		//EU_HOU CHANGES : added stackTools boolean
+		boolean stackTools = false;
 		switchPopup.removeAll();
         path = IJ.getDir("macros") + "StartupMacros.txt";
 		f = new File(path);
@@ -1666,6 +1676,23 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
             addItem("Startup Macros");
         else
             addItem("StartupMacros*");
+		
+		/*
+		 * EU_HOU CHANGES
+		 */
+		if (!stackTools) {
+			addItem("Stack Tools*");
+		}
+		for (int i = 0; i < list.length; i++) {
+			if (list[i].equals("Stack Tools.txt")) {
+				stackTools = true;
+				break;
+			}
+		}
+		/*
+		 * EU_HOU CHANGES END
+		 */
+	
  		for (int i=0; i<list.length; i++) {
 			String name = list[i];
 			if (name.startsWith(".") || name.endsWith(" Tool"))
@@ -1678,18 +1705,20 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
                 addItem(name);
 			}
 		}
-		addItem("Overlay Editing Tools*");
+		//addItem("Overlay Editing Tools*");
 		addPluginTools();
-		addItem("Restore Startup Tools");
-		addItem("Remove Custom Tools");
+		//addItem("Restore Startup Tools");
+		//addItem("Remove Custom Tools");
 		addItem("Help...");
-		add(ovalPopup);
+		//EU_HOU CHANGES
+		//add(ovalPopup);
 		if (IJ.isMacOSX()) IJ.wait(10);
 		switchPopup.show(e.getComponent(), e.getX(), e.getY());
 	}
 
 	private void addPluginTools() {
-		switchPopup.addSeparator();
+		//EU_HOU CHANGES
+		//switchPopup.addSeparator();
 		for (int i=0; i<builtInTools.length; i++)
 			addBuiltInTool(builtInTools[i]);
 		MenuBar menuBar = Menus.getMenuBar();
@@ -1711,7 +1740,8 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 			}
 		}
 		if (toolsMenu==null) {
-			switchPopup.addSeparator();
+			//EU_HOU CHANGES
+			//switchPopup.addSeparator();
 			return;
 		}
 		n = toolsMenu.getItemCount();
@@ -2427,7 +2457,7 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 		if (IJ.debugMode) IJ.log("Toolbar.installBuiltinTool: "+label);
 		boolean ok = true;
 		PlugInTool tool = null;
-		if (label.startsWith("Arrow")) {
+		/*if (label.startsWith("Arrow")) {
 			tool = new ij.plugin.tool.ArrowTool();
 			if (tool!=null) tool.run("");
 			showSource("Arrow");
@@ -2468,7 +2498,7 @@ public class Toolbar extends Canvas implements MouseListener, MouseMotionListene
 		else if (label.startsWith("Label"))
 			installMacroFromJar("/macros/Label_Tool.txt");
 		else
-			ok = false;
+			ok = false;*/
 		return ok;
 	}
 	

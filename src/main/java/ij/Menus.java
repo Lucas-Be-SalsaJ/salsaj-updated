@@ -298,10 +298,10 @@ public class Menus {
 		// System.out.println(("menu help ok");
 		addPlugInItem(help, "IJWebSite", "ij.plugin.BrowserLauncher", 0, false);
 		addPlugInItem(help, "OnlineDocs",
-				"ij.plugin.BrowserLauncher(\"index.php?option=com_content&task=view&id=126&Itemid=182\")", 0, false);
+				"ij.plugin.BrowserLauncher(\"http://www.euhou.net/index.php?option=com_content&task=view&id=126&Itemid=182\")", 0, false);
 		addPlugInItem(help, "AboutIJ", "ij.plugin.AboutBox", 0, false);
 		addPlugInItem(help, "Credits",
-				"ij.plugin.BrowserLauncher(\"index.php?option=com_content&task=view&id=4&Itemid=8\")", 0, false);
+				"ij.plugin.BrowserLauncher(\"http://www.euhou.net/index.php?option=com_content&task=view&id=4&Itemid=8\")", 0, false);
 
 		addPluginsMenu();
 

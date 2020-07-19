@@ -134,29 +134,16 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 		panel = new Panel();
 		int nButtons = BUTTONS;
 		panel.setLayout(new GridLayout(nButtons, 1, 5, 0));
-		/*
-		 * EU_HOU CHANGES
-		 */
-		/*addButton("Add [t]");
+
+		addButton("Add [t]");
 		addButton("Update");
 		addButton("Delete");
 		addButton("Rename...");
 		addButton("Measure");
 		addButton("Deselect");
 		addButton("Properties...");
-		addButton("Flatten [F]");*/
-        addButton("RM_Add");
-        addButton("RM_Update");
-        addButton("RM_Delete");
-        addButton("RM_Rename");
-        addButton("RM_Open");
-        addButton("RM_Save");
-        addButton("RM_Measure");
-        addButton("RM_Deselect");
-        addButton("RM_Show_All");
-		/*
-		 * EU_HOU CHANGES END
-		 */
+		addButton("Flatten [F]");
+		
 		addButton(moreButtonLabel);
 		showAllCheckbox.addItemListener(this);
 		panel.add(showAllCheckbox);
@@ -191,10 +178,8 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 	void addPopupMenu() {
 		pm = new PopupMenu();
 		GUI.scalePopupMenu(pm);
-		/*
-		 * EU_HOU CHANGES
-		 */
-		/*addPopupItem("Open...");
+        //EU_HOU Bundle
+		addPopupItem("Open...");
 		addPopupItem("Save...");
 		addPopupItem("Fill");
 		addPopupItem("Draw");
@@ -213,35 +198,7 @@ public class RoiManager extends PlugInFrame implements ActionListener, ItemListe
 		addPopupItem("Interpolate ROIs");
 		addPopupItem("Translate...");
 		addPopupItem("Help");
-		addPopupItem("Options...");*/
-        //EU_HOU Bundle
-        addPopupItem("RM_Draw");
-        //EU_HOU Bundle
-        addPopupItem("RM_Fill");
-        //EU_HOU Bundle
-        addPopupItem("RM_Label");
-        pm.addSeparator();
-        //EU_HOU Bundle
-        addPopupItem("RM_Combine");
-        //EU_HOU Bundle
-        addPopupItem("RM_Split");
-        //EU_HOU Bundle
-        addPopupItem("RM_Add_Particles");
-        //EU_HOU Bundle
-        addPopupItem("RM_Multi_Measure");
-        //EU_HOU Bundle
-        addPopupItem("Sort");
-        //EU_HOU Bundle
-        addPopupItem("Specify...");
-        //EU_HOU Bundle
-        addPopupItem("RM_Remove_Slice_Info");
-        //EU_HOU Bundle
-        addPopupItem("RM_Help");
-        //EU_HOU Bundle
-        addPopupItem("RM_Options...");
-		/*
-		 * EU_HOU CHANGES END
-		 */
+		addPopupItem("Options...");
 		add(pm);
 	}
 

@@ -187,8 +187,8 @@ public class Plot implements Cloneable {
 	int preferredPlotWidth = PlotWindow.plotWidth;  //default size of plot frame (not taking 'High-Resolution' scale factor into account)
 	int preferredPlotHeight = PlotWindow.plotHeight;
 
-
-	double xMin = Double.NaN, xMax, yMin, yMax;		//current plot range, logarithm if log axis
+	//EU_HOU CHANGES
+	//double xMin = Double.NaN, xMax, yMin, yMax;		//current plot range, logarithm if log axis
 	double[] currentMinMax = new double[]{Double.NaN, 0, Double.NaN, 0}; //current plot range, xMin, xMax, yMin, yMax (values, not logarithm if log axis)
 	double[] defaultMinMax = new double[]{Double.NaN, 0, Double.NaN, 0}; //default plot range
 	double[] savedMinMax = new double[]{Double.NaN, 0, Double.NaN, 0};	//keeps previous range for revert
@@ -206,10 +206,13 @@ public class Plot implements Cloneable {
 	private int minorTickLength = 3;                // length of minor ticks
 	private Color gridColor = new Color(0xc0c0c0);  // light gray
 	private ImageProcessor ip;
-	private ImagePlus imp;                          // if we have an ImagePlus, updateAndDraw on changes
-	private String title;
+	//EU_HOU CHANGES
+	//private ImagePlus imp;                          // if we have an ImagePlus, updateAndDraw on changes
+	//EU_HOU CHANGES
+	//private String title;
 	private boolean invertedLut;                    // grayscale plots only, set in Edit>Options>Appearance
-	private boolean plotDrawn;
+	//EU_HOU CHANGES
+	//private boolean plotDrawn;
 	PlotMaker plotMaker;                            // for PlotMaker interface, handled by PlotWindow
 	private Color currentColor;						// for next objects added
 	private Color currentColor2;					// 2nd color for next object added (e.g. line for CONNECTED_CIRCLES)
@@ -224,9 +227,62 @@ public class Plot implements Cloneable {
 	private int textIndex;                          // remembers index of previous addLabel call (for replacing if at the same position)
 
 	/*
-	 * EU_HOU CHANGES
+	 * EU_HOU ADD
 	 */
 	boolean radio = false;
+	public String title;
+	private boolean initialized;
+	private boolean plotDrawn;
+	private int plotWidth = PlotWindow.plotWidth;
+	private int plotHeight = PlotWindow.plotHeight;
+	private boolean multiplePlots;
+	private boolean drawPending;
+	/*
+	 * EU_HOU ADD END
+	 */
+	
+	/*
+	 * EU_HOU ADD
+	 */
+	float[] errorBars;
+	private int markSize = 5;
+	int nPoints;
+	private int flags;
+	private Font font = new Font("Helvetica", Font.PLAIN, 12);
+	/*
+	 * EU_HOU ADD END
+	 */
+	
+	/*
+	 * EU_HOU CHANGES
+	 */
+	private int lineWidth = 1;// Line.getWidth();
+	public String xLabel;
+	public String yLabel;
+	public final static int MIN_X_GRIDWIDTH = 60;//minimum distance between grid lines or ticks along x
+	public final static int MIN_Y_GRIDWIDTH = 40;//minimum distance between grid lines or ticks along y
+	public final static int MAX_INTERVALS = 12;//maximum number of intervals between ticks or grid lines
+	public final static int TICK_LENGTH = 3;//length of ticks
+	public float[] xValues, yValues, xInitValues, yInitValues, yValuesBaseLine, yValuesMergeGaussFit;
+	public double[] gaussFitResult;
+	public int nbgauss;
+	public double xMin, xMax, xInitMin, xInitMax, yMin, yMax;
+	public Button list, save, copy, setting, setScale, option, setScaleRadio, baseline, subtract, gauss;
+	public Label Xcoord, Ycoord;
+	public boolean modifListener = false;
+	public int oldX = -1, oldY = -1, oldindex = -1;
+	public int Xpoints[], Ypoints[];
+	protected ImagePlus imp;
+	public ImagePlus origin;
+	public Roi region;
+	public static boolean horizontal;
+	//EU_HOU_rb
+	public static boolean RadioSpectra = false;
+	//EU_HOU_jl
+	public static boolean Base_Line = false;
+	public static boolean Base_Line_subtracted = false;
+	public static boolean ZERO_LINE = false;
+	private Vector labels = new Vector(), xlabs = new Vector(), ylabs = new Vector();
 	/*
 	 * EU_HOU CHANGES END
 	 */
@@ -322,7 +378,326 @@ public class Plot implements Cloneable {
 	public Plot(String dummy, String title, String xLabel, String yLabel, float[] x, float[] y) {
 		this(title, xLabel, yLabel, x, y, getDefaultFlags());
 	}
+	
+	/*
+	 * EU_HOU ADD
+	 */
+	void setup() {
+		if (initialized) {
+			return;
+		}
+		initialized = true;
+		createImage();
+		ip.setColor(Color.black);
+		if (lineWidth > 3) {
+			lineWidth = 3;
+		}
+		ip.setLineWidth(lineWidth);
+		ip.setFont(font);
+		ip.setAntialiasedText(true);
+		if (frameWidth == 0) {
+			frameWidth = plotWidth;
+			frameHeight = plotHeight;
+		}
+		frame = new Rectangle(LEFT_MARGIN, TOP_MARGIN, frameWidth, frameHeight);
+		setScale();
+		if (PlotWindow.noGridLines) {
+			drawAxisLabels();
+		} else {
+			drawTicksEtc();
+		}
+	}
+	
+	void createImage() {
+		if (ip != null) {
+			return;
+		}
+		int width = plotWidth + LEFT_MARGIN + RIGHT_MARGIN;
+		int height = plotHeight + TOP_MARGIN + BOTTOM_MARGIN;
+		byte[] pixels = new byte[width * height];
+		for (int i = 0; i < width * height; i++) {
+			pixels[i] = (byte) 255;
+		}
+		ip = new ByteProcessor(width, height, pixels, null);
+	}
+	
+	void setScale() {
+		if ((xMax - xMin) == 0.0) {
+			xScale = 1.0;
+		} else {
+			xScale = frame.width / (xMax - xMin);
+		}
+		if ((yMax - yMin) == 0.0) {
+			yScale = 1.0;
+		} else {
+			yScale = frame.height / (yMax - yMin);
+		}
+	}
+	
+	void drawAxisLabels() {
+		int digits = getDigits(yMin, yMax);
+		String s = IJ.d2s(yMax, digits);
+		int sw = ip.getStringWidth(s);
+		if ((sw + 4) > LEFT_MARGIN) {
+			ip.drawString(s, 4, TOP_MARGIN - 4);
+		} else {
+			ip.drawString(s, LEFT_MARGIN - ip.getStringWidth(s) - 4, TOP_MARGIN + 10);
+		}
+		s = IJ.d2s(yMin, digits);
+		sw = ip.getStringWidth(s);
+		if ((sw + 4) > LEFT_MARGIN) {
+			ip.drawString(s, 4, TOP_MARGIN + frame.height);
+		} else {
+			ip.drawString(s, LEFT_MARGIN - ip.getStringWidth(s) - 4, TOP_MARGIN + frame.height);
+		}
+		FontMetrics fm = ip.getFontMetrics();
+		int x = LEFT_MARGIN;
+		int y = TOP_MARGIN + frame.height + fm.getAscent() + 6;
+		digits = getDigits(xMin, xMax);
+		ip.drawString(IJ.d2s(xMin, digits), x, y);
+		s = IJ.d2s(xMax, digits);
+		ip.drawString(s, x + frame.width - ip.getStringWidth(s) + 6, y);
+		ip.drawString(xLabel, LEFT_MARGIN + (frame.width - ip.getStringWidth(xLabel)) / 2, y + 3);
+		drawYLabel(yLabel, LEFT_MARGIN - 4, TOP_MARGIN, frame.height, fm);
+	}
 
+
+	/**
+	 *  Description of the Method
+	 */
+	void drawTicksEtc() {
+		int fontAscent = ip.getFontMetrics().getAscent();
+		int fontMaxAscent = ip.getFontMetrics().getMaxAscent();
+		if ((flags & (X_NUMBERS + X_TICKS + X_GRID)) != 0) {
+			double step = Math.abs(Math.max(frame.width / MAX_INTERVALS, MIN_X_GRIDWIDTH) / xScale);//the smallest allowable increment
+			step = niceNumber(step);
+			int i1;
+			int i2;
+			if ((flags & X_FORCE2GRID) != 0) {
+				i1 = (int) Math.floor(Math.min(xMin, xMax) / step + 1.e-10);//this also allows for inverted xMin, xMax
+				i2 = (int) Math.ceil(Math.max(xMin, xMax) / step - 1.e-10);
+				xMin = i1 * step;
+				xMax = i2 * step;
+				xScale = frame.width / (xMax - xMin);//rescale to make it fit
+			} else {
+				i1 = (int) Math.ceil(Math.min(xMin, xMax) / step - 1.e-10);
+				i2 = (int) Math.floor(Math.max(xMin, xMax) / step + 1.e-10);
+			}
+			int digits = -(int) Math.floor(Math.log(step) / Math.log(10) + 1e-6);
+			if (digits < 0) {
+				digits = 0;
+			}
+			int y1 = TOP_MARGIN;
+			int y2 = TOP_MARGIN + frame.height;
+			int yNumbers = y2 + fontAscent + 7;
+			for (int i = 0; i <= (i2 - i1); i++) {
+				double v = (i + i1) * step;
+				int x = (int) Math.round((v - xMin) * xScale) + LEFT_MARGIN;
+				if ((flags & X_GRID) != 0) {
+					ip.setColor(gridColor);
+					ip.drawLine(x, y1, x, y2);
+					ip.setColor(Color.black);
+				}
+				if ((flags & X_TICKS) != 0) {
+					ip.drawLine(x, y1, x, y1 + TICK_LENGTH);
+					ip.drawLine(x, y2, x, y2 - TICK_LENGTH);
+				}
+				if ((flags & X_NUMBERS) != 0) {
+					String s = IJ.d2s(v, digits);
+					ip.drawString(s, x - ip.getStringWidth(s) / 2, yNumbers);
+				}
+			}
+		}
+		int maxNumWidth = 0;
+		if ((flags & (Y_NUMBERS + Y_TICKS + Y_GRID)) != 0) {
+			double step = Math.abs(Math.max(frame.width / MAX_INTERVALS, MIN_Y_GRIDWIDTH) / yScale);//the smallest allowable increment
+			step = niceNumber(step);
+			int i1;
+			int i2;
+			if ((flags & X_FORCE2GRID) != 0) {
+				i1 = (int) Math.floor(Math.min(yMin, yMax) / step + 1.e-10);//this also allows for inverted xMin, xMax
+				i2 = (int) Math.ceil(Math.max(yMin, yMax) / step - 1.e-10);
+				yMin = i1 * step;
+				yMax = i2 * step;
+				yScale = frame.height / (yMax - yMin);//rescale to make it fit
+			} else {
+				i1 = (int) Math.ceil(Math.min(yMin, yMax) / step - 1.e-10);
+				i2 = (int) Math.floor(Math.max(yMin, yMax) / step + 1.e-10);
+			}
+			int digits = -(int) Math.floor(Math.log(step) / Math.log(10) + 1e-6);
+			if (digits < 0) {
+				digits = 0;
+			}
+			int x1 = LEFT_MARGIN;
+			int x2 = LEFT_MARGIN + frame.width;
+			for (int i = 0; i <= (i2 - i1); i++) {
+				double v = (i + i1) * step;
+				int y = TOP_MARGIN + frame.height - (int) Math.round((v - yMin) * yScale);
+				if ((flags & Y_GRID) != 0) {
+					ip.setColor(gridColor);
+					ip.drawLine(x1, y, x2, y);
+					ip.setColor(Color.black);
+				}
+				if ((flags & Y_TICKS) != 0) {
+					ip.drawLine(x1, y, x1 + TICK_LENGTH, y);
+					ip.drawLine(x2, y, x2 - TICK_LENGTH, y);
+				}
+				if ((flags & Y_NUMBERS) != 0) {
+					String s = IJ.d2s(v, digits);
+					int w = ip.getStringWidth(s);
+					if (w > maxNumWidth) {
+						maxNumWidth = w;
+					}
+					ip.drawString(s, LEFT_MARGIN - w - 4, y + fontMaxAscent / 2 + 1);
+				}
+			}
+		}
+		if ((flags & Y_NUMBERS) == 0) {//simply note y-axis min&max
+			int digits = getDigits(yMin, yMax);
+			String s = IJ.d2s(yMax, digits);
+			int sw = ip.getStringWidth(s);
+			if ((sw + 4) > LEFT_MARGIN) {
+				ip.drawString(s, 4, TOP_MARGIN - 4);
+			} else {
+				ip.drawString(s, LEFT_MARGIN - ip.getStringWidth(s) - 4, TOP_MARGIN + 10);
+			}
+			s = IJ.d2s(yMin, digits);
+			sw = ip.getStringWidth(s);
+			if ((sw + 4) > LEFT_MARGIN) {
+				ip.drawString(s, 4, TOP_MARGIN + frame.height);
+			} else {
+				ip.drawString(s, LEFT_MARGIN - ip.getStringWidth(s) - 4, TOP_MARGIN + frame.height);
+			}
+		}
+		FontMetrics fm = ip.getFontMetrics();
+		int x = LEFT_MARGIN;
+		int y = TOP_MARGIN + frame.height + fm.getAscent() + 6;
+		if ((flags & X_NUMBERS) == 0) {//simply note x-axis min&max
+			int digits = getDigits(xMin, xMax);
+			ip.drawString(IJ.d2s(xMin, digits), x, y);
+			String s = IJ.d2s(xMax, digits);
+			ip.drawString(s, x + frame.width - ip.getStringWidth(s) + 6, y);
+		} else {
+			y += fm.getAscent();
+		}//space needed for x numbers
+                drawXLabel(xLabel, 270, 235, 0, fm);
+		//ip.drawString(xLabel, LEFT_MARGIN + (frame.width - ip.getStringWidth(xLabel)) / 2, y + 6);
+		drawYLabel(yLabel, LEFT_MARGIN - maxNumWidth - 4, TOP_MARGIN, frame.height, fm);
+	}
+	/*
+	 * EU_HOU ADD END
+	 */
+	
+	/*
+	 * EU_HOU ADD
+	 */
+	public void addPoints(float[] x, float[] y, int shape, Color c) {
+		setup();
+		switch (shape) {
+						case CIRCLE:
+						case X:
+						case BOX:
+						case TRIANGLE:
+						case CROSS:
+						case DOT:
+							for (int i = 0; i < x.length; i++) {
+								int xt = LEFT_MARGIN + (int) ((x[i] - xMin) * xScale);
+								int yt = TOP_MARGIN + frameHeight - (int) ((y[i] - yMin) * yScale);
+								if (xt >= frame.x && yt >= frame.y && xt <= frame.x + frame.width && yt <= frame.y + frame.height) {
+									drawShape(shape, xt, yt, markSize);
+								}
+							}
+							break;
+						case LINE:
+							ip.setClipRect(frame);
+							int xts[] = new int[x.length];
+							int yts[] = new int[y.length];
+							for (int i = 0; i < x.length; i++) {
+								xts[i] = LEFT_MARGIN + (int) ((x[i] - xMin) * xScale);
+								yts[i] = TOP_MARGIN + frameHeight - (int) ((y[i] - yMin) * yScale);
+							}
+							/*
+							    EU_HOU CHANGES
+							  */
+							setColor(c);
+							drawPolyline(ip, xts, yts, x.length);
+							setColor(Color.black);
+							/*
+							    EU_HOU END
+							  */
+							ip.setClipRect(null);
+							break;
+		}
+		multiplePlots = true;
+		if (xValues.length == 1) {
+			xValues = x;
+			yValues = y;
+			nPoints = x.length;
+			drawPending = false;
+		}
+	}
+	/*
+	 * EU_HOU ADD END
+	 */
+	
+	/*
+	 * EU_HOU ADD
+	 */
+	void drawPolyline(ImageProcessor ip, int[] x, int[] y, int n) {
+		ip.moveTo(x[0], y[0]);
+		for (int i = 0; i < n; i++) {
+			ip.lineTo(x[i], y[i]);
+		}
+	}
+	
+	void drawYLabel(String yLabel, int x, int y, int height, FontMetrics fm) {
+		if (yLabel.equals("")) {
+			return;
+		}
+		int w = fm.stringWidth(yLabel) + 5;
+		int h = fm.getHeight() + 5;
+		ImageProcessor label = new ByteProcessor(w, h);
+		label.setColor(Color.white);
+		label.fill();
+		label.setColor(Color.black);
+		label.setFont(font);
+		label.setAntialiasedText(true);
+		int descent = fm.getDescent();
+		label.drawString(yLabel, 0, h - descent);
+		label = label.rotateLeft();
+		int y2 = y + (height - ip.getStringWidth(yLabel)) / 2;
+		if (y2 < y) {
+			y2 = y;
+		}
+		int x2 = Math.max(x - h, 0);
+		ip.insert(label, x2, y2);
+	}
+
+        void drawXLabel(String yLabel, int x, int y, int height, FontMetrics fm) {
+		if (yLabel.equals("")) {
+			return;
+		}
+		int w = fm.stringWidth(yLabel) + 5;
+		int h = fm.getHeight() + 5;
+		ImageProcessor label = new ByteProcessor(w, h);
+		label.setColor(Color.white);
+		label.fill();
+		label.setColor(Color.black);
+		label.setFont(font);
+		label.setAntialiasedText(true);
+		int descent = fm.getDescent();
+		label.drawString(yLabel, 0, h - descent);
+		int y2 = y + (height - ip.getStringWidth(yLabel)) / 2;
+		if (y2 < y) {
+			y2 = y;
+		}
+		int x2 = Math.max(x - h, 0);
+		ip.insert(label, x2, y2);
+	}
+	/*
+	 * EU_HOU ADD END
+	 */
+	
 	/** Writes this plot into an OutputStream containing (1) the serialized PlotProperties and
 	 *	(2) the serialized Vector of all 'added' PlotObjects. The stream is NOT closed.
 	 *	The plot should have been drawn already.
@@ -899,6 +1274,47 @@ public class Plot implements Cloneable {
 	public void drawShapes(String shapeType, ArrayList floatCoords) {
 		allPlotObjects.add(new PlotObject(shapeType, floatCoords, currentLineWidth, currentColor, currentColor2));
 	}
+	
+	/*
+	 * EU_HOU ADD
+	 */
+	void drawShape(int shape, int x, int y, int size) {
+		int xbase = x - size / 2;
+		int ybase = y - size / 2;
+		switch (shape) {
+						case X:
+							ip.drawLine(xbase, ybase, xbase + size, ybase + size);
+							ip.drawLine(xbase + size, ybase, xbase, ybase + size);
+							break;
+						case BOX:
+							ip.drawLine(xbase, ybase, xbase + size, ybase);
+							ip.drawLine(xbase + size, ybase, xbase + size, ybase + size);
+							ip.drawLine(xbase + size, ybase + size, xbase, ybase + size);
+							ip.drawLine(xbase, ybase + size, xbase, ybase);
+							break;
+						case TRIANGLE:
+							ip.drawLine(x, ybase, xbase + size, ybase + size);
+							ip.drawLine(xbase + size, ybase + size, xbase, ybase + size);
+							ip.drawLine(xbase, ybase + size, x, ybase);
+							break;
+						case CROSS:
+							ip.drawLine(xbase, y, xbase + size, y);
+							ip.drawLine(x, ybase, x, ybase + size);
+							break;
+						case DOT:
+							ip.drawDot(x, y);
+							break;
+						default:// 5x5 oval
+							ip.drawLine(x - 1, y - 2, x + 1, y - 2);
+							ip.drawLine(x - 1, y + 2, x + 1, y + 2);
+							ip.drawLine(x + 2, y + 1, x + 2, y - 1);
+							ip.drawLine(x - 2, y + 1, x - 2, y - 1);
+							break;
+		}
+	}
+	/*
+	 * EU_HOU END
+	 */
 
 	public static double calculateDistance(int x1, int y1, int x2, int y2) {
 		return java.lang.Math.sqrt((x2 - x1)*(double)(x2 - x1) + (y2 - y1)*(double)(y2 - y1));
@@ -1636,7 +2052,7 @@ public class Plot implements Cloneable {
 				setImagePlus(null);
 		}
 		//EU_HOU CHANGES : added imp parameter
-		PlotWindow pw = new PlotWindow(this, imp);		//note: this may set imp to null if pw has listValues and autoClose are set
+		PlotWindow pw = new PlotWindow(imp, this);		//note: this may set imp to null if pw has listValues and autoClose are set
 		if (IJ.isMacro() && imp!=null) // wait for plot to be displayed
 			IJ.selectWindow(imp.getID());
 		return pw;
@@ -1665,17 +2081,94 @@ public class Plot implements Cloneable {
 		return stack;
 	}
 
+	/*
+	 * EU_HOU ADD
+	 */
+	int getDigits(double n1, double n2) {
+		if (Math.round(n1) == n1 && Math.round(n2) == n2) {
+			return 0;
+		} else {
+			n1 = Math.abs(n1);
+			n2 = Math.abs(n2);
+			double n = n1 < n2 && n1 > 0.0 ? n1 : n2;
+			double diff = Math.abs(n2 - n1);
+			if (diff > 0.0 && diff < n) {
+				n = diff;
+			}
+			int digits = 1;
+			if (n < 10.0) {
+				digits = 2;
+			}
+			if (n < 0.01) {
+				digits = 3;
+			}
+			if (n < 0.001) {
+				digits = 4;
+			}
+			if (n < 0.0001) {
+				digits = 5;
+			}
+			return digits;
+		}
+	}
+	/*
+	 * EU_HOU ADD END
+	 */
+	
+	/*
+	 * EU_HOU CHANGES
+	 */
 	/** Draws the plot specified for the first time. Does nothing if the plot has been drawn already.
 	 *	Call getProcessor to retrieve the ImageProcessor with it.
 	 *	Does no action with respect to the ImagePlus (if any) */
-	public void draw() {
+	/*public void draw() {
 		//IJ.log("draw(); plotDrawn="+plotDrawn);
 		if (plotDrawn) return;
 		getInitialMinAndMax();
 		pp.frame.setFont(nonNullFont(pp.frame.getFont(), currentFont)); //make sure we have a number font for calculating the margins
 		getBlankProcessor();
 		drawContents(ip);
+	}*/
+	public void draw() {
+		if (plotDrawn) {
+			return;
+		}
+		plotDrawn = true;
+		createImage();
+		setup();
+
+		if (drawPending) {
+			ip.setClipRect(frame);
+			//EU_HOU
+			Xpoints = new int[nPoints];
+			Ypoints = new int[nPoints];
+			for (int i = 0; i < nPoints; i++) {
+				Xpoints[i] = LEFT_MARGIN + (int) ((xValues[i] - xMin) * xScale);
+				Ypoints[i] = TOP_MARGIN + frame.height - (int) ((yValues[i] - yMin) * yScale);
+			}
+			drawPolyline(ip, Xpoints, Ypoints, nPoints);
+			ip.setClipRect(null);
+			if (this.errorBars != null) {
+				//EU_HOU
+				int[] xpoints = new int[2];
+				int[] ypoints = new int[2];
+				for (int i = 0; i < nPoints; i++) {
+					xpoints[0] = xpoints[1] = LEFT_MARGIN + (int) ((xValues[i] - xMin) * xScale);
+					ypoints[0] = TOP_MARGIN + frame.height - (int) ((yValues[i] - yMin - errorBars[i]) * yScale);
+					ypoints[1] = TOP_MARGIN + frame.height - (int) ((yValues[i] - yMin + errorBars[i]) * yScale);
+					drawPolyline(ip, xpoints, ypoints, 2);
+				}
+			}
+		}
+
+		if (ip instanceof ColorProcessor) {
+			ip.setColor(Color.black);
+		}
+		ip.drawRect(frame.x, frame.y, frame.width + 1, frame.height + 1);
 	}
+	/*
+	 * EU_HOU CHANGES END
+	 */
 
 	/** Freezes or unfreezes the plot. In the frozen state, the plot cannot be resized or updated,
 	 *	and the Plot class does no modifications to the ImageProcessor.

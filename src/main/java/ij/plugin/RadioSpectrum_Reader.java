@@ -1,3 +1,4 @@
+//EU_HOU
 package ij.plugin;
 
 import java.util.*;

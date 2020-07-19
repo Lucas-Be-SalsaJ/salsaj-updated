@@ -514,7 +514,8 @@ public class PlotContentsDialog implements DialogListener {
 		if (savedLimits != null)
 			plot.setLimits(savedLimits);
 		plot.setColor(colorField.getText(), color2Field.getText());
-		plot.addPoints(data[0], data[1], data[3], shape, label);
+		//EU_HOU CHANGES
+		plot.addPoints(data[0], data[1], data[3], shape, label, Color.black);
 		if (data[2] != null)
 			plot.addHorizontalErrorBars(data[2]);
 		if (creatingPlot) {
