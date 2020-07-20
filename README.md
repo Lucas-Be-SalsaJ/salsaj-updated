@@ -30,3 +30,5 @@ Commentary have been added through SalsaJ code to describe modifications and the
 * Translation related *(additional code that permit the translation (different from IJ.getBundle() and IJ.getColorBundle())*
     * EU_HOU Bundle ADD
     * EU_HOU Bundle ADD END
+
+Note: Toolbars haven't really been updated, but they work kind of separately so it shouldn't be a problem, a lot of functionalities need to be tested (for instance, functionalities affiliated to Plot.java)
